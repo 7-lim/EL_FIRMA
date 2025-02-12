@@ -27,7 +27,66 @@
                 <p class="fs-5 fw-medium fst-italic text-primary">Online Store</p>
                 <h1 class="display-6">Want to stay healthy? Choose tea taste</h1>
             </div>
-            <div class="row g-4">
+            <!-- Début de la section Filtres et Recherche -->
+        <div class="row mb-4 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="col-md-12">
+                <!-- Barre de recherche -->
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control rounded-pill" placeholder="Search teas...">
+                    <button class="btn btn-primary rounded-pill ms-2 px-4">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Colonne des Filtres -->
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-3 p-4 mb-4">
+                    <h5 class="mb-3">Categories</h5>
+                    <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Green Tea
+                            <span class="badge bg-primary rounded-pill">14</span>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Black Tea
+                            <span class="badge bg-primary rounded-pill">8</span>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Herbal Tea
+                            <span class="badge bg-primary rounded-pill">5</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-3 p-4 mb-4">
+                    <h5 class="mb-3">Price Range</h5>
+                    <div class="d-flex justify-content-between">
+                        <input type="number" class="form-control me-2" placeholder="Min">
+                        <input type="number" class="form-control ms-2" placeholder="Max">
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-3 p-4">
+                    <h5 class="mb-3">Additional Filters</h5>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="organic">
+                        <label class="form-check-label" for="organic">Organic</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="discount">
+                        <label class="form-check-label" for="discount">Discount</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="new">
+                        <label class="form-check-label" for="new">New Arrivals</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne des Produits -->
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="store-item position-relative text-center">
                         <img class="img-fluid" src="{{asset('img/store-product-1.jpg')}}" alt="">
@@ -101,4 +160,3 @@
     <!-- Back to Top -->
     <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-circle back-to-top"><i class="bi bi-arrow-up"></i></a>
 {% endblock %}
-
