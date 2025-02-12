@@ -14,9 +14,6 @@ class Produit
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $Id_produit = null;
-
     #[ORM\Column(length: 255)]
     private ?string $NomProduit = null;
 
@@ -32,21 +29,19 @@ class Produit
     #[ORM\Column]
     private ?float $Prix = null;
 
-    public function getId(): ?int
+    #[ORM\ManyToOne(inversedBy: 'produits')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Fournisseur $Fournisseur = null;
+
+    #[ORM\ManyToOne(inversedBy: 'produits')]
+    private ?Agriculteur $agriculteur = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Categorie $categorie = null;
+
+      public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getIdProduit(): ?int
-    {
-        return $this->Id_produit;
-    }
-
-    public function setIdProduit(int $Id_produit): static
-    {
-        $this->Id_produit = $Id_produit;
-
-        return $this;
     }
 
     public function getNomProduit(): ?string
@@ -105,6 +100,42 @@ class Produit
     public function setPrix(float $Prix): static
     {
         $this->Prix = $Prix;
+
+        return $this;
+    }
+
+    public function getFournisseur(): ?Fournisseur
+    {
+        return $this->Fournisseur;
+    }
+
+    public function setFournisseur(?Fournisseur $Fournisseur): static
+    {
+        $this->Fournisseur = $Fournisseur;
+
+        return $this;
+    }
+
+    public function getAgriculteur(): ?Agriculteur
+    {
+        return $this->agriculteur;
+    }
+
+    public function setAgriculteur(?Agriculteur $agriculteur): static
+    {
+        $this->agriculteur = $agriculteur;
+
+        return $this;
+    }
+
+    public function getCategorie(): ?Categorie
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(?Categorie $categorie): static
+    {
+        $this->categorie = $categorie;
 
         return $this;
     }

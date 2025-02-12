@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EvenementRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,97 +16,137 @@ class Evenement
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $Id_evenement = null;
+    #[ORM\Column(length: 255)]
+    private ?string $titre = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Titre = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $Description = null;
+    private ?string $description = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $DateDebut = null;
+    private ?\DateTimeInterface $dateDebut = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $DateFin = null;
+    private ?\DateTimeInterface $dateFin = null;
 
     #[ORM\Column(length: 55)]
-    private ?string $Lieu = null;
+    private ?string $lieu = null;
+
+    /**
+     * @var Collection<int, Fournisseur>
+     */
+    #[ORM\ManyToMany(targetEntity: Fournisseur::class, mappedBy: 'Evenements')]
+    private Collection $fournisseurs;
+
+    /**
+     * @var Collection<int, Agriculteur>
+     */
+    #[ORM\ManyToMany(targetEntity: Agriculteur::class, mappedBy: 'evenements')]
+    private Collection $agriculteurs;
+
+    #[ORM\ManyToOne(inversedBy: 'evenements')]
+    private ?Administrateur $administrateur = null;
+
+    public function __construct()
+    {
+        $this->fournisseurs = new ArrayCollection();
+        $this->agriculteurs = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getIdEvenement(): ?int
-    {
-        return $this->Id_evenement;
-    }
-
-    public function setIdEvenement(int $Id_evenement): static
-    {
-        $this->Id_evenement = $Id_evenement;
-
-        return $this;
-    }
-
     public function getTitre(): ?string
     {
-        return $this->Titre;
+        return $this->titre;
     }
 
-    public function setTitre(string $Titre): static
+    public function setTitre(string $titre): static
     {
-        $this->Titre = $Titre;
-
+        $this->titre = $titre;
         return $this;
     }
 
     public function getDescription(): ?string
     {
-        return $this->Description;
+        return $this->description;
     }
 
-    public function setDescription(string $Description): static
+    public function setDescription(string $description): static
     {
-        $this->Description = $Description;
-
+        $this->description = $description;
         return $this;
     }
 
     public function getDateDebut(): ?\DateTimeInterface
     {
-        return $this->DateDebut;
+        return $this->dateDebut;
     }
 
-    public function setDateDebut(\DateTimeInterface $DateDebut): static
+    public function setDateDebut(\DateTimeInterface $dateDebut): static
     {
-        $this->DateDebut = $DateDebut;
-
+        $this->dateDebut = $dateDebut;
         return $this;
     }
 
     public function getDateFin(): ?\DateTimeInterface
     {
-        return $this->DateFin;
+        return $this->dateFin;
     }
 
-    public function setDateFin(\DateTimeInterface $DateFin): static
+    public function setDateFin(\DateTimeInterface $dateFin): static
     {
-        $this->DateFin = $DateFin;
-
+        $this->dateFin = $dateFin;
         return $this;
     }
 
     public function getLieu(): ?string
     {
-        return $this->Lieu;
+        return $this->lieu;
     }
 
-    public function setLieu(string $Lieu): static
+    public function setLieu(string $lieu): static
     {
-        $this->Lieu = $Lieu;
+        $this->lieu = $lieu;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Fournisseur>
+     */
+    public function getFournisseurs(): Collection
+    {
+        return $this->fournisseurs;
+    }
+
+    public function addFournisseur(Fournisseur $fournisseur): static
+    {
+        if (!$this->fournisseurs->contains($fournisseur)) {
+            $this->fournisseurs->add($fournisseur);
+            $fournisseur->addEvenement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFournisseur(Fournisseur $fournisseur): static
+    {
+        if ($this->fournisseurs->removeElement($fournisseur)) {
+            $fournisseur->removeEvenement($this);
+        }
+
+        return $this;
+    }
+
+    public function getAdministrateur(): ?Administrateur
+    {
+        return $this->administrateur;
+    }
+
+    public function setAdministrateur(?Administrateur $administrateur): static
+    {
+        $this->administrateur = $administrateur;
 
         return $this;
     }

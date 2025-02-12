@@ -6,15 +6,15 @@ use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
+#[ORM\InheritanceType(value: 'JOINED')]
+#[ORM\DiscriminatorColumn(name: 'disc', type: 'string')]
+#[ORM\DiscriminatorMap(['Agriculteur' => Agriculteur::class, 'Administrateur' => Administrateur::class, 'Fournisseur' => Fournisseur::class, 'Expert' => Expert::class])]
 class Utilisateur
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\Column]
-    private ?int $Id_utilisateur = null;
 
     #[ORM\Column(length: 55)]
     private ?string $Nom = null;
@@ -37,18 +37,6 @@ class Utilisateur
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getIdUtilisateur(): ?int
-    {
-        return $this->Id_utilisateur;
-    }
-
-    public function setIdUtilisateur(int $Id_utilisateur): static
-    {
-        $this->Id_utilisateur = $Id_utilisateur;
-
-        return $this;
     }
 
     public function getNom(): ?string
