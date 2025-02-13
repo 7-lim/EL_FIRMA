@@ -1,0 +1,125 @@
+/* Styles généraux */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #E8F6F3;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #145A32;
+    padding: 15px 0;
+    text-align: center;
+}
+
+.navbar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+.navbar ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.navbar ul li a:hover {
+    color: #28A745;
+}
+
+/* Bouton Déconnexion */
+.logout {
+    color: #E74C3C !important;
+}
+
+/* Conteneur principal */
+.container {
+    width: 90%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+/* Titre */
+h1 {
+    color: #145A32;
+    margin-bottom: 20px;
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Table header */
+thead {
+    background-color: #28A745;
+    color: white;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Alternate row colors */
+tbody tr:nth-child(even) {
+    background-color: #D5F5E3;
+}
+
+/* Hover effect */
+tbody tr:hover {
+    background-color: #ABEBC6;
+}
+
+/* Boutons Modifier & Supprimer */
+.btn {
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.edit {
+    background-color: #28A745;
+    color: white;
+}
+
+.edit:hover {
+    background-color: #1D8348;
+}
+
+.delete {
+    background-color: #E74C3C;
+    color: white;
+}
+
+.delete:hover {
+    background-color: #C0392B;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+    table {
+        width: 100%;
+    }
+    
+    th, td {
+        font-size: 14px;
+        padding: 8px;
+    }
+}

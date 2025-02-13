@@ -2,34 +2,29 @@
 
 namespace App\Entity;
 
-use App\Repository\AgriculteurRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: AgriculteurRepository::class)]
-class Agriculteur
+#[ORM\Entity]
+class Agriculteur extends Utilisateur
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $Localisation = null;
+    private ?string $adresseExploitation = null;
 
-    public function getId(): ?int
+    public function __construct()
     {
-        return $this->id;
+        parent::__construct();
+        $this->setRoles(['ROLE_AGRICULTEUR']); // Utilisez le setter
     }
 
-    public function getLocalisation(): ?string
+    // Getters et setters pour adresseExploitation
+    public function getAdresseExploitation(): ?string
     {
-        return $this->Localisation;
+        return $this->adresseExploitation;
     }
 
-    public function setLocalisation(?string $Localisation): static
+    public function setAdresseExploitation(?string $adresseExploitation): self
     {
-        $this->Localisation = $Localisation;
-
+        $this->adresseExploitation = $adresseExploitation;
         return $this;
     }
 }

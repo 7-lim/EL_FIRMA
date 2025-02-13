@@ -79,4 +79,15 @@ final class PageController extends AbstractController
     {
         return $this->render('404.html.twig');
     }
+    
+    #[Route('/login', name: 'login')]
+    public function login(): Response
+    {
+        return $this->render('login.html.twig');
+    }
+    #[Route('/dashboard', name: 'app_dashboard')]
+    public function dashboard(): Response
+    {
+        return $this->render('dashboard.html.twig');
+    }
 }
