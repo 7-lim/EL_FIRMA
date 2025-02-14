@@ -18,19 +18,15 @@ class Ticket
     #[ORM\Column]
     private ?int $Prix = null;
 
-    /**
-     * @var Collection<int, Agriculteur>
-     */
-    #[ORM\ManyToMany(targetEntity: Agriculteur::class, mappedBy: 'tickets')]
-    private Collection $agriculteurs;
+    #[ORM\ManyToOne(inversedBy: 'tickets')]
+    private ?Agriculteur $agriculteur = null;
 
     #[ORM\ManyToOne(inversedBy: 'tickets')]
     private ?Expert $expert = null;
 
-    public function __construct()
-    {
-        $this->agriculteurs = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(inversedBy: 'tickets')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Evenement $evenement = null;
 
     public function getId(): ?int
     {
@@ -49,32 +45,18 @@ class Ticket
         return $this;
     }
 
-    /**
-     * @return Collection<int, Agriculteur>
-     */
-    public function getAgriculteurs(): Collection
+    public function getAgriculteurs(): ?Agriculteur
     {
-        return $this->agriculteurs;
+        return $this->agriculteur;
     }
 
-    public function addDiscussion(Agriculteur $agriculteur): static
+    public function setAgrivulteur(?Agriculteur $agriculteur): static
     {
-        if (!$this->agriculteurs->contains($agriculteur)) {
-            $this->agriculteurs->add($agriculteur);
-            $agriculteur->addTicket($this);
-        }
+        $this->agriculteur = $agriculteur;
 
         return $this;
     }
 
-    public function removeDiscussion(Agriculteur $agriculteur): static
-    {
-        if ($this->agriculteurs->removeElement($agriculteur)) {
-            $agriculteur->removeTicket($this);
-        }
-
-        return $this;
-    }
 
     public function getExpert(): ?Expert
     {
@@ -84,6 +66,18 @@ class Ticket
     public function setExpert(?Expert $expert): static
     {
         $this->expert = $expert;
+
+        return $this;
+    }
+
+    public function getEvenement(): ?Evenement
+    {
+        return $this->evenement;
+    }
+
+    public function setEvenement(?Evenement $evenement): static
+    {
+        $this->evenement = $evenement;
 
         return $this;
     }

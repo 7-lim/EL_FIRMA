@@ -37,19 +37,21 @@ class Evenement
     #[ORM\ManyToMany(targetEntity: Fournisseur::class, mappedBy: 'Evenements')]
     private Collection $fournisseurs;
 
-    /**
-     * @var Collection<int, Agriculteur>
-     */
-    #[ORM\ManyToMany(targetEntity: Agriculteur::class, mappedBy: 'evenements')]
-    private Collection $agriculteurs;
-
+   
     #[ORM\ManyToOne(inversedBy: 'evenements')]
     private ?Administrateur $administrateur = null;
+
+    /**
+     * @var Collection<int, Ticket>
+     */
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'evenement')]
+    private Collection $tickets;
 
     public function __construct()
     {
         $this->fournisseurs = new ArrayCollection();
-        $this->agriculteurs = new ArrayCollection();
+        $this->tickets = new ArrayCollection();
+ 
     }
 
     public function getId(): ?int
@@ -147,6 +149,36 @@ class Evenement
     public function setAdministrateur(?Administrateur $administrateur): static
     {
         $this->administrateur = $administrateur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ticket>
+     */
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
+    }
+
+    public function addTicket(Ticket $ticket): static
+    {
+        if (!$this->tickets->contains($ticket)) {
+            $this->tickets->add($ticket);
+            $ticket->setEvenement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicket(Ticket $ticket): static
+    {
+        if ($this->tickets->removeElement($ticket)) {
+            // set the owning side to null (unless already changed)
+            if ($ticket->getEvenement() === $this) {
+                $ticket->setEvenement(null);
+            }
+        }
 
         return $this;
     }

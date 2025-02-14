@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ProduitRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -36,9 +37,8 @@ class Produit
     #[ORM\ManyToOne(inversedBy: 'produits')]
     private ?Agriculteur $agriculteur = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'produits')]
     private ?Categorie $categorie = null;
-
       public function getId(): ?int
     {
         return $this->id;

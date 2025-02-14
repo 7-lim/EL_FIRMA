@@ -15,12 +15,6 @@ class Agriculteur extends Utilisateur
     private ?string $Localisation = null;
 
     /**
-     * @var Collection<int, Evenement>
-     */
-    #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'agriculteurs')]
-    private Collection $evenements;
-
-    /**
      * @var Collection<int, Produit>
      */
     #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'agriculteur')]
@@ -29,7 +23,7 @@ class Agriculteur extends Utilisateur
     /**
      * @var Collection<int, Ticket>
      */
-    #[ORM\ManyToMany(targetEntity: Ticket::class, inversedBy: 'discussions')]
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'agriculteur')]
     private Collection $tickets;
 
     /**
@@ -52,7 +46,6 @@ class Agriculteur extends Utilisateur
 
     public function __construct()
     {
-        $this->evenements = new ArrayCollection();
         $this->produits = new ArrayCollection();
         $this->tickets = new ArrayCollection();
         $this->discussions = new ArrayCollection();
@@ -72,29 +65,6 @@ class Agriculteur extends Utilisateur
         return $this;
     }
 
-    /**
-     * @return Collection<int, Evenement>
-     */
-    public function getEvenements(): Collection
-    {
-        return $this->evenements;
-    }
-
-    public function addEvenement(Evenement $evenement): static
-    {
-        if (!$this->evenements->contains($evenement)) {
-            $this->evenements->add($evenement);
-        }
-
-        return $this;
-    }
-
-    public function removeEvenement(Evenement $evenement): static
-    {
-        $this->evenements->removeElement($evenement);
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Produit>
