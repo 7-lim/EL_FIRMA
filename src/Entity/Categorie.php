@@ -66,26 +66,4 @@ class Categorie
     {
         return $this->produits;
     }
-
-    public function addProduit(Produit $produit): static
-    {
-        if (!$this->produits->contains($produit)) {
-            $this->produits->add($produit);
-            $produit->setNo($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduit(Produit $produit): static
-    {
-        if ($this->produits->removeElement($produit)) {
-            // set the owning side to null (unless already changed)
-            if ($produit->getNo() === $this) {
-                $produit->setNo(null);
-            }
-        }
-
-        return $this;
-    }
 }
