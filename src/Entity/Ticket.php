@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TicketRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
@@ -16,6 +17,9 @@ class Ticket
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\Positive]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?int $Prix = null;
 
     #[ORM\ManyToOne(inversedBy: 'tickets')]
