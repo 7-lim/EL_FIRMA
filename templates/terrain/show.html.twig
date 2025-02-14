@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Terrain{% endblock %}
+
+{% block body %}
+<!-- Page Header -->
+<div class="container-fluid page-header py-5 mb-5 bg-light">
+    <div class="container text-center py-5">
+        <h1 class="display-4 text-dark animated slideInDown">Détails du Terrain</h1>
+        <nav aria-label="breadcrumb" class="animated slideInDown">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item active" aria-current="page">Détails</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+{% if terrain %}
+<div class="container py-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="card-title">{{ terrain.localisation|default('Localisation inconnue') }}</h2>
+            <p class="card-text">
+                <strong>Superficie :</strong> {{ terrain.superficie|number_format(0, ',', ' ') }} m²<br>
+                <strong>Latitude :</strong> {{ terrain.latitude|default('Non spécifiée') }}<br>
+                <strong>Longitude :</strong> {{ terrain.longitude|default('Non spécifiée') }}<br>
+                <strong>Type de sol :</strong> {{ terrain.typeSol|default('Non spécifié') }}<br>
+                <strong>Irrigation disponible :</strong> {{ terrain.irrigationDisponible ? 'Oui' : 'Non' }}<br>
+                <strong>Statut :</strong> 
+                {% if terrain.statut == 'disponible' %}
+                    <span class="text-success">Disponible</span>
+                {% elseif terrain.statut == 'occupé' %}
+                    <span class="text-danger">Occupé</span>
+                {% else %}
+                    <span class="text-warning">Inconnu</span>
+                {% endif %}
+            </p>
+        </div>
+        <div class="card-footer text-center">
+            <a href="{{ path('terrain_edit', {id: terrain.id}) }}" class="btn btn-secondary btn-sm">Modifier</a>
+            <a href="{{ path('terrain_list') }}" class="btn btn-outline-primary btn-sm">Retour à la liste</a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="container text-center py-5">
+    <div class="alert alert-warning">
+        <strong>Erreur :</strong> Ce terrain n'existe pas ou a été supprimé.
+    </div>
+    <a href="{{ path('terrain_list') }}" class="btn btn-outline-primary">Retour à la liste</a>
+</div>
+{% endif %}
+{% endblock %}

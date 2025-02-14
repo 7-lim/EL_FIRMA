@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le Terrain{% endblock %}
+
+{% block body %}
+<!-- Page Header -->
+<div class="container-fluid page-header py-5 mb-5 bg-light">
+    <div class="container text-center py-5">
+        <h1 class="display-4 text-dark animated slideInDown">Modifier le Terrain</h1>
+        <nav aria-label="breadcrumb" class="animated slideInDown">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="{{ path('terrain_list') }}">Terrains</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Modifier</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container py-5">
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+    
+    {% for message in app.flashes('danger') %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_label(form.superficie, 'Superficie (m²)') }}
+                            {{ form_widget(form.superficie, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.superficie) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(form.localisation, 'Localisation') }}
+                            {{ form_widget(form.localisation, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.localisation) }}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.latitude, 'Latitude') }}
+                                {{ form_widget(form.latitude, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.latitude) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.longitude, 'Longitude') }}
+                                {{ form_widget(form.longitude, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.longitude) }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(form.typeSol, 'Type de sol') }}
+                            {{ form_widget(form.typeSol, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.typeSol) }}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form_widget(form.irrigationDisponible, {'attr': {'class': 'form-check-input'}}) }}
+                            {{ form_label(form.irrigationDisponible, 'Irrigation disponible', {'label_attr': {'class': 'form-check-label'}}) }}
+                            {{ form_errors(form.irrigationDisponible) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(form.statut, 'Statut') }}
+                            {{ form_widget(form.statut, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.statut) }}
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary rounded-pill py-3 px-5">
+                                {{ button_label is defined ? button_label : 'Mettre à jour' }}
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <!-- Lien retour à la liste des terrains -->
+                <a href="{{ path('terrain_list') }}" class="btn btn-link">Retour à la liste</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
