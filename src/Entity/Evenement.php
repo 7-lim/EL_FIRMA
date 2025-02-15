@@ -42,11 +42,9 @@ class Evenement
     #[Assert\NotNull]
     private ?string $lieu;
 
-    /**
-     * @var Collection<int, Fournisseur>
-     */
-    #[ORM\ManyToMany(targetEntity: Fournisseur::class, mappedBy: 'Evenements')]
-    private Collection $fournisseurs;
+   
+    #[ORM\ManyToOne(inversedBy: 'Evenements')]
+    private ?Fournisseur $fournisseurs = null;
 
    
     #[ORM\ManyToOne(inversedBy: 'evenements')]
@@ -60,7 +58,6 @@ class Evenement
 
     public function __construct()
     {
-        $this->fournisseurs = new ArrayCollection();
         $this->tickets = new ArrayCollection();
  
     }
@@ -125,31 +122,10 @@ class Evenement
         return $this;
     }
 
-    /**
-     * @return Collection<int, Fournisseur>
-     */
-    public function getFournisseurs(): Collection
+
+    public function getFournisseurs(): ?Fournisseur
     {
         return $this->fournisseurs;
-    }
-
-    public function addFournisseur(Fournisseur $fournisseur): static
-    {
-        if (!$this->fournisseurs->contains($fournisseur)) {
-            $this->fournisseurs->add($fournisseur);
-            $fournisseur->addEvenement($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFournisseur(Fournisseur $fournisseur): static
-    {
-        if ($this->fournisseurs->removeElement($fournisseur)) {
-            $fournisseur->removeEvenement($this);
-        }
-
-        return $this;
     }
 
     public function getAdministrateur(): ?Administrateur

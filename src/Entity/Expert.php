@@ -28,6 +28,8 @@ class Expert extends Utilisateur
 
     public function __construct()
     {
+        parent::__construct();
+        $this->setRoles(['ROLE_EXPERT']);
         $this->discussions = new ArrayCollection();
         $this->tickets = new ArrayCollection();
     }

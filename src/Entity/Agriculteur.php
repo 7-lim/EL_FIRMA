@@ -51,6 +51,8 @@ class Agriculteur extends Utilisateur
         $this->discussions = new ArrayCollection();
         $this->terrains = new ArrayCollection();
         $this->reclamations = new ArrayCollection();
+        parent::__construct();
+        $this->setRoles(['ROLE_AGRICULTEUR']); 
     }
 
     public function getLocalisation(): ?string
