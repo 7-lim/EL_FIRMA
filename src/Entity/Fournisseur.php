@@ -7,100 +7,66 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: FournisseurRepository::class)]
+#[ORM\Entity]
 class Fournisseur extends Utilisateur
 {
-    #[ORM\Column(length: 55)]
-    private ?string $NomEntreprise = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $nomEntreprise = null;
 
-    #[ORM\Column(length: 55)]
-    private ?string $Id_fiscale = null;
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $idFiscale = null;
 
-    /**
-     * @var Collection<int, Produit>
-     */
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'Fournisseur', orphanRemoval: true)]
-    private Collection $produits;
-
-    /**
-     * @var Collection<int, Evenement>
-     */
-    #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'fournisseurs')]
-    private Collection $Evenements;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $categorieProduit = null;
 
     public function __construct()
     {
-        $this->produits = new ArrayCollection();
-        $this->Evenements = new ArrayCollection();
+        parent::__construct();
+        $this->setRoles(['ROLE_FOURNISSEUR']);
+        $this->evenements = new ArrayCollection();
     }
 
-
+    // Getters et setters pour nomEntreprise
     public function getNomEntreprise(): ?string
     {
-        return $this->NomEntreprise;
+        return $this->nomEntreprise;
     }
 
-    public function setNomEntreprise(string $NomEntreprise): static
+    public function setNomEntreprise(?string $nomEntreprise): self
     {
-        $this->NomEntreprise = $NomEntreprise;
-
+        $this->nomEntreprise = $nomEntreprise;
         return $this;
     }
 
+    // Getters et setters pour idFiscale
     public function getIdFiscale(): ?string
     {
-        return $this->Id_fiscale;
+        return $this->idFiscale;
     }
 
-    public function setIdFiscale(string $Id_fiscale): static
+    public function setIdFiscale(?string $idFiscale): self
     {
-        $this->Id_fiscale = $Id_fiscale;
-
+        $this->idFiscale = $idFiscale;
         return $this;
     }
 
-    /**
-     * @return Collection<int, Produit>
-     */
-    public function getProduits(): Collection
+    // Getters et setters pour categorieProduit
+    public function getCategorieProduit(): ?string
     {
-        return $this->produits;
+        return $this->categorieProduit;
     }
 
-    public function addProduit(Produit $produit): static
+    public function setCategorieProduit(?string $categorieProduit): self
     {
-        if (!$this->produits->contains($produit)) {
-            $this->produits->add($produit);
-            $produit->setFournisseur($this);
-        }
-
+        $this->categorieProduit = $categorieProduit;
         return $this;
     }
-
-    public function removeProduit(Produit $produit): static
-    {
-        if ($this->produits->removeElement($produit)) {
-            // set the owning side to null (unless already changed)
-            if ($produit->getFournisseur() === $this) {
-                $produit->setFournisseur(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Evenement>
-     */
-    public function getEvenements(): Collection
-    {
-        return $this->Evenements;
-    }
+    private Collection $evenements;
 
     public function addEvenement(Evenement $evenement): static
     {
-        if (!$this->Evenements->contains($evenement)) {
-            $this->Evenements->add($evenement);
+        if (!$this->evenements->contains($evenement)) {
+            $this->evenements->add($evenement);
         }
 
         return $this;
@@ -108,7 +74,7 @@ class Fournisseur extends Utilisateur
 
     public function removeEvenement(Evenement $evenement): static
     {
-        $this->Evenements->removeElement($evenement);
+        $this->evenements->removeElement($evenement);
 
         return $this;
     }

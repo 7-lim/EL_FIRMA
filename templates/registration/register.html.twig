@@ -1,0 +1,106 @@
+    {% block stylesheets %}
+        <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="{{ asset('css/style1.css') }}">
+    {% endblock %}
+
+    {% block body %}
+        <div class="container">
+            <div class="signup-section">
+                <header>Sign Up</header>
+
+                <div class="social-buttons">
+                    <button><i class='bx bxl-google'></i> Use Google</button>
+                    <button><i class='bx bxl-apple'></i> Use Apple</button>
+                </div>
+
+                <div class="separator">
+                    <div class="line"></div>
+                    <p>Or</p>
+                    <div class="line"></div>
+                </div>
+
+                {# Formulaire d'inscription Symfony #}
+                <form method="POST" action="{{ path('app_register') }}" id="registration-form">
+    {{ form_start(registrationForm) }}
+     <div class="form-group">
+        {{ form_row(registrationForm.Nom) }}
+    </div> 
+    <div class="form-group">
+        {{ form_row(registrationForm.Prenom) }}
+    </div>
+    <div class="form-group">
+        {{ form_row(registrationForm.Telephone) }}
+    </div>
+    <div class="form-group">
+        {{ form_row(registrationForm.email) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_row(registrationForm.plainPassword) }}
+    </div>
+
+    
+
+    <div class="form-group">
+        {{ form_row(registrationForm.user_type) }}
+    </div>
+
+   {# Champs dynamiques cachés par défaut #}
+<div class="form-group" id="fournisseur-fields" style="display:none;">
+    {{ form_row(registrationForm.company_name) }}
+</div>
+
+<div class="form-group" id="fournisseur-id-fiscale" style="display:none;">
+    {{ form_row(registrationForm.id_fiscale) }}
+</div>
+
+<div class="form-group" id="fournisseur-category" style="display:none;">
+    {{ form_row(registrationForm.category_product) }}
+</div>
+
+<div class="form-group" id="expert-fields" style="display:none;">
+    {{ form_row(registrationForm.expertise_area) }}
+</div>
+
+<div class="form-group" id="agriculteur-fields" style="display:none;">
+    {{ form_row(registrationForm.farm_size) }}
+</div>
+
+<div class="form-group" id="admin-fields" style="display:none;">
+    {{ form_row(registrationForm.admin_code) }}
+</div>
+
+
+    <button type="submit" class="btn">Sign Up</button>
+    
+    {{ form_end(registrationForm) }}
+</form>
+
+            </div>
+
+            <div class="login-section">
+                <header>Sign in</header>
+                <div class="social-buttons">
+                    <button><i class='bx bxl-google'></i> Use Google</button>
+                    <button><i class='bx bxl-apple'></i> Use Apple</button>
+                </div>
+
+                <div class="separator">
+                    <div class="line"></div>
+                    <p>Or</p>
+                    <div class="line"></div>
+                </div>
+
+              <form method="POST" action="{{ path('app_dashboard') }}">
+                <input type="email" name="_username" placeholder="Email" required>
+                <input type="password" name="_password" placeholder="Password" required>
+                <button type="submit">Login1</button>
+                </form>
+
+            </div>
+        </div>
+    {% endblock %}
+
+    {% block javascripts %}
+        <script src="{{ asset('js/script.js') }}"></script>
+    {% endblock %}
