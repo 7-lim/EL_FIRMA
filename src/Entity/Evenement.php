@@ -29,12 +29,12 @@ class Evenement
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotNull]
-    #[Assert\Date]
+
     private ?\DateTimeInterface $dateDebut;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotNull]
-    #[Assert\Date]
+  
     private ?\DateTimeInterface $dateFin;
 
     #[ORM\Column(length: 55)]
