@@ -36,30 +36,44 @@
                 <hr class="sidebar-divider my-0">
 
                 <!-- Dashboard Link -->
-                <li class="nav-item">
+                <li class="nav-item {% if app.request.attributes.get('_route') == 'dashboard' %}active{% endif %}">
                     <a class="nav-link" href="{{ path('dashboard') }}">
                         <i class="fas fa-fw fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
 
-                <!-- Sidebar Items Block -->
-                {% block sidebar_items %}
-                    <hr class="sidebar-divider">
-                    <div class="sidebar-heading">Terrain Management</div>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('terrain_list') }}">
-                            <i class="fas fa-fw fa-map"></i>
-                            <span>List of Terrains</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('terrain_new') }}">
-                            <i class="fas fa-fw fa-plus"></i>
-                            <span>Add New Terrain</span>
-                        </a>
-                    </li>
-                {% endblock %}
+                <!-- Gestion des Terrains -->
+                <hr class="sidebar-divider">
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTerrains"
+                       aria-expanded="false" aria-controls="collapseTerrains">
+                        <i class="fas fa-fw fa-map"></i>
+                        <span>Gestion des Terrains</span>
+                    </a>
+                    <div id="collapseTerrains" class="collapse {% if app.request.attributes.get('_route') in ['terrain_list', 'terrain_new'] %}show{% endif %}">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item {% if app.request.attributes.get('_route') == 'terrain_list' %}active{% endif %}" href="{{ path('terrain_list') }}">Liste des Terrains</a>
+                            <a class="collapse-item {% if app.request.attributes.get('_route') == 'terrain_new' %}active{% endif %}" href="{{ path('terrain_new') }}">Ajouter un Terrain</a>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Gestion des Locations -->
+                <hr class="sidebar-divider">
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLocations"
+                       aria-expanded="false" aria-controls="collapseLocations">
+                        <i class="fas fa-fw fa-calendar-alt"></i>
+                        <span>Gestion des Locations</span>
+                    </a>
+                    <div id="collapseLocations" class="collapse {% if app.request.attributes.get('_route') in ['location_index', 'location_new'] %}show{% endif %}">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item {% if app.request.attributes.get('_route') == 'location_index' %}active{% endif %}" href="{{ path('location_index') }}">Liste des Locations</a>
+                            <a class="collapse-item {% if app.request.attributes.get('_route') == 'location_new' %}active{% endif %}" href="{{ path('location_new') }}">Ajouter une Location</a>
+                        </div>
+                    </div>
+                </li>
 
                 <!-- Sidebar Toggler -->
                 <hr class="sidebar-divider d-none d-md-block">

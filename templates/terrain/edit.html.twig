@@ -3,7 +3,7 @@
 {% block title %}Modifier le Terrain{% endblock %}
 
 {% block body %}
-<!-- Page Header -->
+<!-- Page Header Start -->
 <div class="container-fluid page-header py-5 mb-5 bg-light">
     <div class="container text-center py-5">
         <h1 class="display-4 text-dark animated slideInDown">Modifier le Terrain</h1>
@@ -15,6 +15,7 @@
         </nav>
     </div>
 </div>
+<!-- Page Header End -->
 
 <div class="container py-5">
     {% for message in app.flashes('success') %}
@@ -35,7 +36,7 @@
         <div class="col-md-8">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    {{ form_start(form) }}
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
                         <div class="mb-3">
                             {{ form_label(form.superficie, 'Superficie (m²)') }}
                             {{ form_widget(form.superficie, {'attr': {'class': 'form-control'}}) }}
@@ -82,7 +83,6 @@
                 </div>
             </div>
             <div class="text-center mt-4">
-                <!-- Lien retour à la liste des terrains -->
                 <a href="{{ path('terrain_list') }}" class="btn btn-link">Retour à la liste</a>
             </div>
         </div>

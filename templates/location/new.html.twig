@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+
+
+{% block title %}Créer une Nouvelle Location{% endblock %}
+
+{% block body %}
+<div class="container d-flex justify-content-center">
+    <div class="card shadow-lg mt-5" style="width: 60%;">
+        <div class="card-header bg-primary text-white text-center">
+            <h5 class="mb-0">Créer une Nouvelle Location</h5>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.DateDebut, 'Date de début', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.DateDebut, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.DateDebut) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.DateFin, 'Date de fin', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.DateFin, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.DateFin) }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.PrixLocation, 'Prix de location (€)', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.PrixLocation, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.PrixLocation) }}
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        {{ form_widget(form.PaiementEffectue, {'attr': {'class': 'form-check-input'}}) }}
+                        {{ form_label(form.PaiementEffectue, 'Paiement effectué ?', {'label_attr': {'class': 'form-check-label'}}) }}
+                        {{ form_errors(form.PaiementEffectue) }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.ModePaiement, 'Mode de paiement', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.ModePaiement, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.ModePaiement) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.Statut, 'Statut', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.Statut, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.Statut) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.terrain, 'Terrain associé', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.terrain, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.terrain) }}
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success px-4">Enregistrer</button>
+                    <a href="{{ path('location_index') }}" class="btn btn-secondary px-4">Retour à la liste</a>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
