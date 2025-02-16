@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface - Agriculture</title>
+    <style>
+        body {
+            background-color: #f0fff0;
+            font-family: Arial, sans-serif;
+        }
+
+        .chat-container {
+            width: 350px;
+            border: 2px solid #4CAF50;
+            background: #ffffff;
+            padding: 15px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-messages {
+            list-style: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        .chat-message {
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+        }
+
+        .user-message {
+            background-color: #dff0d8;
+            text-align: right;
+        }
+
+        .assistant-message {
+            background-color: #e7e7e7;
+            text-align: left;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #4CAF50;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .chat-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chat-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .chat-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <ul class="chat-messages">
+            <li class="chat-message user-message">User: Hello! 🌿</li>
+            <li class="chat-message assistant-message">Assistant: Hi there! How's your farm today? 🚜</li>
+        </ul>
+        <input type="text" class="chat-input" placeholder="Type your message...">
+        <div class="chat-buttons">
+            <button class="chat-button">Send</button>
+            <button class="chat-button">📷 Image</button>
+            <button class="chat-button">😊 Emoji</button>
+        </div>
+    </div>
+</body>
+</html>
