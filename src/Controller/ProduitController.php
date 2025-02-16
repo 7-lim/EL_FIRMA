@@ -43,10 +43,10 @@ final class ProduitController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Ensure Fournisseur is set
-            if ($produit->getFournisseur() === null) {
+            /*if ($produit->getFournisseur() === null) {
                 $this->addFlash('error', 'Fournisseur must be set.');
                 return $this->redirectToRoute('app_produit_new');
-            }
+            }*/
             $entityManager->persist($produit);
             $entityManager->flush();
 

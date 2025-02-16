@@ -19,7 +19,7 @@ class Fournisseur extends Utilisateur
     /**
      * @var Collection<int, Produit>
      */
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'Fournisseur', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'Fournisseur')]
     private Collection $produits;
 
     /**
