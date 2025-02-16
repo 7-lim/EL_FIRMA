@@ -1,20 +1,116 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_admin.html.twig' %}
 
-{% block title %}Hello DashboardController!{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Gestion des terrain </h1>
+            <a href="{{ path('terrain_new') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-plus fa-sm text-white-50"></i> Add New Terrain
+            </a>
+        </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        <!-- Summary Cards Row -->
+        <div class="row">
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Terrains</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalTerrains }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-map fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Terrains Available</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">10</div> <!-- Replace with actual data -->
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Terrains Pending</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">5</div> <!-- Replace with actual data -->
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-clock fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>E:/PIDEV/new/EL_FIRMA/src/Controller/DashboardController.php</code></li>
-        <li>Your template at <code>E:/PIDEV/new/EL_FIRMA/templates/dashboard/index.html.twig</code></li>
-    </ul>
-</div>
+        <!-- Recent Terrains List -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Recent Terrains</h6>
+            </div>
+            <div class="card-body">
+                {% if terrains|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Localisation</th>
+                                    <th>Superficie</th>
+                                    <th>Type de sol</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for terrain in terrains %}
+                                    <tr>
+                                        <td>{{ terrain.id }}</td>
+                                        <td>{{ terrain.localisation }}</td>
+                                        <td>{{ terrain.superficie }} m²</td>
+                                        <td>{{ terrain.typeSol }}</td>
+                                        <td>{{ terrain.statut }}</td>
+                                        <td>
+                                            <a href="{{ path('terrain_show', {'id': terrain.id}) }}" class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                            <a href="{{ path('terrain_edit', {'id': terrain.id}) }}" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <form method="post" action="{{ path('terrain_delete', {'id': terrain.id}) }}" style="display:inline-block;" onsubmit="return confirm('Are you sure?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ terrain.id) }}">
+                                                <button class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center">No terrains available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
