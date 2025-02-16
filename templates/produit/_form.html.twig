@@ -1,4 +1,70 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+{% block css %}
+<style>
+    .border-success:focus {
+        box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+        border-color: #28a745;
+    }
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    .card {
+        border-radius: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-success text-white text-center">
+                        <h2>Créer un Nouveau Produit</h2>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'class': 'form_container', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+
+                        <div class="mb-3">
+                            {{ form_label(form.NomProduit, 'Nom Produit', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
+                            {{ form_widget(form.NomProduit, {'attr': {'class': 'form-control border-success', 'placeholder': 'Nom du produit'}}) }}
+                            {{ form_errors(form.NomProduit) }}
+                        </div>
+
+                        {# Uncomment this section if you want the description field #}
+                        <div class="mb-3">
+                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control border-success', 'rows': '4', 'placeholder': 'Description du produit'}}) }}
+                            {{ form_errors(form.description) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.quantite, 'Quantité', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
+                            {{ form_widget(form.quantite, {'attr': {'class': 'form-control border-success', 'placeholder': 'Quantité disponible'}}) }}
+                            {{ form_errors(form.quantite) }}
+                        </div>
+
+                        <div class="mb-3">
+    {{ form_label(form.prix, 'Prix (€)', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
+    {{ form_widget(form.prix, {'attr': {'class': 'form-control border-success', 'placeholder': 'Prix en Euro', 'step': '0.01'}}) }}
+    {{ form_errors(form.prix) }}
+</div>
+
+
+                        {# Uncomment this section if you want the image upload field #}
+                        {#<div class="mb-3">
+                            {{ form_label(form.image, 'Image du produit', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
+                            {{ form_widget(form.image, {'attr': {'class': 'form-control border-success'}}) }}
+                            {{ form_errors(form.image) }}
+                        </div>#}
+
+                        <button type="submit" class="btn btn-success w-100 mt-3">Créer le Produit</button>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

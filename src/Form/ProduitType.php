@@ -5,8 +5,9 @@ namespace App\Form;
 use App\Entity\Produit;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -16,13 +17,37 @@ class ProduitType extends AbstractType
     {
         $builder
             ->add('NomProduit', TextType::class)
-            ->add('Description', TextType::class)
-            ->add('Image', TextType::class, ['required' => false])
+            ->add('description', TextareaType::class)
+            /*->add('image', FileType::class, ['required' => false])*/
             ->add('quantite', IntegerType::class)
-            ->add('Prix', MoneyType::class)
-            ->add('Fournisseur')
-            ->add('agriculteur')
-            ->add('categorie');
+            
+            ->add('prix', NumberType::class, [
+                'label' => 'Prix (€)',
+                'attr' => [
+                    'class' => 'form-control border-success',
+                    'placeholder' => 'Prix en Euro',
+                    'step' => '0.01' // Allows decimal inputs like 12.99
+                ],
+                'scale' => 2, // Ensures two decimal places
+                'empty_data' => '0', // Prevents null errors
+                'html5' => true, // Enables HTML5 number input
+            ]);
+            
+            /*->add('prix', FloatType::class)*/
+            /*->add('fournisseur', ChoiceType::class, [
+                'choices' => [
+                    'Fournisseur 1' => 'fournisseur1',
+                    'Fournisseur 2' => 'fournisseur2',
+                ],
+            ])*/
+            /*->add('categorie', ChoiceType::class, [
+                'choices' => [
+                    'Catégorie 1' => 'categorie1',
+                    'Catégorie 2' => 'categorie2',
+            ],
+            ])*/
+
+        /*$builder->get('image')->addModelTransformer(new FileToStringTransformer());*/
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -32,3 +57,4 @@ class ProduitType extends AbstractType
         ]);
     }
 }
+
