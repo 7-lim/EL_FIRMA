@@ -1,0 +1,18 @@
+{% block stylesheets %}
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/style1.css') }}">
+{% endblock %}
+{% form_theme registrationForm _self %}
+
+{% block form_errors %}
+    {% if errors|length > 0 %}
+        <div class="alert alert-custom">
+            {% for error in errors %}
+                <div class="error-item">
+                    <span class="error-icon">⚠️</span>
+                    {{ error.message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

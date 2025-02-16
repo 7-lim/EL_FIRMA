@@ -4,32 +4,34 @@ namespace App\Entity;
 
 use App\Repository\ExpertRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-#[ORM\Entity(repositoryClass: ExpertRepository::class)]
-class Expert
+#[ORM\Entity]
+class Expert extends Utilisateur
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $domaineExpertise = null;
 
-    #[ORM\Column(length: 55)]
-    private ?string $DomaineExpertise = null;
-
-    public function getId(): ?int
+    public function __construct()
     {
-        return $this->id;
+        parent::__construct();
+        $this->setRoles(['ROLE_EXPERT']);
     }
+   
 
+    // Getters et setters pour domaineExpertise
     public function getDomaineExpertise(): ?string
     {
-        return $this->DomaineExpertise;
+        return $this->domaineExpertise;
     }
 
-    public function setDomaineExpertise(string $DomaineExpertise): static
+    public function setDomaineExpertise(?string $domaineExpertise): self
     {
-        $this->DomaineExpertise = $DomaineExpertise;
-
+        $this->domaineExpertise = $domaineExpertise;
         return $this;
     }
+
+
+
 }
+
