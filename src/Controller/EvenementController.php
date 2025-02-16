@@ -22,6 +22,17 @@ final class EvenementController extends AbstractController
         ]);
     }
 
+
+    #[Route('/dbfrsevents', name: 'dbfrsevents', methods: ['GET'])]
+    public function indexfrs(EvenementRepository $evenementRepository): Response
+    {
+        return $this->render('dbFournisseurEvents.html.twig', [
+            'evenements' => $evenementRepository->findAll(),
+        ]);
+    }
+
+
+
     #[Route('/new', name: 'app_evenement_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -49,6 +60,7 @@ final class EvenementController extends AbstractController
             'evenement' => $evenement,
         ]);
     }
+
 
     #[Route('/{id}/edit', name: 'app_evenement_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Evenement $evenement, EntityManagerInterface $entityManager): Response
