@@ -6,6 +6,7 @@ use App\Repository\EvenementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EvenementRepository::class)]
@@ -17,25 +18,33 @@ class Evenement
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $titre = null;
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    private ?string $titre;
 
     #[ORM\Column(length: 255)]
-    private ?string $description = null;
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    private ?string $description;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $dateDebut = null;
+    #[Assert\NotNull]
+
+    private ?\DateTimeInterface $dateDebut;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $dateFin = null;
+    #[Assert\NotNull]
+  
+    private ?\DateTimeInterface $dateFin;
 
     #[ORM\Column(length: 55)]
-    private ?string $lieu = null;
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    private ?string $lieu;
 
-    /**
-     * @var Collection<int, Fournisseur>
-     */
-    #[ORM\ManyToMany(targetEntity: Fournisseur::class, mappedBy: 'Evenements')]
-    private Collection $fournisseurs;
+   
+    #[ORM\ManyToOne(inversedBy: 'Evenements')]
+    private ?Fournisseur $fournisseurs = null;
 
    
     #[ORM\ManyToOne(inversedBy: 'evenements')]
@@ -49,7 +58,6 @@ class Evenement
 
     public function __construct()
     {
-        $this->fournisseurs = new ArrayCollection();
         $this->tickets = new ArrayCollection();
  
     }
@@ -114,31 +122,10 @@ class Evenement
         return $this;
     }
 
-    /**
-     * @return Collection<int, Fournisseur>
-     */
-    public function getFournisseurs(): Collection
+
+    public function getFournisseurs(): ?Fournisseur
     {
         return $this->fournisseurs;
-    }
-
-    public function addFournisseur(Fournisseur $fournisseur): static
-    {
-        if (!$this->fournisseurs->contains($fournisseur)) {
-            $this->fournisseurs->add($fournisseur);
-            $fournisseur->addEvenement($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFournisseur(Fournisseur $fournisseur): static
-    {
-        if ($this->fournisseurs->removeElement($fournisseur)) {
-            $fournisseur->removeEvenement($this);
-        }
-
-        return $this;
     }
 
     public function getAdministrateur(): ?Administrateur

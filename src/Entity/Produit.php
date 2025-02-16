@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\ProduitRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -21,9 +20,9 @@ class Produit
     #[ORM\Column(length: 255)]
     private ?string $Description = null;
 
-    #[ORM\Column(type: Types::OBJECT, nullable: true)]
-    private ?object $Image = null;
-
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $Image = null;
+    
     #[ORM\Column]
     private ?int $quantite = null;
 
@@ -37,9 +36,10 @@ class Produit
     #[ORM\ManyToOne(inversedBy: 'produits')]
     private ?Agriculteur $agriculteur = null;
 
-    #[ORM\OneToOne(inversedBy: 'produits')]
+    #[ORM\ManyToOne(inversedBy: 'produits')]
     private ?Categorie $categorie = null;
-      public function getId(): ?int
+
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -68,12 +68,12 @@ class Produit
         return $this;
     }
 
-    public function getImage(): ?object
+    public function getImage(): ?string
     {
         return $this->Image;
     }
 
-    public function setImage(?object $Image): static
+    public function setImage(?string $Image): static
     {
         $this->Image = $Image;
 

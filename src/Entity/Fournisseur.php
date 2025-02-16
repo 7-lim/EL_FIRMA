@@ -25,11 +25,13 @@ class Fournisseur extends Utilisateur
     /**
      * @var Collection<int, Evenement>
      */
-    #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'fournisseurs')]
+    #[ORM\OneToMany(targetEntity: Evenement::class, mappedBy: 'fournisseurs')]
     private Collection $Evenements;
 
     public function __construct()
     {
+        parent::__construct();
+        $this->setRoles(['ROLE_FOURNISSEUR']);
         $this->produits = new ArrayCollection();
         $this->Evenements = new ArrayCollection();
     }
