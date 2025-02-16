@@ -71,7 +71,7 @@ final class EvenementController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_evenement_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('dbfrsevents', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('evenement/edit.html.twig', [
@@ -88,6 +88,6 @@ final class EvenementController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_evenement_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('dbfrsevents', [], Response::HTTP_SEE_OTHER);
     }
 }
