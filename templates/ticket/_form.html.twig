@@ -1,0 +1,110 @@
+{% block css %}
+
+<style>
+    .custom-form-card {
+        max-width: 600px;
+        margin: 2rem auto;
+        border: none;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15)!important;
+        border-radius: 0.35rem;
+    }
+
+    .form_container {
+        padding: 2rem;
+        background-color: #ffffff;
+    }
+
+    .title_container {
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color:rgb(12, 12, 12);
+    }
+
+    .subtitle {
+        font-size: 0.9rem;
+        color:rgb(0, 0, 0);
+    }
+
+    .input_label {
+        font-size: 0.85rem;
+        color:rgb(49, 51, 65);
+        font-weight: 600;
+    }
+
+    .input_field {
+        transition: all 0.3s cubic-bezier(0.15, 0.83, 0.66, 1);
+        border: 1px solidrgb(255, 255, 255);
+    }
+
+    .input_field:focus {
+        border-color: #85b33e;
+        box-shadow: 0 0 0 0.2rem rgba(112, 154, 65, 0.25);
+    }
+
+    .submit_btn {
+        background: #709A41;
+        font-weight: 600;
+        transition: background 0.3s ease;
+    }
+
+    .btn_label {
+        color: #ffffff;
+    }
+
+    .submit_btn:hover {
+        background:rgb(69, 110, 22);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <a href={{ path('app_ticket_index') }} class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-ticket-alt fa-sm text-white-50"></i> Retour à la liste
+        </a>
+    </div>
+
+    <!-- Form Row -->
+    <div class="row justify-content-center">
+        <div class="col-xl-8 col-lg-9">
+            <div class="card custom-form-card">
+                <div class="card-body form_container">
+                    {{ form_start(form, {'attr': {'class': 'form_container', 'novalidate': 'novalidate'}}) }}
+                        <div class="title_container mb-5">
+                            <h2 class="title">{{ form_title|default('Créer un ticket') }}</h2>
+                            <p class="subtitle mt-2">Remplissez les détails pour créer votre ticket</p>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(form.Prix, 'Prix', {'label_attr': {'class': 'input_label'}}) }}
+                            {{ form_widget(form.Prix, {'attr': {
+                                'class': 'form-control input_field',
+                                'placeholder': 'Entrez le prix du ticket'
+                            }}) }}
+                            {{ form_errors(form.Prix) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(form.evenement, 'Événement', {'label_attr': {'class': 'input_label'}}) }}
+                            {{ form_widget(form.evenement, {'attr': {
+                                'class': 'form-control input_field'
+                            }}) }}
+                        </div>
+
+                        <button type="submit" class="btn btn-block submit_btn btn-lg btn_label">
+                            {{ button_label|default('Créer ticket') }}
+                        </button>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

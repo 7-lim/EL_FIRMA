@@ -17,9 +17,9 @@ class Ticket
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Assert\Positive]
-    #[Assert\NotBlank]
-    #[Assert\NotNull]
+    #[Assert\Positive (message:'Le prix doit être positif')]
+    #[Assert\NotBlank (message:'Le prix ne doit pas être vide')]
+    #[Assert\NotNull (message: 'Le prix ne doit pas être nul')]
     private ?int $Prix = null;
 
     #[ORM\ManyToOne(inversedBy: 'tickets')]
@@ -28,8 +28,8 @@ class Ticket
     #[ORM\ManyToOne(inversedBy: 'tickets')]
     private ?Expert $expert = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tickets')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Evenement::class, inversedBy: 'tickets')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')] // Add referential integrity
     private ?Evenement $evenement = null;
 
     public function getId(): ?int
@@ -79,7 +79,7 @@ class Ticket
         return $this->evenement;
     }
 
-    public function setEvenement(?Evenement $evenement): static
+    public function setEvenement(?Evenement $evenement): self
     {
         $this->evenement = $evenement;
 

@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'baseFournisseur.html.twig' %}
 
 {% block title %}{{ evenement.titre }}{% endblock %}
 
@@ -18,11 +18,11 @@
 </div>
 
 <div class="container mt-5">
-    <!-- Carte de détails -->
-    <div class="card border-0 shadow-lg overflow-hidden">
-        <div class="row g-0">
-            <!-- Image de l'événement -->
-            <div class="col-md-4" style="background: linear-gradient(rgba(112, 154, 65, 0.9), rgba(112, 154, 65, 0.8)), url('https://via.placeholder.com/400') center/cover;">
+    <!-- Modified Card Structure -->
+    <div class="card border-0 shadow-lg">
+        <div class="row g-0 min-vh-50">
+            <!-- Image/Details Column -->
+            <div class="col-md-4 d-flex flex-column" style="background: linear-gradient(rgba(112, 154, 65, 0.9), rgba(112, 154, 65, 0.8)), url('https://via.placeholder.com/400') center/cover;">
                 <div class="d-flex flex-column h-100 p-4 text-white">
                     <div class="mb-auto">
                         <h3 class="h5">Détails de l'événement</h3>
@@ -52,11 +52,15 @@
                 </div>
             </div>
             
-            <!-- Description -->
-            <div class="col-md-8">
-                <div class="card-body p-4">
+            <!-- Description Column -->
+            <div class="col-md-8 d-flex flex-column">
+                <div class="card-body p-4 d-flex flex-column">
                     <h3 class="h4 mb-4" style="color: #709A41;">À propos de l'événement</h3>
-                    <p class="lead">{{ evenement.description }}</p>
+                    <div class="flex-grow-1">
+                        <p class="lead text-break" style="white-space: pre-wrap; overflow-wrap: break-word;">
+                            {{ evenement.description|nl2br }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -67,10 +71,13 @@
         <a href="{{ path('app_evenement_index') }}" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left me-2"></i>Retour à la liste
         </a>
-      
+        <a href="#" class="btn btn-outline-primary">
+            <i class="fas fa-ticket-alt me-2"></i>Get Ticket
+        </a>
+    </div>
 </div>
 
-<!-- Styles restants identiques -->
+<!-- Styles -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
@@ -95,5 +102,25 @@
         background-color: #5d8340 !important;
         border-color: #5d8340 !important;
     }
+
+    /* New CSS Additions */
+    .min-vh-50 {
+        min-height: 50vh;
+    }
+    
+    .flex-grow-1 {
+        flex: 1 1 auto;
+    }
+    
+    .card-body {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .text-break {
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
 </style>
-{% endblock %} 
+{% endblock %}

@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/evenement')]
+ 
 final class EvenementController extends AbstractController
 {
     #[Route(name: 'app_evenement_index', methods: ['GET'])]
@@ -44,7 +44,7 @@ final class EvenementController extends AbstractController
             $entityManager->persist($evenement);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_evenement_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('dbfrsevents', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('evenement/new.html.twig', [

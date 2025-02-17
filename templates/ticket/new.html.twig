@@ -1,0 +1,11 @@
+{% extends 'baseFournisseur.html.twig' %}
+
+{% block title %}Creation du Ticket{% endblock %}
+
+{% block body %}
+    <h1>Créer nouvelle ticket</h1>
+
+    {{ include('ticket/_form.html.twig') }}
+
+    <a href="{{ path('app_ticket_index') }}">retourner à la list</a>
+{% endblock %}

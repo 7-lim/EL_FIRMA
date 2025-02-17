@@ -1,0 +1,47 @@
+{% extends 'baseFournisseur.html.twig' %}
+
+{% block title %}Ticket index{% endblock %}
+
+{% block body %}
+    <h1>Ticket index</h1>
+
+    {% if tickets is empty %}
+        <div class="alert alert-info">No tickets found</div>
+    {% else %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Price</th>
+                    <th>Event</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for ticket in tickets %}
+                <tr>
+                    <td>{{ ticket.id }}</td>
+                    <td>{{ ticket.Prix }}</td>
+                    <td>
+                        {% if ticket.evenement %}
+                            {{ ticket.evenement.titre }}
+                        {% else %}
+                            <span class="text-danger">Event deleted</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ path('app_ticket_show', {'id': ticket.id}) }}" 
+                           class="btn btn-sm btn-primary">
+                            Show
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <a href="{{ path('app_ticket_new') }}" class="btn btn-success">
+        Create new tickets
+    </a>
+{% endblock %}

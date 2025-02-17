@@ -10,6 +10,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Validator\Constraints\File;
 
 class EvenementType extends AbstractType
 {
@@ -17,26 +21,38 @@ class EvenementType extends AbstractType
     {
         $builder
             ->add('titre')
-            ->add('description')
-            ->add('dateDebut', null, [
+            ->add('description', TextareaType::class, [
+                'attr' => [
+                    'placeholder' => 'Description',
+                    'rows' => 4,
+                ],
+            ])
+            ->add('dateDebut', DateType::class, [
                 'widget' => 'single_text',
             ])
-            ->add('dateFin', null, [
+            ->add('dateFin', DateType::class, [
                 'widget' => 'single_text',
             ])
             ->add('lieu')
-
-            // ->add('fournisseurs', EntityType::class, [
-            //     'class' => Fournisseur::class,
-            //     'choice_label' => 'id',
-            //     'multiple' => true,
-            // ])
-
-            // ->add('administrateur', EntityType::class, [
-            //     'class' => Administrateur::class,
-            //     'choice_label' => 'id',
-            // ])
-        ;
+            ->add('image', FileType::class, [
+                'label' => 'Image (JPG file)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid JPG image',
+                    ])
+                ],
+            ])
+            ->add('nombreDePlaces', IntegerType::class, [
+                'attr' => [
+                    'placeholder' => 'Nombre de places',
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
