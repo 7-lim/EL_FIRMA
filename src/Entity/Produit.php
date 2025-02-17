@@ -24,7 +24,7 @@ class Produit
         maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères."
     )]
     private ?string $NomProduit = null;
-        
+
     #[ORM\Column(length: 255)]
     private ?string $Description = null;
 
@@ -48,7 +48,8 @@ class Produit
     #[ORM\ManyToOne(inversedBy: 'produits')]
     private ?Agriculteur $agriculteur = null;
 
-    #[ORM\ManyToOne(inversedBy: 'produits')]
+    #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'produits')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Categorie $categorie = null;
 
       public function getId(): ?int

@@ -1,37 +1,39 @@
+{# templates/categorie/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Categorie index{% endblock %}
-
 {% block body %}
-    <h1>Categorie index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>NomCategorie</th>
-                <th>Description</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
+<div class="container-fluid page-header py-5" style="background-color: #709A41;">
+    <div class="container text-center py-5">
+        <h1 class="display-4 text-white mb-3 fw-bold">Catégories</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="#" class="text-white">Accueil</a></li>
+                <li class="breadcrumb-item active text-white-50" aria-current="page">Catégories</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-5">
+    <div class="row">
+{% if categories is defined and categories|length > 0 %}
         {% for categorie in categories %}
-            <tr>
-                <td>{{ categorie.id }}</td>
-                <td>{{ categorie.NomCategorie }}</td>
-                <td>{{ categorie.description }}</td>
-                <td>
-                    <a href="{{ path('app_categorie_show', {'id': categorie.id}) }}">show</a>
-                    <a href="{{ path('app_categorie_edit', {'id': categorie.id}) }}">edit</a>
-                </td>
-            </tr>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success">{{ categorie.name }}</h5>
+                    <a href="{{ path('app_categorie_show', {'id': categorie.id}) }}" class="btn btn-outline-success">Voir</a>
+                    <a href="{{ path('app_categorie_edit', {'id': categorie.id}) }}" class="btn btn-outline-primary">Modifier</a>
+                    <form method="post" action="{{ path('app_categorie_delete', {'id': categorie.id}) }}" class="d-inline">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ categorie.id) }}">
+                        <button class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+{% endfor %}
         {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_categorie_new') }}">Create new</a>
+        <p class="text-center">Aucune catégorie trouvée.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

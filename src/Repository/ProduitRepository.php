@@ -21,6 +21,25 @@ class ProduitRepository extends ServiceEntityRepository
         $this->_em->persist($produit);
         $this->_em->flush();
     }
+    public function findByCategorieWithFilters($categorieId, $price = null, $name = null)
+{
+    $qb = $this->createQueryBuilder('p')
+        ->where('p.categorie = :categorie')
+        ->setParameter('categorie', $categorieId);
+
+    if ($price) {
+        $qb->andWhere('p.price <= :price')
+           ->setParameter('price', $price);
+    }
+
+    if ($name) {
+        $qb->andWhere('p.name LIKE :name')
+           ->setParameter('name', "%$name%");
+    }
+
+    return $qb->getQuery()->getResult();
+}
+
 
     //    /**
     //     * @return Produit[] Returns an array of Produit objects

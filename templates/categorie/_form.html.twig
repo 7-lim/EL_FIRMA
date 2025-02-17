@@ -1,4 +1,5 @@
-{{ form_start(form) }}
+{# templates/categorie/_form.html.twig #}
+<form method="post">
     {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+    <button class="btn btn-success">{{ button_label|default('Sauvegarder') }}</button>
+</form>

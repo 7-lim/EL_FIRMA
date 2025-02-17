@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Categorie;
 use App\Entity\Produit;
 use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
@@ -90,7 +91,7 @@ $produit = $produitRepository->find($id);
     #[Route('/{id<\d+>}', name: 'app_produit_delete', methods: ['POST'])]
     public function delete(Request $request, int $id, ProduitRepository $produitRepository, EntityManagerInterface $entityManager): Response
     {
-$produit = $produitRepository->find($id);
+        $produit = $produitRepository->find($id);
         if (!$produit) {
             throw $this->createNotFoundException('Produit not found');
         }
@@ -102,6 +103,18 @@ $produit = $produitRepository->find($id);
 
         return $this->redirectToRoute('dbfrsproduit', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/produits/categorie/{id}', name: 'app_produits_by_categorie', methods: ['GET'])]
+    public function produitsByCategorie(Categorie $categorie, ProduitRepository $produitRepository): Response
+    {
+    $produits = $produitRepository->findBy(['categorie' => $categorie]);
+
+    return $this->render('produit/index.html.twig', [
+        'produits' => $produits,
+        'categorie' => $categorie
+    ]);
+}
+
 
 
 }

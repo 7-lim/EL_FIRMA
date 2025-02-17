@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Categorie;
 use App\Entity\Produit;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -10,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class ProduitType extends AbstractType
 {
@@ -21,6 +23,7 @@ class ProduitType extends AbstractType
             /*->add('image', FileType::class, ['required' => false])*/
             ->add('quantite', IntegerType::class)
             
+            
             ->add('prix', NumberType::class, [
                 'label' => 'Prix (€)',
                 'attr' => [
@@ -31,7 +34,7 @@ class ProduitType extends AbstractType
                 'scale' => 2, // Ensures two decimal places
                 'empty_data' => '0', // Prevents null errors
                 'html5' => true, // Enables HTML5 number input
-            ]);
+            ])
             
             /*->add('prix', FloatType::class)*/
             /*->add('fournisseur', ChoiceType::class, [
@@ -40,6 +43,15 @@ class ProduitType extends AbstractType
                     'Fournisseur 2' => 'fournisseur2',
                 ],
             ])*/
+            ->add('categorie', EntityType::class, [
+                'class' => Categorie::class,
+                'choice_label' => 'name', // Display category name
+                'placeholder' => 'Choose a category',
+            ]);
+
+            
+                
+
             /*->add('categorie', ChoiceType::class, [
                 'choices' => [
                     'Catégorie 1' => 'categorie1',
