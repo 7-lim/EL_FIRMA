@@ -13,9 +13,9 @@ class Fournisseur extends Utilisateur
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $entreprise = null;
 
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'fournisseur', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: "fournisseur")]
     private Collection $produits;
-
+    
     #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'fournisseurs')]
     private Collection $evenements;
     private $nomEntreprise;

@@ -20,12 +20,12 @@ class Ticket
     #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
     private ?Utilisateur $expert = null;
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
-    private ?Utilisateur $agriculteur = null;
-
-    #[ORM\ManyToOne(targetEntity: Evenement::class)]
+    #[ORM\ManyToOne(targetEntity: Agriculteur::class, inversedBy: "tickets")]
+    private ?Agriculteur $agriculteur = null;
+    
+    #[ORM\ManyToOne(targetEntity: Evenement::class, inversedBy: "tickets")]
     private ?Evenement $evenement = null;
-    public function getId(): ?int
+        public function getId(): ?int
     {
         return $this->id;
     }

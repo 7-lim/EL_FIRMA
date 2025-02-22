@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Expert;
 
 #[ORM\Entity(repositoryClass: EvenementRepository::class)]
 class Evenement
@@ -44,9 +45,15 @@ class Evenement
     #[ORM\ManyToMany(targetEntity: Fournisseur::class, mappedBy: 'evenements')]
     private Collection $fournisseurs;
 
-    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'evenement', cascade: ['persist', 'remove'])]
-    private Collection $tickets;
 
+    #[ORM\ManyToMany(targetEntity: Expert::class, inversedBy: "evenements")]
+    private Collection $experts;
+
+    
+
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: "evenement")]
+    private Collection $tickets;
+    
     public function __construct()
     {
         $this->agriculteurs = new ArrayCollection();

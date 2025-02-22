@@ -22,9 +22,12 @@ class Expert extends Utilisateur
     /**
      * @var Collection<int, Evenement>
      */
-    #[ORM\ManyToMany(targetEntity: Evenement::class, mappedBy: 'experts')]
+    #[ORM\ManyToMany(targetEntity: Evenement::class, mappedBy: "experts")]
     private Collection $evenements;
-
+    
+    #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: "expert")]
+    private Collection $reclamations;
+    
     /**
      * @var Collection<int, Discussion>
      */
@@ -34,8 +37,7 @@ class Expert extends Utilisateur
     /**
      * @var Collection<int, Reclamation>
      */
-    #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'expert', cascade: ['persist', 'remove'])]
-    private Collection $reclamations;
+
 
     public function __construct()
     {

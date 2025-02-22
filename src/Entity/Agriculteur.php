@@ -16,12 +16,13 @@ class Agriculteur extends Utilisateur
     #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'agriculteurs')]
     private Collection $evenements;
 
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: "agriculteur")]
     private Collection $produits;
+    
 
-    #[ORM\ManyToMany(targetEntity: Ticket::class, mappedBy: 'agriculteurs')]
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: "agriculteur")]
     private Collection $tickets;
-
+    
     #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
     private Collection $discussions;
     private $adresseExploitation;
