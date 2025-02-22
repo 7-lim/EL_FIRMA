@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_admin.html.twig' %}
 
 
 {% block stylesheets %}
@@ -52,15 +52,7 @@
                     <div class="form-group" id="fournisseur-category">
                         {{ form_row(registrationForm.categorieProduit, {'attr': {'class': 'form-control'}}) }}
                     </div>
-                    <div class="form-group" id="expert-fields">
-                        {{ form_row(registrationForm.domaine_expertise, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                    <div class="form-group" id="agriculteur-fields">
-                        {{ form_row(registrationForm.adresse_exploitation, {'attr': {'class': 'form-control'}}) }}
-                    </div>
-                    <div class="form-group" id="admin-fields">
-                        {{ form_row(registrationForm.admin_code, {'attr': {'class': 'form-control'}}) }}
-                    </div>
+                 
                     
                     <button type="submit" class="btn">Sign Up</button>
                 {{ form_end(registrationForm) }}

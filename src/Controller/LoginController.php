@@ -2,14 +2,17 @@
 
 namespace App\Controller;
 
-use App\Entity\Administrateur; // Changed from Utilisateur to Administrateur to ensure it's a concrete class
+use App\Entity\Administrateur;
+use App\Form\AdminFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class LoginController extends AbstractController
 {
@@ -22,10 +25,13 @@ class LoginController extends AbstractController
     #[Route('/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // Get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
+        // Rediriger les utilisateurs connectés vers la bonne page
+        if ($this->getUser()) {
+            return $this->redirectToRoute('custom_redirect');
+        }
 
-        // Last username entered by the user
+        // Récupérer les erreurs d'authentification s'il y en a
+        $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('login/index.html.twig', [
@@ -34,33 +40,58 @@ class LoginController extends AbstractController
         ]);
     }
 
+    #[Route('/redirect', name: 'custom_redirect')]
+    public function redirectAfterLogin(): RedirectResponse
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw new AccessDeniedException();
+        }
+
+        // Vérification du rôle et redirection appropriée
+        $roles = $user->getRoles();
+
+        if (in_array('ROLE_ADMIN', $roles)) {
+            return $this->redirectToRoute('app_dashboard');
+        }
+
+        if (in_array('ROLE_AGRICULTEUR', $roles) || in_array('ROLE_FOURNISSEUR', $roles)) {
+            return $this->redirectToRoute('app_home');
+        }
+
+        // Redirection par défaut en cas d'erreur
+        return $this->redirectToRoute('app_login');
+    }
+
     #[Route('/logout', name: 'app_logout', methods: ['GET'])]
     public function logout(): void
     {
-        // The logout is managed by Symfony (security.yaml). This method is never executed.
-        throw new \Exception('Don\'t forget to activate logout in security.yaml');
+        // Symfony gère automatiquement la déconnexion, donc cette méthode ne sera jamais appelée.
     }
 
-    #[Route('/create-user', name: 'create_user')]
-    public function createUser(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    #[Route('/admin/create', name: 'admin_create')]
+    public function createAdmin(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
-        // Using Administrateur instead of Utilisateur to avoid instantiating an abstract class
-        $user = new Administrateur();
-        $user->setEmail('admin@admin.com');
-        $user->setRoles(['ROLE_ADMIN']); // Changed to ROLE_ADMIN for clarity
-        $hashedPassword = $passwordHasher->hashPassword($user, '123456');
-        $user->setPassword($hashedPassword);
-        $user->setNom('Admin');
-        $user->setPrenom('Test');
-        
-        // Ensure the phone number is valid (must be 8 digits)
-        $user->setTelephone('12345678'); // Adjusted to an 8-digit format
+        $admin = new Administrateur();
+        $form = $this->createForm(AdminFormType::class, $admin);
+        $form->handleRequest($request);
 
-        $user->setActif(true); // Ensure this field exists in the entity
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Hash du mot de passe
+            $hashedPassword = $passwordHasher->hashPassword($admin, $form->get('plainPassword')->getData());
+            $admin->setPassword($hashedPassword);
 
-        $entityManager->persist($user);
-        $entityManager->flush();
+            // Enregistrement en base de données
+            $entityManager->persist($admin);
+            $entityManager->flush();
 
-        return new Response('Admin user created successfully!');
+            $this->addFlash('success', 'Administrateur créé avec succès !');
+            return $this->redirectToRoute('app_login'); // Redirection après création
+        }
+
+        return $this->render('admin/create.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

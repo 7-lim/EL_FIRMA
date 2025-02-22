@@ -16,6 +16,21 @@ class Administrateur extends Utilisateur
     #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'administrateur', cascade: ['persist', 'remove'])]
     private Collection $reclamations;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+private ?string $domaineExpertise = null;
+
+public function getDomaineExpertise(): ?string
+{
+    return $this->domaineExpertise;
+}
+
+public function setDomaineExpertise(?string $domaineExpertise): self
+{
+    $this->domaineExpertise = $domaineExpertise;
+    return $this;
+}
+
+
     public function __construct()
     {
         parent::__construct();
