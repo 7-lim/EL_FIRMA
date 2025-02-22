@@ -69,10 +69,17 @@ final class EvenementController extends AbstractController
                 return $this->redirectToRoute('app_evenement_show', ['id' => $id]);
             }
 
+            $ticket = new Ticket();
+            $ticket->setEvenement($evenement);
+            $ticket->setPrix($evenement->getPrix());
+            //$ticket->setUser($user); // Assuming you have a setUser method in Ticket entity
+
             $evenement->setNombreDePlaces($evenement->getNombreDePlaces() - 1);
+
+            $entityManager->persist($ticket);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_evenement_show', ['id' => $evenement->getId()]);
+            return $this->redirectToRoute('app_ticket_show', ['id' => $ticket->getId()]);
         }
 
         return $this->render('evenement/show.html.twig', [
