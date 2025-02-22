@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Utilisateur; // Ensure this class exists in the specified namespace
+use App\Entity\Administrateur; // Changed from Utilisateur to Administrateur to ensure it's a concrete class
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,33 +34,33 @@ class LoginController extends AbstractController
         ]);
     }
 
-    #[Route('/logout', name: 'app_logout')]
-    public function logout(): Response
+    #[Route('/logout', name: 'app_logout', methods: ['GET'])]
+    public function logout(): void
     {
-        return $this->redirectToRoute('app_login');
+        // The logout is managed by Symfony (security.yaml). This method is never executed.
+        throw new \Exception('Don\'t forget to activate logout in security.yaml');
     }
 
     #[Route('/create-user', name: 'create_user')]
     public function createUser(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
-        $user = new Utilisateur(); // Ensure Utilisateur is a concrete class or replace with an actual concrete subclass
-        $user->setEmail('azazazaz@gmail.com');
-        $user->setRoles(['ROLE_USER']);
+        // Using Administrateur instead of Utilisateur to avoid instantiating an abstract class
+        $user = new Administrateur();
+        $user->setEmail('admin@admin.com');
+        $user->setRoles(['ROLE_ADMIN']); // Changed to ROLE_ADMIN for clarity
         $hashedPassword = $passwordHasher->hashPassword($user, '123456');
         $user->setPassword($hashedPassword);
-        $user->setNom('user');
-        $user->setPrenom('test');
-        $user->setTelephone('1234567890');
-        $user->setType('user');
-        // $user->setLocalisation(null); // Commented out as the method does not exist
-        // $user->setNomEntreprise(null); // Commented out as the method does not exist
-        //        $user->setIdFiscale(null); // Commented out as the method does not exist
-        // $user->setDomaineExpertise(null); // Commented out as the method does not exist
-        $user->setActif(true);
+        $user->setNom('Admin');
+        $user->setPrenom('Test');
+        
+        // Ensure the phone number is valid (must be 8 digits)
+        $user->setTelephone('12345678'); // Adjusted to an 8-digit format
+
+        $user->setActif(true); // Ensure this field exists in the entity
 
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return new Response('User created successfully!');
+        return new Response('Admin user created successfully!');
     }
 }

@@ -17,6 +17,12 @@ framework:
     php_errors:
         log: true
 
+parameters:
+    env(APP_SECRET): '%env(APP_SECRET)%'
+    env(DATABASE_URL): '%env(DATABASE_URL)%'
+    
+
+
 when@test:
     framework:
         test: true

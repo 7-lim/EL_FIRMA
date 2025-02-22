@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
-use App\Entity\Utilisateur;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -15,13 +14,12 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Type;
+use App\Entity\Utilisateur;
 
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $userType = $options['user_type'];
-
         $builder
             ->add('nom', TextType::class, [
                 'constraints' => [
@@ -31,21 +29,17 @@ class RegistrationFormType extends AbstractType
                         'max' => 50,
                         'minMessage' => 'Le nom doit avoir au moins {{ limit }} caractères',
                         'maxMessage' => 'Le nom ne peut dépasser {{ limit }} caractères'
-                        
-                        
                     ]),
                 ],
-            'required' => false,
+                'required' => false,
             ])
             ->add('prenom', TextType::class, [
                 'constraints' => [
-                    new NotBlank(['message' => '⚠️ Le prénom est est requis pour votre identification']),
+                    new NotBlank(['message' => '⚠️ Le prénom est requis pour votre identification']),
                     new Length([
                         'min' => 2,
                         'max' => 50,
                         'minMessage' => 'Le prénom doit avoir au moins {{ limit }} caractères',
-                        
-                        
                     ]),
                 ],
                 'required' => false,
@@ -56,7 +50,6 @@ class RegistrationFormType extends AbstractType
                     new Regex([
                         'pattern' => '/^\d{8}$/',
                         'message' => 'Le numéro de téléphone doit contenir 8 chiffres',
-                        
                     ]),
                 ],
                 'required' => false,
@@ -65,7 +58,6 @@ class RegistrationFormType extends AbstractType
                 'constraints' => [
                     new NotBlank(['message' => '📧 Une adresse email valide est obligatoire']),
                     new Email(['message' => 'Veuillez entrer un email valide']),
-                   
                 ],
                 'required' => false,
             ])
@@ -73,18 +65,17 @@ class RegistrationFormType extends AbstractType
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
-                    new NotBlank(['message' => '🔒  créer un mot de passe sécurisé min 6 caracters']),
+                    new NotBlank(['message' => '🔒 Créer un mot de passe sécurisé min 6 caractères']),
                     new Length([
                         'min' => 6,
                         'minMessage' => 'Le mot de passe doit avoir au moins {{ limit }} caractères',
                         'max' => 4096,
-                        
                     ]),
-                    
                 ],
                 'required' => false,
             ]);
 
+        // Ajouter le type d'utilisateur uniquement lors de l'inscription
         if (!$options['is_edit']) {
             $builder->add('user_type', ChoiceType::class, [
                 'choices' => [
@@ -95,12 +86,10 @@ class RegistrationFormType extends AbstractType
                 ],
                 'mapped' => false,
                 'label' => 'Type d\'utilisateur',
-                
             ]);
-            
         }
 
-        // Validation spécifique pour chaque rôle
+        // Champs spécifiques aux rôles
         $builder
             ->add('nomEntreprise', TextType::class, [
                 'required' => false,
@@ -108,12 +97,9 @@ class RegistrationFormType extends AbstractType
                     new Length([
                         'max' => 100,
                         'maxMessage' => 'Le nom de l\'entreprise ne doit pas dépasser {{ limit }} caractères',
-                        
                     ]),
                 ],
-                
                 'attr' => ['class' => 'role-fields', 'id' => 'fournisseur-fields'],
-                
             ])
             ->add('idFiscale', TextType::class, [
                 'required' => false,
@@ -121,11 +107,9 @@ class RegistrationFormType extends AbstractType
                     new Length([
                         'max' => 50,
                         'maxMessage' => 'L\'ID fiscale ne doit pas dépasser {{ limit }} caractères',
-                        
                     ]),
                 ],
                 'attr' => ['class' => 'role-fields', 'id' => 'fournisseur-id-fiscale'],
-                
             ])
             ->add('categorieProduit', TextType::class, [
                 'required' => false,
@@ -133,29 +117,26 @@ class RegistrationFormType extends AbstractType
                     new Length([
                         'max' => 100,
                         'maxMessage' => 'La catégorie de produit ne doit pas dépasser {{ limit }} caractères',
-                        
                     ]),
                 ],
                 'attr' => ['class' => 'role-fields', 'id' => 'fournisseur-category'],
             ])
-            ->add('domaine_expertise', TextType::class, [
+            ->add('domaineExpertise', TextType::class, [
                 'required' => false,
                 'constraints' => [
                     new Length([
                         'max' => 100,
                         'maxMessage' => 'Le domaine d\'expertise ne doit pas dépasser {{ limit }} caractères',
-                        
                     ]),
                 ],
                 'attr' => ['class' => 'role-fields', 'id' => 'expert-fields'],
             ])
-            ->add('adresse_exploitation', NumberType::class, [
+            ->add('farm_size', TextType::class, [ // Renommé de 'adresse_exploitation' à 'farm_size'
                 'required' => false,
                 'constraints' => [
-                    new Type([
-                        'type' => 'numeric',
-                        'message' => 'L\'adresse d\'exploitation doit être un nombre',
-                        
+                    new Length([
+                        'max' => 255,
+                        'maxMessage' => 'L\'adresse d\'exploitation ne doit pas dépasser {{ limit }} caractères',
                     ]),
                 ],
                 'attr' => ['class' => 'role-fields', 'id' => 'agriculteur-fields'],
@@ -166,7 +147,6 @@ class RegistrationFormType extends AbstractType
                     new Length([
                         'max' => 50,
                         'maxMessage' => 'Le code administrateur ne doit pas dépasser {{ limit }} caractères',
-                        
                     ]),
                 ],
                 'attr' => ['class' => 'role-fields', 'id' => 'admin-fields'],
@@ -176,9 +156,9 @@ class RegistrationFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => null,
-            'user_type' => null, 
-            'is_edit' => false, 
+            'data_class' => Utilisateur::class, // Correction : Assurez-vous que cela correspond à votre entité utilisateur
+            'user_type' => null,
+            'is_edit' => false,
         ]);
     }
 }
