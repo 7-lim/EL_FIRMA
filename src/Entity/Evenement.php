@@ -33,6 +33,7 @@ class Evenement
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotNull (message:"La date de fin est obligatoire")]
+    #[Assert\GreaterThan(propertyPath: "dateDebut", message: "La date de fin doit être supérieure à la date de début")]
     private ?\DateTimeInterface $dateFin;
 
     #[ORM\Column(length: 55)]
@@ -48,6 +49,11 @@ class Evenement
     #[Assert\Positive (message:"Le nombre de places doit être positif")]
     private ?int $nombreDePlaces = null;
 
+    #[ORM\Column(type: Types::INTEGER)]
+    #[Assert\NotNull (message:"Le prix est obligatoire")]
+    #[Assert\Positive (message:"Le prix doit être positif")]
+    private ?int $prix = null;
+
     #[ORM\ManyToOne(inversedBy: 'Evenements')]
     private ?Fournisseur $fournisseurs = null;
 
@@ -57,7 +63,7 @@ class Evenement
     /**
      * @var Collection<int, Ticket>
      */
-    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'evenement')]
+    #[ORM\OneToMany(mappedBy: 'evenement', targetEntity: Ticket::class, orphanRemoval: true)]
     private Collection $tickets;
 
     public function __construct()
@@ -144,6 +150,17 @@ class Evenement
     public function setNombreDePlaces(?int $nombreDePlaces): static
     {
         $this->nombreDePlaces = $nombreDePlaces;
+        return $this;
+    }
+
+    public function getPrix(): ?int
+    {
+        return $this->prix;
+    }
+
+    public function setPrix(?int $prix): static
+    {
+        $this->prix = $prix;
         return $this;
     }
 

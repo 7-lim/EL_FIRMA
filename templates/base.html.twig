@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{% block title %}Tea House{% endblock %}</title>
+        <title>{% block title %}El'firma{% endblock %}</title>
 
         {% block css %}
         {#<!-- Google Web Fonts -->#}
@@ -47,13 +47,13 @@
                         <div class="navbar-nav ms-auto">
                             <a href="{{ path('home') }}" class="nav-item nav-link {% if app.request.get('_route') == 'home' %}active{% endif %}">Home</a>
                             <a href="{{ path('about') }}" class="nav-item nav-link {% if app.request.get('_route') == 'about' %}active{% endif %}">About</a>
-                            <a href="{{ path('app_evenement_index') }}" class="nav-item nav-link {% if app.request.get('_route') == 'evenement' %}active{% endif %}">Evénements</a>
-                            <a href="{{ path('store') }}" class="nav-item nav-link {% if app.request.get('_route') == 'store' %}active{% endif %}">Store</a>
+                            <a href="{{ path('app_evenement_index') }}" class="nav-item nav-link {% if app.request.get('_route') == 'evenement' %}active{% endif %}">Évènements</a>
+                            <a href="{{ path('store') }}" class="nav-item nav-link {% if app.request.get('_route') == 'store' %}active{% endif %}">Produits</a>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                                 <div class="dropdown-menu bg-light rounded-0 m-0">
-                                    <a href="{{ path('features') }}" class="dropdown-item">Features</a>
-                                    <a href="{{ path('blog') }}" class="dropdown-item">Blog Article</a>
+                                    <a href="{{ path('features') }}" class="dropdown-item">Mes produits</a>
+                                    <a href="{{ path('app_ticket_index') }}" class="dropdown-item">Mes tickets</a>
                                     <a href="{{ path('testimonial') }}" class="dropdown-item">Testimonial</a>
                                     <a href="{{ path('404') }}" class="dropdown-item">404 Page</a>
                                 </div>

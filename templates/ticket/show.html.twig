@@ -1,26 +1,89 @@
-{% extends 'baseFournisseur.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block title %}Ticket{% endblock %}
+{% block title %}Détails du Ticket{% endblock %}
 
 {% block body %}
-    <h1>Ticket</h1>
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-5" style="background-color: #709A41;">
+    <div class="container text-center py-5">
+        <h1 class="display-4 text-white mb-3 fw-bold">Détails du Ticket</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="#" class="text-white">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="#" class="text-white">Tickets</a></li>
+                <li class="breadcrumb-item active text-white-50" aria-current="page">Détails</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- Page Header End -->
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ ticket.id }}</td>
-            </tr>
-            <tr>
-                <th>Prix</th>
-                <td>{{ ticket.Prix }}</td>
-            </tr>
-        </tbody>
-    </table>
+<div class="container my-5">
+    <div class="card border-0 shadow-lg">
+        <div class="card-body">
+            <h3 class="card-title mb-4">Ticket #{{ ticket.id }}</h3>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>ID</th>
+                        <td>{{ ticket.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Prix</th>
+                        <td>{{ ticket.Prix }} $</td>
+                    </tr>
+                    <tr>
+                        <th>Événement</th>
+                        <td>
+                            {% if ticket.evenement %}
+                                <a href="{{ path('app_evenement_show', {'id': ticket.evenement.id}) }}">
+                                    {{ ticket.evenement.titre }}
+                                </a>
+                            {% else %}
+                                <span class="text-danger">Événement annulé !</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ path('app_ticket_index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Voir mes tickets
+                </a>
+                {{ include('ticket/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
 
-    <a href="{{ path('app_ticket_index') }}">back to list</a>
+<!-- Add Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <a href="{{ path('app_ticket_edit', {'id': ticket.id}) }}">edit</a>
+<style>
+    .card {
+        border-radius: 0.5rem;
+    }
 
-    {{ include('ticket/_delete_form.html.twig') }}
+    .table th, .table td {
+        vertical-align: middle;
+    }
+
+    .btn-outline-secondary {
+        border-color: #709A41;
+        color: #709A41;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #709A41;
+        color: white;
+    }
+
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+</style>
 {% endblock %}

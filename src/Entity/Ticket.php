@@ -54,7 +54,7 @@ class Ticket
         return $this->agriculteur;
     }
 
-    public function setAgrivulteur(?Agriculteur $agriculteur): static
+    public function setAgriculteur(?Agriculteur $agriculteur): static
     {
         $this->agriculteur = $agriculteur;
 

@@ -1,47 +1,92 @@
-{% extends 'baseFournisseur.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block title %}Ticket index{% endblock %}
+{% block title %}Mes tickets{% endblock %}
 
 {% block body %}
-    <h1>Ticket index</h1>
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-5" style="background-color: #709A41;">
+    <div class="container text-center py-5">
+        <h1 class="display-4 text-white mb-3 fw-bold">Mes Tickets</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="#" class="text-white">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="#" class="text-white">Pages</a></li>
+                <li class="breadcrumb-item active text-white-50" aria-current="page">Mes Tickets</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- Page Header End -->
 
+<div class="container my-5">
     {% if tickets is empty %}
-        <div class="alert alert-info">No tickets found</div>
+        <div class="alert alert-info text-center py-4">
+            <i class="fas fa-ticket-alt fa-2x mb-3 text-success"></i>
+            <h4 class="mb-0">Aucun ticket trouvé</h4>
+        </div>
     {% else %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Price</th>
-                    <th>Event</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for ticket in tickets %}
-                <tr>
-                    <td>{{ ticket.id }}</td>
-                    <td>{{ ticket.Prix }}</td>
-                    <td>
-                        {% if ticket.evenement %}
-                            {{ ticket.evenement.titre }}
-                        {% else %}
-                            <span class="text-danger">Event deleted</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{{ path('app_ticket_show', {'id': ticket.id}) }}" 
-                           class="btn btn-sm btn-primary">
-                            Show
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Prix</th>
+                        <th>Événement</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for ticket in tickets %}
+                    <tr>
+                        <td>{{ ticket.id }}</td>
+                        <td>{{ ticket.Prix }}</td>
+                        <td>
+                            {% if ticket.evenement %}
+                                {{ ticket.evenement.titre }}
+                            {% else %}
+                                <span class="text-danger">Événement annulé !</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ path('app_ticket_show', {'id': ticket.id}) }}" 
+                               class="btn btn-sm btn-primary">
+                                Voir Ticket
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% endif %}
+</div>
 
-    <a href="{{ path('app_ticket_new') }}" class="btn btn-success">
-        Create new tickets
-    </a>
+<!-- Add Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+    .table {
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background-color: #709A41;
+        color: white;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .btn-primary {
+        background-color: #709A41;
+        border-color: #709A41;
+    }
+
+    .btn-primary:hover {
+        background-color: #5d8340;
+        border-color: #5d8340;
+    }
+</style>
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends 'baseFournisseur.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}{{ evenement.titre }}{% endblock %}
 
@@ -71,9 +71,11 @@
         <a href="{{ path('app_evenement_index') }}" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left me-2"></i>Retour à la liste
         </a>
-        <a href="#" class="btn btn-outline-primary">
-            <i class="fas fa-ticket-alt me-2"></i>Get Ticket
-        </a>
+        <form method="post" action="{{ path('app_evenement_show', {'id': evenement.id}) }}">
+            <button type="submit" class="btn btn-outline-primary">
+                <i class="fas fa-ticket-alt me-2"></i>Participer à l'événement
+            </button>
+        </form>
     </div>
 </div>
 

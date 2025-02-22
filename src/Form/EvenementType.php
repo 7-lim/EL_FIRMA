@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Validator\Constraints\File;
 
 class EvenementType extends AbstractType
@@ -52,7 +53,15 @@ class EvenementType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Nombre de places',
                 ],
-            ]);
+            ])
+
+            ->add('prix',  NumberType::class, [
+                'attr' => [
+                    'placeholder' => 'Prix $',
+                    'label' => 'Prix $',
+                    'scale' => 2,
+                ],
+                ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
