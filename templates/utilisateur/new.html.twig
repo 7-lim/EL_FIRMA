@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un Utilisateur{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Créer un nouvel utilisateur</h1>
+        
+        {{ form_start(form) }}
+            <div class="mb-3">
+                {{ form_label(form.nom) }}
+                {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.password) }}
+                {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <button type="submit" class="btn btn-success">Créer</button>
+        {{ form_end(form) }}
+
+        <a href="{{ path('user_index') }}" class="btn btn-secondary mt-3">Retour</a>
+    </div>
+{% endblock %}

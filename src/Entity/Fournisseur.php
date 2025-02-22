@@ -19,7 +19,7 @@ class Fournisseur extends Utilisateur
     /**
      * @var Collection<int, Produit>
      */
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'Fournisseur', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'fournisseur', orphanRemoval: true)]
     private Collection $produits;
 
     /**
@@ -27,6 +27,23 @@ class Fournisseur extends Utilisateur
      */
     #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'fournisseurs')]
     private Collection $Evenements;
+
+    private $categorieProduit;
+
+    // Add your properties and methods here
+
+    public function setCategorieProduit($categorieProduit): self
+    {
+        $this->categorieProduit = $categorieProduit;
+
+        return $this;
+    }
+
+    public function getCategorieProduit()
+    {
+        return $this->categorieProduit;
+    }
+
 
     public function __construct()
     {

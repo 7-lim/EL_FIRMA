@@ -1,24 +1,25 @@
 <?php
 
-namespace App\Entity;
+namespace App\Repository;
 
-use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Utilisateur;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-#[ORM\Entity]
-class UtilisateurRepository
+/**
+ * @extends ServiceEntityRepository<Utilisateur>
+ *
+ * @method Utilisateur|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Utilisateur|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Utilisateur[]    findAll()
+ * @method Utilisateur[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class UtilisateurRepository extends ServiceEntityRepository
 {
-    private array $roles = [];
-
-    // Existing properties and methods
-
-    public function setRoles(array $roles): self
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->roles = $roles;
-        return $this;
+        parent::__construct($registry, Utilisateur::class);
     }
 
-    public function getRoles(): array
-    {
-        return $this->roles;
-    }
+    // Add custom repository methods here
 }

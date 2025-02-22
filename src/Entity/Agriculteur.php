@@ -29,7 +29,7 @@ class Agriculteur extends Utilisateur
     /**
      * @var Collection<int, Ticket>
      */
-    #[ORM\ManyToMany(targetEntity: Ticket::class, inversedBy: 'discussions')]
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: "agriculteur", cascade: ["persist", "remove"])]
     private Collection $tickets;
 
     /**
@@ -50,6 +50,22 @@ class Agriculteur extends Utilisateur
     #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'agriculteur')]
     private Collection $reclamations;
 
+    private $adresseExploitation;
+
+
+
+public function setAdresseExploitation(string $adresseExploitation): self
+    {
+        $this->adresseExploitation = $adresseExploitation;
+
+        return $this;
+    }
+
+    public function getAdresseExploitation(): ?string
+    {
+        return $this->adresseExploitation;
+    }
+    
     public function __construct()
     {
         $this->evenements = new ArrayCollection();

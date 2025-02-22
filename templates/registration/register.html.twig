@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+
+{% block stylesheets %}
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/style1.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="signup-section">
+            <header>Sign Up</header>
+            <hr>  
+            <div class="social-buttons">
+                <button><i class='bx bxl-google'></i> Use Google</button>
+                <button><i class='bx bxl-apple'></i> Use Apple</button>
+            </div>
+
+            <div class="separator">
+                <div class="line"></div>
+                <p>Or</p>
+                <div class="line"></div>
+            </div>
+
+            <form method="POST" action="{{ path('app_register') }}" id="registration-form">
+                {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+                    <div class="form-group">
+                        {{ form_row(registrationForm.nom, {'attr': {'class': 'form-control'}}) }}
+                    </div> 
+                    <div class="form-group">
+                        {{ form_row(registrationForm.prenom, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(registrationForm.telephone, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(registrationForm.user_type, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    
+                    <div class="form-group" id="fournisseur-fields">
+                        {{ form_row(registrationForm.nomEntreprise, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group" id="fournisseur-id-fiscale">
+                        {{ form_row(registrationForm.idFiscale, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group" id="fournisseur-category">
+                        {{ form_row(registrationForm.categorieProduit, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group" id="expert-fields">
+                        {{ form_row(registrationForm.domaine_expertise, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group" id="agriculteur-fields">
+                        {{ form_row(registrationForm.adresse_exploitation, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group" id="admin-fields">
+                        {{ form_row(registrationForm.admin_code, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    
+                    <button type="submit" class="btn">Sign Up</button>
+                {{ form_end(registrationForm) }}
+            </form>
+              </div>
+
+        <div class="login-section">
+            <header>Sign in</header>
+            <div class="social-buttons">
+            <br> <br><br><br><br> <br><br><br>
+                <button><i class='bx bxl-google'></i> Use Google</button>
+                <button><i class='bx bxl-apple'></i> Use Apple</button>
+            </div>
+            <div class="separator">
+                <div class="line"></div>
+                <p>Or</p>
+                <div class="line"></div>
+            </div >
+            <form method="POST" action="{{ path('app_dashboard') }}">
+                <input type="email" name="_username" placeholder="Email">
+                <input type="password" name="_password" placeholder="Password">
+                <button type="submit" class="btn">Login</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('js/script.js') }}"></script>
+{% endblock %}
+

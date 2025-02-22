@@ -1,13 +1,24 @@
 <?php
 
+namespace App\Repository;
+
+use Doctrine\ORM\EntityRepository;
+
+class CategorieRepository extends EntityRepository
+{
+    // Add your custom repository methods here
+}
+
 namespace App\Entity;
 
 use App\Repository\CategorieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
+#[ORM\Table(name: "categorie")]
 class Categorie
 {
     #[ORM\Id]
@@ -16,15 +27,24 @@ class Categorie
     private ?int $id = null;
 
     #[ORM\Column(length: 55)]
-    private ?string $NomCategorie = null;
+    #[Assert\NotBlank(message: "Le nom de la catégorie est obligatoire.")]
+    #[Assert\Length(
+        max: 55,
+        maxMessage: "Le nom de la catégorie ne peut pas dépasser {{ limit }} caractères."
+    )]
+    private ?string $nomCategorie = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "La description ne peut pas dépasser {{ limit }} caractères."
+    )]
     private ?string $description = null;
 
     /**
      * @var Collection<int, Produit>
      */
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'no')]
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'categorie')]
     private Collection $produits;
 
     public function __construct()
@@ -39,12 +59,12 @@ class Categorie
 
     public function getNomCategorie(): ?string
     {
-        return $this->NomCategorie;
+        return $this->nomCategorie;
     }
 
-    public function setNomCategorie(string $NomCategorie): static
+    public function setNomCategorie(string $nomCategorie): static
     {
-        $this->NomCategorie = $NomCategorie;
+        $this->nomCategorie = $nomCategorie;
         return $this;
     }
 
@@ -71,7 +91,7 @@ class Categorie
     {
         if (!$this->produits->contains($produit)) {
             $this->produits->add($produit);
-            $produit->setNo($this);
+            $produit->setCategorie($this);
         }
 
         return $this;
@@ -80,9 +100,8 @@ class Categorie
     public function removeProduit(Produit $produit): static
     {
         if ($this->produits->removeElement($produit)) {
-            // set the owning side to null (unless already changed)
-            if ($produit->getNo() === $this) {
-                $produit->setNo(null);
+            if ($produit->getCategorie() === $this) {
+                $produit->setCategorie(null);
             }
         }
 

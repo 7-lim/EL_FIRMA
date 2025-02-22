@@ -6,7 +6,6 @@ use App\Repository\TerrainRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TerrainRepository::class)]
 class Terrain
@@ -17,37 +16,25 @@ class Terrain
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Assert\NotBlank]
-    #[Assert\Type("float")]
-    #[Assert\Range(min: 0, max: 10000)]  // Optionnel, par exemple, pour la superficie
     private ?float $superficie = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
     private ?string $localisation = null;
 
     #[ORM\Column]
-    #[Assert\NotBlank]
-    #[Assert\Type("float")]
-    #[Assert\Range(min: -90, max: 90)] // Latitude doit être entre -90 et 90
-    private ?float $latitude = null;
+    private ?float $Latitude = null;
 
     #[ORM\Column]
-    #[Assert\NotBlank]
-    #[Assert\Type("float")]
-    #[Assert\Range(min: -180, max: 180)] // Longitude doit être entre -180 et 180
-    private ?float $longitude = null;
+    private ?float $Longitude = null;
 
     #[ORM\Column(length: 55)]
-    #[Assert\NotBlank]
-    private ?string $typeSol = null;
+    private ?string $TypeSol = null;
+    
 
     #[ORM\Column]
-    #[Assert\NotBlank]
-    private ?bool $irrigationDisponible = null;
+    private ?bool $IrrigationDisponible = null;
 
     #[ORM\Column(length: 55)]
-    #[Assert\NotBlank]
     private ?string $statut = null;
 
     #[ORM\ManyToOne(inversedBy: 'terrains')]
@@ -95,48 +82,48 @@ class Terrain
 
     public function getLatitude(): ?float
     {
-        return $this->latitude;
+        return $this->Latitude;
     }
 
-    public function setLatitude(float $latitude): static
+    public function setLatitude(float $Latitude): static
     {
-        $this->latitude = $latitude;
+        $this->Latitude = $Latitude;
 
         return $this;
     }
 
     public function getLongitude(): ?float
     {
-        return $this->longitude;
+        return $this->Longitude;
     }
 
-    public function setLongitude(float $longitude): static
+    public function setLongitude(float $Longitude): static
     {
-        $this->longitude = $longitude;
+        $this->Longitude = $Longitude;
 
         return $this;
     }
 
     public function getTypeSol(): ?string
     {
-        return $this->typeSol;
+        return $this->TypeSol;
     }
 
-    public function setTypeSol(string $typeSol): static
+    public function setTypeSol(string $TypeSol): static
     {
-        $this->typeSol = $typeSol;
+        $this->TypeSol = $TypeSol;
 
         return $this;
     }
 
     public function isIrrigationDisponible(): ?bool
     {
-        return $this->irrigationDisponible;
+        return $this->IrrigationDisponible;
     }
 
-    public function setIrrigationDisponible(bool $irrigationDisponible): static
+    public function setIrrigationDisponible(bool $IrrigationDisponible): static
     {
-        $this->irrigationDisponible = $irrigationDisponible;
+        $this->IrrigationDisponible = $IrrigationDisponible;
 
         return $this;
     }
@@ -183,10 +170,6 @@ class Terrain
         return $this;
     }
 
-
-
-
-    
     public function removeLocation(Location $location): static
     {
         if ($this->locations->removeElement($location)) {

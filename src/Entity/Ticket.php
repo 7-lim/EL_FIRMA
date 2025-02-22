@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\TicketRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
@@ -15,22 +13,15 @@ class Ticket
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $Prix = null;
+    #[ORM\Column(type: "integer")]
+    private ?int $prix = null;
 
-    /**
-     * @var Collection<int, Agriculteur>
-     */
-    #[ORM\ManyToMany(targetEntity: Agriculteur::class, mappedBy: 'tickets')]
-    private Collection $agriculteurs;
+    #[ORM\ManyToOne(targetEntity: Agriculteur::class, inversedBy: "tickets")]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Agriculteur $agriculteur = null;
 
     #[ORM\ManyToOne(inversedBy: 'tickets')]
     private ?Expert $expert = null;
-
-    public function __construct()
-    {
-        $this->agriculteurs = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -39,40 +30,23 @@ class Ticket
 
     public function getPrix(): ?int
     {
-        return $this->Prix;
+        return $this->prix;
     }
 
-    public function setPrix(int $Prix): static
+    public function setPrix(int $prix): static
     {
-        $this->Prix = $Prix;
-
+        $this->prix = $prix;
         return $this;
     }
 
-    /**
-     * @return Collection<int, Agriculteur>
-     */
-    public function getAgriculteurs(): Collection
+    public function getAgriculteur(): ?Agriculteur
     {
-        return $this->agriculteurs;
+        return $this->agriculteur;
     }
 
-    public function addDiscussion(Agriculteur $agriculteur): static
+    public function setAgriculteur(?Agriculteur $agriculteur): static
     {
-        if (!$this->agriculteurs->contains($agriculteur)) {
-            $this->agriculteurs->add($agriculteur);
-            $agriculteur->addTicket($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDiscussion(Agriculteur $agriculteur): static
-    {
-        if ($this->agriculteurs->removeElement($agriculteur)) {
-            $agriculteur->removeTicket($this);
-        }
-
+        $this->agriculteur = $agriculteur;
         return $this;
     }
 
@@ -84,7 +58,6 @@ class Ticket
     public function setExpert(?Expert $expert): static
     {
         $this->expert = $expert;
-
         return $this;
     }
 }

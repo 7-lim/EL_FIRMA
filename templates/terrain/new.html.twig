@@ -1,17 +1,15 @@
-{# templates/terrain/new.html.twig #}
-
 {% extends 'base.html.twig' %}
 
-{% block title %}Publier un terrain{% endblock %}
+{% block title %}Créer un Utilisateur{% endblock %}
 
 {% block body %}
     {# Page Header Start #}
     <div class="container-fluid page-header py-5 mb-5 bg-light">
         <div class="container text-center py-5">
-            <h1 class="display-2 text-dark mb-4 animated slideInDown">Publier un terrain à louer</h1>
+            <h1 class="display-2 text-dark mb-4 animated slideInDown">Créer un nouvel utilisateur</h1>
             <nav aria-label="breadcrumb" class="animated slideInDown">
                 <ol class="breadcrumb justify-content-center mb-0">
-                    <li class="breadcrumb-item active" aria-current="page">Publier un terrain</li>
+                    <li class="breadcrumb-item active" aria-current="page">Créer un utilisateur</li>
                 </ol>
             </nav>
         </div>
@@ -33,52 +31,30 @@
                     <div class="card-body">
                         {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
                             <div class="mb-3">
-                                {{ form_label(form.superficie, 'Superficie (en m²)') }}
-                                {{ form_widget(form.superficie, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(form.superficie) }}
+                                {{ form_label(form.nom, 'Nom') }}
+                                {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.nom) }}
                             </div>
                             <div class="mb-3">
-                                {{ form_label(form.localisation, 'Localisation') }}
-                                {{ form_widget(form.localisation, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(form.localisation) }}
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    {{ form_label(form.latitude, 'Latitude') }}
-                                    {{ form_widget(form.latitude, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(form.latitude) }}
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    {{ form_label(form.longitude, 'Longitude') }}
-                                    {{ form_widget(form.longitude, {'attr': {'class': 'form-control'}}) }}
-                                    {{ form_errors(form.longitude) }}
-                                </div>
+                                {{ form_label(form.email, 'Email') }}
+                                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.email) }}
                             </div>
                             <div class="mb-3">
-                                {{ form_label(form.typeSol, 'Type de sol') }}
-                                {{ form_widget(form.typeSol, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(form.typeSol) }}
-                            </div>
-                            <div class="mb-3 form-check">
-                                {{ form_widget(form.irrigationDisponible, {'attr': {'class': 'form-check-input'}}) }}
-                                {{ form_label(form.irrigationDisponible, 'Irrigation disponible', {'label_attr': {'class': 'form-check-label'}}) }}
-                                {{ form_errors(form.irrigationDisponible) }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form_label(form.statut, 'Statut') }}
-                                {{ form_widget(form.statut, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(form.statut) }}
+                                {{ form_label(form.password, 'Mot de passe') }}
+                                {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.password) }}
                             </div>
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary rounded-pill py-3 px-5">
-                                    {{ button_label|default('Publier le terrain') }}
+                                    {{ button_label|default('Créer le compte') }}
                                 </button>
                             </div>
                         {{ form_end(form) }}
                     </div>
                 </div>
                 <div class="text-center mt-4">
-                    <a href="{{ path('terrain_list') }}" class="btn btn-link">Voir tous les terrains</a>
+                    <a href="{{ path('user_index') }}" class="btn btn-link">Retour à la liste des utilisateurs</a>
                 </div>
             </div>
         </div>

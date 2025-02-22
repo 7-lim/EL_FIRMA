@@ -15,68 +15,66 @@ class Produit
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $NomProduit = null;
+    private ?string $nomProduit = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Description = null;
+    private ?string $description = null;
 
-    #[ORM\Column(type: Types::OBJECT, nullable: true)]
-    private ?object $Image = null;
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $image = null;
 
     #[ORM\Column]
     private ?int $quantite = null;
 
     #[ORM\Column]
-    private ?float $Prix = null;
+    private ?float $prix = null;
 
     #[ORM\ManyToOne(inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Fournisseur $Fournisseur = null;
+    private ?Fournisseur $fournisseur = null;
 
     #[ORM\ManyToOne(inversedBy: 'produits')]
     private ?Agriculteur $agriculteur = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: "produits")]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Categorie $categorie = null;
-
-      public function getId(): ?int
+    
+    public function getId(): ?int
     {
         return $this->id;
     }
 
     public function getNomProduit(): ?string
     {
-        return $this->NomProduit;
+        return $this->nomProduit;
     }
 
-    public function setNomProduit(string $NomProduit): static
+    public function setNomProduit(string $nomProduit): static
     {
-        $this->NomProduit = $NomProduit;
-
+        $this->nomProduit = $nomProduit;
         return $this;
     }
 
     public function getDescription(): ?string
     {
-        return $this->Description;
+        return $this->description;
     }
 
-    public function setDescription(string $Description): static
+    public function setDescription(string $description): static
     {
-        $this->Description = $Description;
-
+        $this->description = $description;
         return $this;
     }
 
-    public function getImage(): ?object
+    public function getImage(): ?string
     {
-        return $this->Image;
+        return $this->image;
     }
 
-    public function setImage(?object $Image): static
+    public function setImage(?string $image): static
     {
-        $this->Image = $Image;
-
+        $this->image = $image;
         return $this;
     }
 
@@ -88,31 +86,28 @@ class Produit
     public function setQuantite(int $quantite): static
     {
         $this->quantite = $quantite;
-
         return $this;
     }
 
     public function getPrix(): ?float
     {
-        return $this->Prix;
+        return $this->prix;
     }
 
-    public function setPrix(float $Prix): static
+    public function setPrix(float $prix): static
     {
-        $this->Prix = $Prix;
-
+        $this->prix = $prix;
         return $this;
     }
 
     public function getFournisseur(): ?Fournisseur
     {
-        return $this->Fournisseur;
+        return $this->fournisseur;
     }
 
-    public function setFournisseur(?Fournisseur $Fournisseur): static
+    public function setFournisseur(?Fournisseur $fournisseur): static
     {
-        $this->Fournisseur = $Fournisseur;
-
+        $this->fournisseur = $fournisseur;
         return $this;
     }
 
@@ -124,7 +119,6 @@ class Produit
     public function setAgriculteur(?Agriculteur $agriculteur): static
     {
         $this->agriculteur = $agriculteur;
-
         return $this;
     }
 
@@ -136,7 +130,6 @@ class Produit
     public function setCategorie(?Categorie $categorie): static
     {
         $this->categorie = $categorie;
-
         return $this;
     }
 }
