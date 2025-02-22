@@ -18,6 +18,52 @@ class Fournisseur extends Utilisateur
 
     #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'fournisseurs')]
     private Collection $evenements;
+    private $nomEntreprise;
+
+    private $idFiscale;
+
+    public function getIdFiscale(): ?string
+    {       
+        return $this->idFiscale;
+            
+
+
+       }
+
+       private $categorieProduit;
+
+    // existing properties and methods
+
+    public function setCategorieProduit($categorieProduit): self
+    {
+        $this->categorieProduit = $categorieProduit;
+        return $this;
+    }
+
+    public function getCategorieProduit(): ?string
+    {
+        return $this->categorieProduit; 
+    }
+        
+    
+
+        public function setIdFiscale(string $idFiscale): self
+    {
+        $this->idFiscale = $idFiscale;
+        return $this;
+    }
+
+    public function setNomEntreprise(string $nomEntreprise): self
+    {
+        $this->nomEntreprise = $nomEntreprise;
+        return $this;
+    }
+
+    public function getNomEntreprise(): ?string
+    {
+        return $this->nomEntreprise;
+    }
+
 
     public function __construct()
     {

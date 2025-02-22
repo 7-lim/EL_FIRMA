@@ -3,19 +3,18 @@
 namespace App\Entity;
 
 use App\Repository\UtilisateurRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
-#[ORM\Table(name: "utilisateur")]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\InheritanceType("SINGLE_TABLE")]
 #[ORM\DiscriminatorColumn(name: "type", type: "string")]
 #[ORM\DiscriminatorMap([
     'agriculteur' => Agriculteur::class,
+    'fournisseur' => Fournisseur::class,
     'expert' => Expert::class,
     'administrateur' => Administrateur::class,
 ])]
@@ -27,15 +26,22 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(length: 180)]
     private ?string $email = null;
 
-    #[ORM\Column(type: 'array')]
+    /**
+     * @var list<string> The user roles
+     */
+    #[ORM\Column]
     private array $roles = [];
 
+    /**
+     * @var string The hashed password
+     */
     #[ORM\Column]
     private ?string $password = null;
 
+    // Ajout des nouvelles propriétés
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nom = null;
 
@@ -45,97 +51,13 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
     #[ORM\Column(length: 15, nullable: true)]
     private ?string $telephone = null;
 
-    #[ORM\Column(type: 'boolean')]
-    private bool $actif = true;
-
-    #[ORM\OneToMany(targetEntity: Terrain::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
-    private Collection $terrains;
-
-    #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
-    private Collection $reclamations;
-
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'fournisseur', cascade: ['persist', 'remove'])]
-    private Collection $produits;
-
-    #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
-    private Collection $discussions;
-
-    #[ORM\OneToMany(targetEntity: Location::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
-    private Collection $locations;
-
-    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
-    private Collection $tickets;
-
-    #[ORM\OneToMany(targetEntity: Evenement::class, mappedBy: 'administrateur', cascade: ['persist', 'remove'])]
-    private Collection $evenements;
-
-    #[ORM\ManyToMany(targetEntity: Evenement::class, mappedBy: 'participants')]
-    private Collection $evenementsParticipant;
 
     public function __construct()
     {
-        $this->roles = ['ROLE_USER'];
-        $this->terrains = new ArrayCollection();
-        $this->reclamations = new ArrayCollection();
-        $this->produits = new ArrayCollection();
-        $this->discussions = new ArrayCollection();
-        $this->locations = new ArrayCollection();
-        $this->tickets = new ArrayCollection();
-        }
-    
-
-    // Core User Management
-
-    public function getId(): ?int
-    {
-        return $this->id;
+        $this->roles = ['ROLE_USER']; // Rôle par défaut
     }
 
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): static
-    {
-        $this->email = $email;
-        return $this;
-    }
-
-    public function getUserIdentifier(): string
-    {
-        return (string) $this->email;
-    }
-
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
-        return $this;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): static
-    {
-        $this->password = $password;
-        return $this;
-    }
-
-    public function eraseCredentials(): void
-    {
-        // No sensitive data stored
-    }
-
+    // Méthodes pour les nouvelles propriétés
     public function getNom(): ?string
     {
         return $this->nom;
@@ -169,48 +91,83 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
         return $this;
     }
 
-    public function isActif(): bool
+    // Méthodes existantes
+    public function getId(): ?int
     {
-        return $this->actif;
+        return $this->id;
     }
 
-    public function setActif(bool $actif): static
+    private $type;
+
+    public function setType(string $type): self
     {
-        $this->actif = $actif;
+        $this->type = $type;
+
         return $this;
     }
 
-    // Relations
-
-    public function getTerrains(): Collection
+    public function getType(): ?string
     {
-        return $this->terrains;
+        return $this->type;
     }
 
-    public function getReclamations(): Collection
+    private $actif;
+
+    public function setActif(bool $actif): self
     {
-        return $this->reclamations;
+        $this->actif = $actif;
+
+        return $this;
     }
 
-    public function getProduits(): Collection
+    public function getActif(): bool
     {
-        return $this->produits;
-    }
+        return $this->actif;
 
-    public function getDiscussions(): Collection
+    }
+    public function getEmail(): ?string
     {
-        return $this->discussions;
+        return $this->email;
     }
 
-    public function getLocations(): Collection
+    public function setEmail(string $email): static
     {
-        return $this->locations;
+        $this->email = $email;
+        return $this;
     }
 
-    public function getTickets(): Collection
+    public function getUserIdentifier(): string
     {
-        return $this->tickets;
+        return (string) $this->email;
     }
 
-   
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER'; // garantit que chaque utilisateur a au moins ROLE_USER
+        return array_unique($roles);
     }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    public function eraseCredentials(): void
+    {
+        // Si tu stockes des données sensibles, les effacer ici
+        // $this->plainPassword = null;
+    }
+}

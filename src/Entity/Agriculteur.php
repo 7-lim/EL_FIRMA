@@ -24,6 +24,8 @@ class Agriculteur extends Utilisateur
 
     #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
     private Collection $discussions;
+    private $adresseExploitation;
+
 
     #[ORM\OneToMany(targetEntity: Terrain::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
     private Collection $terrains;
@@ -40,6 +42,19 @@ class Agriculteur extends Utilisateur
         $this->discussions = new ArrayCollection();
         $this->terrains = new ArrayCollection();
         $this->reclamations = new ArrayCollection();
+    }
+
+
+
+    public function setAdresseExploitation($adresseExploitation): self
+    {
+        $this->adresseExploitation = $adresseExploitation;
+        return $this;
+    }
+
+    public function getAdresseExploitation()
+    {
+        return $this->adresseExploitation;
     }
 
     public function getLocalisation(): ?string

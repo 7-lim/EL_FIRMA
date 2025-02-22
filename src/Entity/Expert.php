@@ -16,6 +16,19 @@ class Expert extends Utilisateur
     #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'expert', cascade: ['persist', 'remove'])]
     private Collection $tickets;
 
+    private $domaineExpertise;
+
+    public function setDomaineExpertise(string $domaineExpertise): self
+    {
+        $this->domaineExpertise = $domaineExpertise;
+        return $this;
+    }
+
+    public function getDomaineExpertise(): ?string
+    {
+        return $this->domaineExpertise;
+    }
+
     public function __construct()
     {
         parent::__construct();

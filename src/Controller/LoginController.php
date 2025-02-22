@@ -43,7 +43,7 @@ class LoginController extends AbstractController
     #[Route('/create-user', name: 'create_user')]
     public function createUser(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
-        $user = new Utilisateur();
+        $user = new Utilisateur(); // Ensure Utilisateur is a concrete class or replace with an actual concrete subclass
         $user->setEmail('azazazaz@gmail.com');
         $user->setRoles(['ROLE_USER']);
         $hashedPassword = $passwordHasher->hashPassword($user, '123456');
