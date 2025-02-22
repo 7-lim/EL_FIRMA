@@ -10,64 +10,30 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: AgriculteurRepository::class)]
 class Agriculteur extends Utilisateur
 {
-
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $Localisation = null;
+    private ?string $localisation = null;
 
-    /**
-     * @var Collection<int, Evenement>
-     */
     #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'agriculteurs')]
     private Collection $evenements;
 
-    /**
-     * @var Collection<int, Produit>
-     */
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'agriculteur')]
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
     private Collection $produits;
 
-    /**
-     * @var Collection<int, Ticket>
-     */
-    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: "agriculteur", cascade: ["persist", "remove"])]
+    #[ORM\ManyToMany(targetEntity: Ticket::class, mappedBy: 'agriculteurs')]
     private Collection $tickets;
 
-    /**
-     * @var Collection<int, Discussion>
-     */
-    #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'agriculteur')]
+    #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
     private Collection $discussions;
 
-    /**
-     * @var Collection<int, Terrain>
-     */
-    #[ORM\OneToMany(targetEntity: Terrain::class, mappedBy: 'agriculteur')]
+    #[ORM\OneToMany(targetEntity: Terrain::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
     private Collection $terrains;
 
-    /**
-     * @var Collection<int, Reclamation>
-     */
-    #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'agriculteur')]
+    #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
     private Collection $reclamations;
 
-    private $adresseExploitation;
-
-
-
-public function setAdresseExploitation(string $adresseExploitation): self
-    {
-        $this->adresseExploitation = $adresseExploitation;
-
-        return $this;
-    }
-
-    public function getAdresseExploitation(): ?string
-    {
-        return $this->adresseExploitation;
-    }
-    
     public function __construct()
     {
+        parent::__construct();
         $this->evenements = new ArrayCollection();
         $this->produits = new ArrayCollection();
         $this->tickets = new ArrayCollection();
@@ -78,19 +44,16 @@ public function setAdresseExploitation(string $adresseExploitation): self
 
     public function getLocalisation(): ?string
     {
-        return $this->Localisation;
+        return $this->localisation;
     }
 
-    public function setLocalisation(?string $Localisation): static
+    public function setLocalisation(?string $localisation): static
     {
-        $this->Localisation = $Localisation;
-
+        $this->localisation = $localisation;
         return $this;
     }
 
-    /**
-     * @return Collection<int, Evenement>
-     */
+    // Evenements
     public function getEvenements(): Collection
     {
         return $this->evenements;
@@ -101,20 +64,16 @@ public function setAdresseExploitation(string $adresseExploitation): self
         if (!$this->evenements->contains($evenement)) {
             $this->evenements->add($evenement);
         }
-
         return $this;
     }
 
     public function removeEvenement(Evenement $evenement): static
     {
         $this->evenements->removeElement($evenement);
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Produit>
-     */
+    // Produits
     public function getProduits(): Collection
     {
         return $this->produits;
@@ -126,25 +85,20 @@ public function setAdresseExploitation(string $adresseExploitation): self
             $this->produits->add($produit);
             $produit->setAgriculteur($this);
         }
-
         return $this;
     }
 
     public function removeProduit(Produit $produit): static
     {
         if ($this->produits->removeElement($produit)) {
-            // set the owning side to null (unless already changed)
             if ($produit->getAgriculteur() === $this) {
                 $produit->setAgriculteur(null);
             }
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Ticket>
-     */
+    // Tickets
     public function getTickets(): Collection
     {
         return $this->tickets;
@@ -155,20 +109,16 @@ public function setAdresseExploitation(string $adresseExploitation): self
         if (!$this->tickets->contains($ticket)) {
             $this->tickets->add($ticket);
         }
-
         return $this;
     }
 
     public function removeTicket(Ticket $ticket): static
     {
         $this->tickets->removeElement($ticket);
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Discussion>
-     */
+    // Discussions
     public function getDiscussions(): Collection
     {
         return $this->discussions;
@@ -180,25 +130,20 @@ public function setAdresseExploitation(string $adresseExploitation): self
             $this->discussions->add($discussion);
             $discussion->setAgriculteur($this);
         }
-
         return $this;
     }
 
     public function removeDiscussion(Discussion $discussion): static
     {
         if ($this->discussions->removeElement($discussion)) {
-            // set the owning side to null (unless already changed)
             if ($discussion->getAgriculteur() === $this) {
                 $discussion->setAgriculteur(null);
             }
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Terrain>
-     */
+    // Terrains
     public function getTerrains(): Collection
     {
         return $this->terrains;
@@ -210,25 +155,20 @@ public function setAdresseExploitation(string $adresseExploitation): self
             $this->terrains->add($terrain);
             $terrain->setAgriculteur($this);
         }
-
         return $this;
     }
 
     public function removeTerrain(Terrain $terrain): static
     {
         if ($this->terrains->removeElement($terrain)) {
-            // set the owning side to null (unless already changed)
             if ($terrain->getAgriculteur() === $this) {
                 $terrain->setAgriculteur(null);
             }
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Reclamation>
-     */
+    // Reclamations
     public function getReclamations(): Collection
     {
         return $this->reclamations;
@@ -240,19 +180,16 @@ public function setAdresseExploitation(string $adresseExploitation): self
             $this->reclamations->add($reclamation);
             $reclamation->setAgriculteur($this);
         }
-
         return $this;
     }
 
     public function removeReclamation(Reclamation $reclamation): static
     {
         if ($this->reclamations->removeElement($reclamation)) {
-            // set the owning side to null (unless already changed)
             if ($reclamation->getAgriculteur() === $this) {
                 $reclamation->setAgriculteur(null);
             }
         }
-
         return $this;
     }
 }

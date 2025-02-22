@@ -3,35 +3,73 @@
 namespace App\Entity;
 
 use App\Repository\ExpertRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ExpertRepository::class)]
 class Expert extends Utilisateur
 {
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $domaineExpertise = null;
+    #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'expert', cascade: ['persist', 'remove'])]
+    private Collection $discussions;
+
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'expert', cascade: ['persist', 'remove'])]
+    private Collection $tickets;
 
     public function __construct()
     {
         parent::__construct();
-        $this->setRoles(['ROLE_EXPERT']);
-    }
-   
-
-    // Getters et setters pour domaineExpertise
-    public function getDomaineExpertise(): ?string
-    {
-        return $this->domaineExpertise;
+        $this->discussions = new ArrayCollection();
+        $this->tickets = new ArrayCollection();
     }
 
-    public function setDomaineExpertise(?string $domaineExpertise): self
+    // Discussions
+    public function getDiscussions(): Collection
     {
-        $this->domaineExpertise = $domaineExpertise;
+        return $this->discussions;
+    }
+
+    public function addDiscussion(Discussion $discussion): static
+    {
+        if (!$this->discussions->contains($discussion)) {
+            $this->discussions->add($discussion);
+            $discussion->setExpert($this);
+        }
         return $this;
     }
 
+    public function removeDiscussion(Discussion $discussion): static
+    {
+        if ($this->discussions->removeElement($discussion)) {
+            if ($discussion->getExpert() === $this) {
+                $discussion->setExpert(null);
+            }
+        }
+        return $this;
+    }
 
+    // Tickets
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
+    }
 
+    public function addTicket(Ticket $ticket): static
+    {
+        if (!$this->tickets->contains($ticket)) {
+            $this->tickets->add($ticket);
+            $ticket->setExpert($this);
+        }
+        return $this;
+    }
+
+    public function removeTicket(Ticket $ticket): static
+    {
+        if ($this->tickets->removeElement($ticket)) {
+            if ($ticket->getExpert() === $this) {
+                $ticket->setExpert(null);
+            }
+        }
+        return $this;
+    }
 }
-

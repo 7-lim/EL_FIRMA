@@ -14,37 +14,40 @@ class Produit
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: "string", length: 255)]
     private ?string $nomProduit = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[ORM\Column(type: "text", nullable: true)]
     private ?string $image = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: "integer")]
     private ?int $quantite = null;
 
-    #[ORM\Column]
-    private ?float $prix = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    private ?string $prix = null; // DECIMAL should be stored as string
 
-    #[ORM\ManyToOne(inversedBy: 'produits')]
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "produits")]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Fournisseur $fournisseur = null;
+    private ?Utilisateur $fournisseur = null;
 
-    #[ORM\ManyToOne(inversedBy: 'produits')]
-    private ?Agriculteur $agriculteur = null;
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Utilisateur $agriculteur = null;
 
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: "produits")]
     #[ORM\JoinColumn(nullable: false)]
     private ?Categorie $categorie = null;
-    
+
+    // Getters and Setters
+
     public function getId(): ?int
     {
         return $this->id;
     }
-
+    
     public function getNomProduit(): ?string
     {
         return $this->nomProduit;
@@ -60,8 +63,8 @@ class Produit
     {
         return $this->description;
     }
-
-    public function setDescription(string $description): static
+    
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
         return $this;
@@ -89,34 +92,34 @@ class Produit
         return $this;
     }
 
-    public function getPrix(): ?float
+    public function getPrix(): ?string
     {
         return $this->prix;
     }
 
-    public function setPrix(float $prix): static
+    public function setPrix(string $prix): static
     {
         $this->prix = $prix;
         return $this;
     }
 
-    public function getFournisseur(): ?Fournisseur
+    public function getFournisseur(): ?Utilisateur
     {
         return $this->fournisseur;
     }
 
-    public function setFournisseur(?Fournisseur $fournisseur): static
+    public function setFournisseur(?Utilisateur $fournisseur): static
     {
         $this->fournisseur = $fournisseur;
         return $this;
     }
 
-    public function getAgriculteur(): ?Agriculteur
+    public function getAgriculteur(): ?Utilisateur
     {
         return $this->agriculteur;
     }
 
-    public function setAgriculteur(?Agriculteur $agriculteur): static
+    public function setAgriculteur(?Utilisateur $agriculteur): static
     {
         $this->agriculteur = $agriculteur;
         return $this;
@@ -131,5 +134,10 @@ class Produit
     {
         $this->categorie = $categorie;
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->nomProduit;
     }
 }
