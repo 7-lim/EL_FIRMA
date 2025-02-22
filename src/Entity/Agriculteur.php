@@ -69,6 +69,20 @@ class Agriculteur extends Utilisateur
         return $this;
     }
 
+    private $adresseExploitation;
+
+    public function getAdresseExploitation(): ?string
+    {
+        return $this->adresseExploitation;
+    }
+
+    public function setAdresseExploitation(string $adresseExploitation): self
+    {
+        $this->adresseExploitation = $adresseExploitation;
+
+        return $this;
+    }
+
 
     /**
      * @return Collection<int, Produit>
