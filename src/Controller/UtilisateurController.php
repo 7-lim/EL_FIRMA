@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Controller;
-
 use App\Entity\Utilisateur;
 use App\Form\UtilisateurType;
 use App\Entity\Agriculteur;

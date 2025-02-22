@@ -2,23 +2,21 @@
 
 namespace App\Entity;
 
-use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-#[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\Entity(repositoryClass: 'App\Repository\UtilisateurRepository')]
+#[UniqueEntity(fields: ['email'], message: 'This email is already in use.')]
 #[ORM\InheritanceType("SINGLE_TABLE")]
 #[ORM\DiscriminatorColumn(name: "type", type: "string")]
 #[ORM\DiscriminatorMap([
-    'agriculteur' => Agriculteur::class,
-    'fournisseur' => Fournisseur::class,
-    'expert' => Expert::class,
-    'administrateur' => Administrateur::class,
+    'agriculteur' => 'App\Entity\Agriculteur',
+    'fournisseur' => 'App\Entity\Fournisseur',
+    'expert' => 'App\Entity\Expert',
+    'administrateur' => 'App\Entity\Administrateur',
 ])]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -26,105 +24,37 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180)]
+    #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    /**
-     * @var list<string> The user roles
-     */
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
     private ?string $password = null;
 
-    // Ajout des nouvelles propriétés
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 15, nullable: true)]
     private ?string $telephone = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $actif = true;
 
     public function __construct()
     {
-        $this->roles = ['ROLE_USER']; // Rôle par défaut
+        $this->roles = ['ROLE_USER']; // Default role
     }
 
-    // Méthodes pour les nouvelles propriétés
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-
-    public function setNom(?string $nom): static
-    {
-        $this->nom = $nom;
-        return $this;
-    }
-
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
-
-    public function setPrenom(?string $prenom): static
-    {
-        $this->prenom = $prenom;
-        return $this;
-    }
-
-    public function getTelephone(): ?string
-    {
-        return $this->telephone;
-    }
-
-    public function setTelephone(?string $telephone): static
-    {
-        $this->telephone = $telephone;
-        return $this;
-    }
-
-    // Méthodes existantes
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    private $type;
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    private $actif;
-
-    public function setActif(bool $actif): self
-    {
-        $this->actif = $actif;
-
-        return $this;
-    }
-
-    public function getActif(): bool
-    {
-        return $this->actif;
-
-    }
     public function getEmail(): ?string
     {
         return $this->email;
@@ -143,9 +73,7 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
 
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        $roles[] = 'ROLE_USER'; // garantit que chaque utilisateur a au moins ROLE_USER
-        return array_unique($roles);
+        return array_unique($this->roles);
     }
 
     public function setRoles(array $roles): static
@@ -167,7 +95,50 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
 
     public function eraseCredentials(): void
     {
-        // Si tu stockes des données sensibles, les effacer ici
-        // $this->plainPassword = null;
+        // Clear temporary sensitive data if needed
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): static
+    {
+        $this->nom = $nom;
+        return $this;
+    }
+
+    public function getPrenom(): ?string
+    {
+        return $this->prenom;
+    }
+
+    public function setPrenom(string $prenom): static
+    {
+        $this->prenom = $prenom;
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): static
+    {
+        $this->telephone = $telephone;
+        return $this;
+    }
+
+    public function isActif(): bool
+    {
+        return $this->actif;
+    }
+
+    public function setActif(bool $actif): static
+    {
+        $this->actif = $actif;
+        return $this;
     }
 }
