@@ -10,11 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: FournisseurRepository::class)]
 class Fournisseur extends Utilisateur
 {
-    #[ORM\Column(length: 55)]
-    private ?string $NomEntreprise = null;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $nomEntreprise = null;
 
-    #[ORM\Column(length: 55)]
-    private ?string $Id_fiscale = null;
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $idFiscale = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $categorieProduit = null;
 
     /**
      * @var Collection<int, Produit>
@@ -35,29 +38,28 @@ class Fournisseur extends Utilisateur
         $this->produits = new ArrayCollection();
         $this->Evenements = new ArrayCollection();
     }
-
+    // Getters et setters pour nomEntreprise
 
     public function getNomEntreprise(): ?string
     {
-        return $this->NomEntreprise;
+        return $this->nomEntreprise;
     }
 
-    public function setNomEntreprise(string $NomEntreprise): static
+    public function setNomEntreprise(?string $nom_entreprise): self
     {
-        $this->NomEntreprise = $NomEntreprise;
-
+        $this->nomEntreprise = $nom_entreprise;
         return $this;
     }
 
+    // Getters et setters pour idFiscale
     public function getIdFiscale(): ?string
     {
-        return $this->Id_fiscale;
+        return $this->idFiscale;
     }
 
-    public function setIdFiscale(string $Id_fiscale): static
+    public function setIdFiscale(?string $idFiscale): self
     {
-        $this->Id_fiscale = $Id_fiscale;
-
+        $this->idFiscale = $idFiscale;
         return $this;
     }
 
@@ -112,6 +114,17 @@ class Fournisseur extends Utilisateur
     {
         $this->Evenements->removeElement($evenement);
 
+        return $this;
+    }
+    // Getters et setters pour categorieProduit
+    public function getCategorieProduit(): ?string
+    {
+        return $this->categorieProduit;
+    }
+
+    public function setCategorieProduit(?string $categorieProduit): self
+    {
+        $this->categorieProduit = $categorieProduit;
         return $this;
     }
 }

@@ -136,10 +136,26 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
         $this->password = $password;
         return $this;
     }
+    // Dans Utilisateur.php
+        public function getType(): string
+        {
+            if (in_array('ROLE_FOURNISSEUR', $this->getRoles())) {
+                return 'fournisseur';
+            } elseif (in_array('ROLE_EXPERT', $this->getRoles())) {
+                return 'expert';
+            } elseif (in_array('ROLE_AGRICULTEUR', $this->getRoles())) {
+                return 'agriculteur';
+            } elseif (in_array('ROLE_ADMIN', $this->getRoles())) {
+                return 'administrateur';
+            }
+            return 'default'; // Fallback
+        }
 
     public function eraseCredentials(): void
     {
         // Si tu stockes des données sensibles, les effacer ici
         // $this->plainPassword = null;
     }
+   
+
 }

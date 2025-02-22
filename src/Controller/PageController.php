@@ -80,15 +80,28 @@ final class PageController extends AbstractController
         return $this->render('404.html.twig');
     }
 
-    #[Route('/dashboard', name: 'dashboard')]
-    public function dashboard(): Response
+    #[Route('/dashboardfrs', name: 'dashboardFrs')]
+    public function dashboardFrs(): Response
     {
         return $this->render('baseFournisseur.html.twig');
     }
 
-    // #[Route('/dbfrsevents', name: 'dashboard')]
+    // #[Route('/dbfrsevents', name: 'dashboardevents')]
     // public function dbFournisseurEvents(): Response
     // {
     //     return $this->render('dbFournisseurEvents.html.twig');
     // }
+    
+    #[Route('/dashboard', name: 'app_dashboard')]
+    public function dashboard(): Response
+    {
+        return $this->render('dashboardadmin.html.twig');
+    }
+    #[Route('/back', name: 'back')]
+    public function back(): Response
+    {
+        return $this->render('back.html.twig');
+    }
+    
+    
 }

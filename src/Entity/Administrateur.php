@@ -9,8 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AdministrateurRepository::class)]
 class Administrateur extends Utilisateur
-{
-    
+{   
     #[ORM\Column(type: "boolean")]
     private ?bool $actif = true;
 
@@ -28,6 +27,8 @@ class Administrateur extends Utilisateur
 
     public function __construct()
     {
+        parent::__construct();
+        $this->setRoles(['ROLE_ADMIN']);
         $this->evenements = new ArrayCollection();
         $this->reclamations = new ArrayCollection();
         parent::__construct();
