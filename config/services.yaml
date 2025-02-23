@@ -26,4 +26,8 @@ services:
     App\Services\QrCodeGenerator:
         arguments:
             $builder: '@Endroid\QrCode\Builder\Builder'
+
+    
+
+
     # please note that last definitions always *replace* previous ones

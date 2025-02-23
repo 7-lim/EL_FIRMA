@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Services\QrCodeGenerator;
 
 #[Route('/ticket')]
 final class TicketController extends AbstractController
@@ -30,13 +31,12 @@ final class TicketController extends AbstractController
     }
 
     #[Route('/new', name: 'app_ticket_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, QrCodeGenerator $qrCodeGenerator): Response
     {
         $ticket = new Ticket();
         $form = $this->createForm(TicketType::class, $ticket);
         $form->handleRequest($request);
 
-    
         if ($form->isSubmitted() && $form->isValid()) {
             $evenement = $ticket->getEvenement();
             $prix = $ticket->getPrix();
@@ -59,6 +59,11 @@ final class TicketController extends AbstractController
                 $newTicket = new Ticket();
                 $newTicket->setPrix($prix);
                 $newTicket->setEvenement($evenement);
+
+                // Generate QR code
+                $qrCodePath = $qrCodeGenerator->generate($newTicket);
+                $newTicket->setQrCode($qrCodePath);
+
                 $entityManager->persist($newTicket);
             }
     
@@ -91,12 +96,16 @@ final class TicketController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_ticket_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Ticket $ticket, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Ticket $ticket, EntityManagerInterface $entityManager, QrCodeGenerator $qrCodeGenerator): Response
     {
         $form = $this->createForm(TicketType::class, $ticket);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Generate QR code
+            $qrCodePath = $qrCodeGenerator->generate($ticket);
+            $ticket->setQrCode($qrCodePath);
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_ticket_index', [], Response::HTTP_SEE_OTHER);
@@ -111,7 +120,7 @@ final class TicketController extends AbstractController
     #[Route('/{id}', name: 'app_ticket_delete', methods: ['POST'])]
     public function delete(Request $request, Ticket $ticket, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$ticket->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$ticket->getId(), $request->request->get('_token'))) {
             $entityManager->remove($ticket);
             $entityManager->flush();
         }

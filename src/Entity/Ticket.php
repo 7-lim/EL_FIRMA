@@ -90,12 +90,12 @@ class Ticket
         return $this;
     }
 
-    public function getQrCode(): ?ResultInterface
+    public function getQrCode(): ?string
     {
         return $this->qrCode;
     }
 
-    public function setQrCode(?ResultInterface $qrCode): static
+    public function setQrCode(?string $qrCode): static
     {
         $this->qrCode = $qrCode;
 

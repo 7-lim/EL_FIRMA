@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Services\QrCodeGenerator;
 
 final class EvenementController extends AbstractController
 {
@@ -51,7 +52,7 @@ final class EvenementController extends AbstractController
     }
 
     #[Route('/{id<\d+>}', name: 'app_evenement_show', methods: ['GET', 'POST'])]
-    public function show(Request $request, EvenementRepository $evenementRepository, int $id, EntityManagerInterface $entityManager): Response
+    public function show(Request $request, EvenementRepository $evenementRepository, int $id, EntityManagerInterface $entityManager, QrCodeGenerator $qrCodeGenerator): Response
     {
         $evenement = $evenementRepository->find($id);
         if (!$evenement) {
@@ -74,6 +75,10 @@ final class EvenementController extends AbstractController
             $ticket->setEvenement($evenement);
             $ticket->setPrix($evenement->getPrix());
             
+            // Generate QR code
+            $qrCodePath = $qrCodeGenerator->generate($ticket);
+            $ticket->setQrCode($qrCodePath);
+
             // Assuming you have a setUser method in Ticket entity
             // if ($user instanceof \App\Entity\Agriculteur) {
             //     $ticket->setAgriculteur($user);

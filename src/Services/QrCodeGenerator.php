@@ -25,9 +25,9 @@ class QrCodeGenerator {
         $this->builder = $builder;
     }
 
-    public function generate(Ticket $ticket) {
+    public function generate(Ticket $ticket): string {
 
-        $path = '/public/assets/img/logoelfirma.png';
+        $path = 'C:/Users/Oumayma/ELFIRMA-1/public/assets/img/logoelfirma.png';
         $date = new \DateTime('now');
         $datestring = $date->format('d-m-Y ');
 
@@ -41,19 +41,20 @@ class QrCodeGenerator {
             size: 300,
             margin: 10,
             roundBlockSizeMode: RoundBlockSizeMode::Margin,
-            logoPath: __DIR__.$path,
+            logoPath: $path,
             logoResizeToWidth: 50,
             logoPunchoutBackground: true,
-            labelText: 'Voici  votre ticket créee avec succés. \n'.$datestring,
+            labelText: 'Voici  votre ticket crée avec succés. \n'.$datestring,
             labelFont: new OpenSans(20),
             labelAlignment: LabelAlignment::Center
         );
 
         $namePng = $ticket->getId().'.png';
         $result = $builder->build();
-        $result->saveToFile(__DIR__.'/public/assets/QrCode/'.$namePng);
+        $qrcodePath = 'C:/Users/Oumayma/ELFIRMA-1/public/assets/QrCode/'.$namePng;
+        $result->saveToFile($qrcodePath);
 
-        return $result;
+        return $qrcodePath;
       
 
         
