@@ -1,18 +1,79 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-success {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        .form-control {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <div class="container">
-        <h1>Créer un administrateur</h1>
+        <div class="form-container">
+            <h3 class="text-center"><i class="fa-solid fa-user-plus"></i> Créer un Administrateur</h3>
+            <hr>
 
-        {{ form_start(form) }}
-            {{ form_row(form.nom) }}
-            {{ form_row(form.prenom) }}
-            {{ form_row(form.email) }}
-            {{ form_row(form.plainPassword) }}
-            {{ form_row(form.telephone) }}
-            {{ form_row(form.domaineExpertise) }}
-            {{ form_row(form.roles) }}
-            <button type="submit" class="btn btn-success">Créer</button>
-        {{ form_end(form) }}
+            {{ form_start(form) }}
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa-solid fa-user"></i> Nom</label>
+                    {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le nom'}}) }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa-solid fa-user"></i> Prénom</label>
+                    {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le prénom'}}) }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa-solid fa-envelope"></i> Email</label>
+                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Entrez l\'email'}}) }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa-solid fa-lock"></i> Mot de Passe</label>
+                    {{ form_widget(form.plainPassword, {'attr': {'class': 'form-control', 'placeholder': 'Entrez un mot de passe'}}) }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa-solid fa-phone"></i> Téléphone</label>
+                    {{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le numéro de téléphone'}}) }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa-solid fa-briefcase"></i> Domaine d'Expertise</label>
+                    {{ form_widget(form.domaineExpertise, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Informatique, Finances...'}}) }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa-solid fa-user-tag"></i> Rôle</label>
+                    {{ form_widget(form.roles, {'attr': {'class': 'form-select'}}) }}
+                </div>
+
+                <button type="submit" class="btn btn-success"><i class="fa-solid fa-user-check"></i> Créer l'Administrateur</button>
+            {{ form_end(form) }}
+        </div>
     </div>
 {% endblock %}

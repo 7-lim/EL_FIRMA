@@ -1,6 +1,14 @@
 security:
+
     password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        App\Entity\Utilisateur: 'auto'
+        App\Entity\Administrateur: 'auto'
+        App\Entity\Fournisseur: 'auto' # 🔹 Add this line to fix the issue
+
+
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_ADMIN, ROLE_USER]
+        ROLE_USER: [ROLE_ADMIN]
 
     providers:
         app_user_provider:
@@ -21,9 +29,17 @@ security:
                 target: app_login
             remember_me:
                 secret: '%kernel.secret%'
-                lifetime: 604800 # 1 semaine
+                lifetime: 604800 # 1 week
                 path: /
 
     access_control:
         - { path: ^/dashboard, roles: ROLE_ADMIN }
+        - { path: ^/terrain_list, roles: ROLE_USER }
         - { path: ^/home, roles: ROLE_USER }
+        - { path: ^/login, roles: ROLE_USER }
+        - { path: ^/login, roles: ROLE_ADMIN }
+
+        - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+
+
+
