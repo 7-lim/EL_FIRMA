@@ -19,6 +19,11 @@ services:
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Kernel.php'
+        
+
 
     # add more service definitions when explicit configuration is needed
+    App\Services\QrCodeGenerator:
+        arguments:
+            $builder: '@Endroid\QrCode\Builder\Builder'
     # please note that last definitions always *replace* previous ones

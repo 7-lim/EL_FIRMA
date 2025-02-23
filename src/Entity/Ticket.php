@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TicketRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Endroid\QrCode\Writer\Result\ResultInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -31,6 +32,9 @@ class Ticket
     #[ORM\ManyToOne(targetEntity: Evenement::class, inversedBy: 'tickets')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')] // Add referential integrity
     private ?Evenement $evenement = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $qrCode = null;
 
     public function getId(): ?int
     {
@@ -82,6 +86,18 @@ class Ticket
     public function setEvenement(?Evenement $evenement): self
     {
         $this->evenement = $evenement;
+
+        return $this;
+    }
+
+    public function getQrCode(): ?ResultInterface
+    {
+        return $this->qrCode;
+    }
+
+    public function setQrCode(?ResultInterface $qrCode): static
+    {
+        $this->qrCode = $qrCode;
 
         return $this;
     }

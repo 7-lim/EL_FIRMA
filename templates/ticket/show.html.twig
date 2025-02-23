@@ -44,6 +44,16 @@
                             {% endif %}
                         </td>
                     </tr>
+                    <tr>
+                        <th>QR Code</th>
+                        <td>
+                            {% if ticket.qrCode %}
+                                <img src="{{ asset(ticket.qrCode) }}" alt="QR Code">
+                            {% else %}
+                                <span class="text-danger">QR Code non disponible</span>
+                            {% endif %}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <div class="d-flex justify-content-between mt-4">

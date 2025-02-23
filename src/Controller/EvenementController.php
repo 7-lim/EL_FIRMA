@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 final class EvenementController extends AbstractController
 {
@@ -59,9 +59,10 @@ final class EvenementController extends AbstractController
         }
 
         if ($request->isMethod('POST')) {
-            $user = $this->getUser();
+            // $user = $this->getUser();
+            $user = 1;
             if (!$user) {
-                throw $this->createAccessDeniedException('You must be logged in to participate in an event');
+                throw $this->createAccessDeniedException('Vous devez être connecté pour participer à un événement');
             }
 
             if ($evenement->getNombreDePlaces() <= 0) {
@@ -72,17 +73,16 @@ final class EvenementController extends AbstractController
             $ticket = new Ticket();
             $ticket->setEvenement($evenement);
             $ticket->setPrix($evenement->getPrix());
-            if (!$user instanceof \App\Entity\Agriculteur) {
-                throw $this->createAccessDeniedException('Vous devez être connecté en tant qu\agriculteur pour participer à un événement');
-            }
-            $ticket->setAgriculteur($user); // Assuming you have a setUser method in Ticket entity
-            if ($user instanceof \App\Entity\Agriculteur) {
-                $ticket->setAgriculteur($user);
-            } elseif ($user instanceof \App\Entity\Expert) {
-                $ticket->setExpert($user);
-            } else {
-                throw $this->createAccessDeniedException('Vous devez être connecté en tant qu\expert pour participer à un événement.');
-            }
+            
+            // Assuming you have a setUser method in Ticket entity
+            // if ($user instanceof \App\Entity\Agriculteur) {
+            //     $ticket->setAgriculteur($user);
+            // } elseif ($user instanceof \App\Entity\Expert) {
+            //     $ticket->setExpert($user);
+            // } else {
+            //     throw $this->createAccessDeniedException('Vous devez être connecté en tant qu\'agriculteur ou expert pour participer à un événement.');
+            // }
+
             $evenement->setNombreDePlaces($evenement->getNombreDePlaces() - 1);
 
             $entityManager->persist($ticket);

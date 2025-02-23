@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Ticket;
-use App\Entity\Evenement;
 use App\Form\TicketType;
 use App\Repository\TicketRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,43 +36,47 @@ final class TicketController extends AbstractController
         $form = $this->createForm(TicketType::class, $ticket);
         $form->handleRequest($request);
 
+    
         if ($form->isSubmitted() && $form->isValid()) {
             $evenement = $ticket->getEvenement();
-            if (!$evenement) {
-                throw $this->createNotFoundException('The event does not exist');
-            }
             $prix = $ticket->getPrix();
             $nombreDePlaces = $evenement->getNombreDePlaces();
-
+    
+            // Verify event exists
+            if (!$evenement) {
+                $this->addFlash('error', 'Événement invalide');
+                return $this->redirectToRoute('app_ticket_new');
+            }
+    
             // Validate places
             if ($nombreDePlaces <= 0) {
                 $this->addFlash('error', 'Nombre de places insuffisant');
                 return $this->redirectToRoute('app_ticket_new');
             }
-
-            // // Create tickets
-            // for ($i = 0; $i < $nombreDePlaces; $i++) {
-            //     $newTicket = new Ticket();
-            //     $newTicket->setPrix($prix);
-            //     $newTicket->setEvenement($evenement);
-            //     $entityManager->persist($newTicket);
-            // } 
-
+    
+            // Create tickets
+            for ($i = 0; $i < $nombreDePlaces; $i++) {
+                $newTicket = new Ticket();
+                $newTicket->setPrix($prix);
+                $newTicket->setEvenement($evenement);
+                $entityManager->persist($newTicket);
+            }
+    
             try {
                 $entityManager->flush();
                 $this->addFlash('success', "$nombreDePlaces tickets créés avec succès!");
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Erreur lors de la création: ' . $e->getMessage());
             }
-
+    
             return $this->redirectToRoute('app_ticket_index');
         }
-
+    
         // Handle form errors
         if ($form->isSubmitted() && !$form->isValid()) {
             $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire');
         }
-
+    
         return $this->render('ticket/new.html.twig', [
             'form' => $form->createView(),
         ]);
@@ -109,10 +112,6 @@ final class TicketController extends AbstractController
     public function delete(Request $request, Ticket $ticket, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$ticket->getId(), $request->getPayload()->getString('_token'))) {
-            $evenement = $ticket->getEvenement();
-            if ($evenement) {
-                $evenement->setNombreDePlaces($evenement->getNombreDePlaces() + 1);
-            }
             $entityManager->remove($ticket);
             $entityManager->flush();
         }
