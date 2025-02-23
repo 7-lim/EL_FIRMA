@@ -59,7 +59,7 @@ final class EvenementController extends AbstractController
         }
 
         if ($request->isMethod('POST')) {
-            $user = 1;     //$this->getUser();
+            $user = $this->getUser();
             if (!$user) {
                 throw $this->createAccessDeniedException('You must be logged in to participate in an event');
             }
@@ -72,8 +72,17 @@ final class EvenementController extends AbstractController
             $ticket = new Ticket();
             $ticket->setEvenement($evenement);
             $ticket->setPrix($evenement->getPrix());
-            //$ticket->setUser($user); // Assuming you have a setUser method in Ticket entity
-
+            if (!$user instanceof \App\Entity\Agriculteur) {
+                throw $this->createAccessDeniedException('Vous devez être connecté en tant qu\agriculteur pour participer à un événement');
+            }
+            $ticket->setAgriculteur($user); // Assuming you have a setUser method in Ticket entity
+            if ($user instanceof \App\Entity\Agriculteur) {
+                $ticket->setAgriculteur($user);
+            } elseif ($user instanceof \App\Entity\Expert) {
+                $ticket->setExpert($user);
+            } else {
+                throw $this->createAccessDeniedException('Vous devez être connecté en tant qu\expert pour participer à un événement.');
+            }
             $evenement->setNombreDePlaces($evenement->getNombreDePlaces() - 1);
 
             $entityManager->persist($ticket);
