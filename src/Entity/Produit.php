@@ -20,9 +20,9 @@ class Produit
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
-    private float $prix;
-
+    #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
+    private string $prix;
+    
     #[ORM\Column(type: 'integer')]
     private int $stock;
 

@@ -5,37 +5,46 @@ namespace App\Entity;
 use App\Repository\ReclamationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Expert;
+use App\Entity\Agriculteur;
+use App\Entity\Administrateur;
 
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 class Reclamation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    private ?string $Objet = null;
+    private ?string $objet = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Description = null;
-
+    private ?string $description = null;
+    
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $DateSoumission = null;
+    private ?\DateTimeInterface $dateSoumission = null;
 
     #[ORM\Column(length: 55)]
     private ?string $statut = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $DateTraitement = null;
+    private ?\DateTimeInterface $dateTraitement = null;
+
+    #[ORM\ManyToOne(targetEntity: Expert::class, inversedBy: "reclamations")]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Expert $expert = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $ReponseAdmin = null;
+    private ?string $reponseAdmin = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reclamations')]
+    #[ORM\ManyToOne(targetEntity: Agriculteur::class, inversedBy: "reclamations")]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Agriculteur $agriculteur = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reclamations')]
+    #[ORM\ManyToOne(targetEntity: Administrateur::class, inversedBy: "reclamations")]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Administrateur $administrateur = null;
 
     public function getId(): ?int
@@ -45,37 +54,34 @@ class Reclamation
 
     public function getObjet(): ?string
     {
-        return $this->Objet;
+        return $this->objet;
     }
 
-    public function setObjet(string $Objet): static
+    public function setObjet(string $objet): static
     {
-        $this->Objet = $Objet;
-
+        $this->objet = $objet;
         return $this;
     }
 
     public function getDescription(): ?string
     {
-        return $this->Description;
+        return $this->description;
     }
 
-    public function setDescription(string $Description): static
+    public function setDescription(string $description): static
     {
-        $this->Description = $Description;
-
+        $this->description = $description;
         return $this;
     }
 
     public function getDateSoumission(): ?\DateTimeInterface
     {
-        return $this->DateSoumission;
+        return $this->dateSoumission;
     }
 
-    public function setDateSoumission(\DateTimeInterface $DateSoumission): static
+    public function setDateSoumission(\DateTimeInterface $dateSoumission): static
     {
-        $this->DateSoumission = $DateSoumission;
-
+        $this->dateSoumission = $dateSoumission;
         return $this;
     }
 
@@ -87,31 +93,28 @@ class Reclamation
     public function setStatut(string $statut): static
     {
         $this->statut = $statut;
-
         return $this;
     }
 
     public function getDateTraitement(): ?\DateTimeInterface
     {
-        return $this->DateTraitement;
+        return $this->dateTraitement;
     }
 
-    public function setDateTraitement(?\DateTimeInterface $DateTraitement): static
+    public function setDateTraitement(?\DateTimeInterface $dateTraitement): static
     {
-        $this->DateTraitement = $DateTraitement;
-
+        $this->dateTraitement = $dateTraitement;
         return $this;
     }
 
     public function getReponseAdmin(): ?string
     {
-        return $this->ReponseAdmin;
+        return $this->reponseAdmin;
     }
 
-    public function setReponseAdmin(?string $ReponseAdmin): static
+    public function setReponseAdmin(?string $reponseAdmin): static
     {
-        $this->ReponseAdmin = $ReponseAdmin;
-
+        $this->reponseAdmin = $reponseAdmin;
         return $this;
     }
 
@@ -123,7 +126,6 @@ class Reclamation
     public function setAgriculteur(?Agriculteur $agriculteur): static
     {
         $this->agriculteur = $agriculteur;
-
         return $this;
     }
 
@@ -135,7 +137,17 @@ class Reclamation
     public function setAdministrateur(?Administrateur $administrateur): static
     {
         $this->administrateur = $administrateur;
+        return $this;
+    }
 
+    public function getExpert(): ?Expert
+    {
+        return $this->expert;
+    }
+
+    public function setExpert(?Expert $expert): static
+    {
+        $this->expert = $expert;
         return $this;
     }
 }

@@ -27,8 +27,7 @@ class Expert extends Utilisateur
     
     #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: "expert")]
     private Collection $reclamations;
-    
-    /**
+        /**
      * @var Collection<int, Discussion>
      */
     #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'expert', cascade: ['persist', 'remove'])]
