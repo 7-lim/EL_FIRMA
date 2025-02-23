@@ -2,51 +2,27 @@
 
 namespace App\Entity;
 
-use App\Repository\ReclamationRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Expert;
-use App\Entity\Agriculteur;
-use App\Entity\Administrateur;
 
-#[ORM\Entity(repositoryClass: ReclamationRepository::class)]
+#[ORM\Entity]
 class Reclamation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    // Example fields...
+    #[ORM\Column(length: 255)]
     private ?string $objet = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $description = null;
-    
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $dateSoumission = null;
-
-    #[ORM\Column(length: 55)]
-    private ?string $statut = null;
-
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateTraitement = null;
-
-    #[ORM\ManyToOne(targetEntity: Expert::class, inversedBy: "reclamations")]
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'reclamations')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Expert $expert = null;
+    private ?Utilisateur $utilisateur = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $reponseAdmin = null;
+    
 
-    #[ORM\ManyToOne(targetEntity: Agriculteur::class, inversedBy: "reclamations")]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Agriculteur $agriculteur = null;
-
-    #[ORM\ManyToOne(targetEntity: Administrateur::class, inversedBy: "reclamations")]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Administrateur $administrateur = null;
-
+    // Getters & Setters...
     public function getId(): ?int
     {
         return $this->id;
@@ -57,97 +33,20 @@ class Reclamation
         return $this->objet;
     }
 
-    public function setObjet(string $objet): static
+    public function setObjet(?string $objet): self
     {
         $this->objet = $objet;
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getUtilisateur(): ?Utilisateur
     {
-        return $this->description;
+        return $this->utilisateur;
     }
 
-    public function setDescription(string $description): static
+    public function setUtilisateur(?Utilisateur $utilisateur): self
     {
-        $this->description = $description;
-        return $this;
-    }
-
-    public function getDateSoumission(): ?\DateTimeInterface
-    {
-        return $this->dateSoumission;
-    }
-
-    public function setDateSoumission(\DateTimeInterface $dateSoumission): static
-    {
-        $this->dateSoumission = $dateSoumission;
-        return $this;
-    }
-
-    public function getStatut(): ?string
-    {
-        return $this->statut;
-    }
-
-    public function setStatut(string $statut): static
-    {
-        $this->statut = $statut;
-        return $this;
-    }
-
-    public function getDateTraitement(): ?\DateTimeInterface
-    {
-        return $this->dateTraitement;
-    }
-
-    public function setDateTraitement(?\DateTimeInterface $dateTraitement): static
-    {
-        $this->dateTraitement = $dateTraitement;
-        return $this;
-    }
-
-    public function getReponseAdmin(): ?string
-    {
-        return $this->reponseAdmin;
-    }
-
-    public function setReponseAdmin(?string $reponseAdmin): static
-    {
-        $this->reponseAdmin = $reponseAdmin;
-        return $this;
-    }
-
-    public function getAgriculteur(): ?Agriculteur
-    {
-        return $this->agriculteur;
-    }
-
-    public function setAgriculteur(?Agriculteur $agriculteur): static
-    {
-        $this->agriculteur = $agriculteur;
-        return $this;
-    }
-
-    public function getAdministrateur(): ?Administrateur
-    {
-        return $this->administrateur;
-    }
-
-    public function setAdministrateur(?Administrateur $administrateur): static
-    {
-        $this->administrateur = $administrateur;
-        return $this;
-    }
-
-    public function getExpert(): ?Expert
-    {
-        return $this->expert;
-    }
-
-    public function setExpert(?Expert $expert): static
-    {
-        $this->expert = $expert;
+        $this->utilisateur = $utilisateur;
         return $this;
     }
 }

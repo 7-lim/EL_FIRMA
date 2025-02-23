@@ -2,53 +2,63 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: 'App\Repository\UtilisateurRepository')]
-#[UniqueEntity(fields: ['email'], message: 'This email is already in use.')]
-#[ORM\InheritanceType("SINGLE_TABLE")]
-#[ORM\DiscriminatorColumn(name: "type", type: "string")]
-#[ORM\DiscriminatorMap([
-    'agriculteur' => 'App\Entity\Agriculteur',
-    'fournisseur' => 'App\Entity\Fournisseur',
-    'expert' => 'App\Entity\Expert',
-    'administrateur' => 'App\Entity\Administrateur',
-])]
+#[ORM\MappedSuperclass]
 abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    protected ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    private ?string $email = null;
+    protected ?string $email = null;
 
     #[ORM\Column]
-    private array $roles = [];
+    protected array $roles = [];
 
     #[ORM\Column]
-    private ?string $password = null;
+    protected ?string $password = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $nom = null;
+    #[ORM\Column(length: 50)]
+    protected ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $prenom = null;
+    #[ORM\Column(length: 50)]
+    protected ?string $prenom = null;
 
-    #[ORM\Column(length: 15, nullable: true)]
-    private ?string $telephone = null;
+    #[ORM\Column(length: 20, nullable: true)]
+    protected ?string $telephone = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private bool $actif = true;
+    #[ORM\Column(type: 'boolean')]
+    protected bool $actif = true;
 
-    public function __construct()
-    {
-        $this->roles = ['ROLE_USER']; // Default role
-    }
+
+
+    /**
+     *  Example: A user can have multiple Reclamations
+     *  -> "mappedBy" must match the property in Reclamation (e.g. $utilisateur).
+     *  -> "cascade" allows automatic persistence/removal of child entities.
+     */
+    #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
+    protected Collection $reclamations;
+
+    /**
+     *  Example: A user can have multiple Evenements
+     *  -> "mappedBy" must match the property in Evenement (e.g. $utilisateur).
+     */
+    #[ORM\OneToMany(targetEntity: Evenement::class, mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
+    protected Collection $evenements;
+
+    /**
+     *  Example: A user can have multiple Terrains
+     *  -> "mappedBy" must match the property in Terrain (e.g. $utilisateur).
+     */
+    #[ORM\OneToMany(targetEntity: Terrain::class, mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
+    protected Collection $terrains;
 
     public function getId(): ?int
     {
@@ -60,23 +70,26 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(string $email): self
     {
         $this->email = $email;
         return $this;
     }
 
-    public function getUserIdentifier(): string
-    {
-        return (string) $this->email;
-    }
-
+    /**
+     * By default, all users will have ROLE_USER, unless overridden by child classes.
+     */
     public function getRoles(): array
     {
-        return array_unique($this->roles);
+        $roles = $this->roles;
+        // Guarantee minimum role
+        if (!in_array('ROLE_USER', $roles, true)) {
+            $roles[] = 'ROLE_USER';
+        }
+        return array_unique($roles);
     }
 
-    public function setRoles(array $roles): static
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
         return $this;
@@ -87,15 +100,10 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
         return $this->password;
     }
 
-    public function setPassword(string $password): static
+    public function setPassword(string $password): self
     {
         $this->password = $password;
         return $this;
-    }
-
-    public function eraseCredentials(): void
-    {
-        // Clear temporary sensitive data if needed
     }
 
     public function getNom(): ?string
@@ -103,7 +111,7 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
         return $this->nom;
     }
 
-    public function setNom(string $nom): static
+    public function setNom(string $nom): self
     {
         $this->nom = $nom;
         return $this;
@@ -114,7 +122,7 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
         return $this->prenom;
     }
 
-    public function setPrenom(string $prenom): static
+    public function setPrenom(string $prenom): self
     {
         $this->prenom = $prenom;
         return $this;
@@ -125,7 +133,7 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
         return $this->telephone;
     }
 
-    public function setTelephone(?string $telephone): static
+    public function setTelephone(?string $telephone): self
     {
         $this->telephone = $telephone;
         return $this;
@@ -136,9 +144,19 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
         return $this->actif;
     }
 
-    public function setActif(bool $actif): static
+    public function setActif(bool $actif): self
     {
         $this->actif = $actif;
         return $this;
+    }
+
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary sensitive data, clear it here
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
     }
 }

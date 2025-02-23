@@ -15,22 +15,26 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
-    {
-        // Création du formulaire
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $passwordHasher,
+        EntityManagerInterface $entityManager
+    ): Response {
+        // Create the registration form
         $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
 
-        // Vérification du formulaire
+        // Handle form submission
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupération du type d'utilisateur
+            // Get the selected user type
             $userType = $form->get('user_type')->getData();
 
-            // Création de l'utilisateur selon son type
+            // Create the user based on the selected type
             if ($userType === 'agriculteur') {
                 $user = new Agriculteur();
             } elseif ($userType === 'fournisseur') {
                 $user = new Fournisseur();
+                // Set additional fields for Fournisseur
                 $user->setNomEntreprise($form->get('nomEntreprise')->getData());
                 $user->setIdFiscale($form->get('idFiscale')->getData());
                 $user->setCategorieProduit($form->get('categorieProduit')->getData());
@@ -38,29 +42,27 @@ class RegistrationController extends AbstractController
                 throw new \Exception('Type d\'utilisateur invalide');
             }
 
-            // Assignation des données communes
+            // Set common fields
             $user->setEmail($form->get('email')->getData());
             $user->setNom($form->get('nom')->getData());
             $user->setPrenom($form->get('prenom')->getData());
             $user->setTelephone($form->get('telephone')->getData());
 
-            // Hash du mot de passe
+            // Hash the password
             $hashedPassword = $passwordHasher->hashPassword($user, $form->get('plainPassword')->getData());
             $user->setPassword($hashedPassword);
 
-            // Persistance et enregistrement en base de données
+            // Save the user to the database
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // Redirection après l'inscription
+            // Redirect to the login page after successful registration
             return $this->redirectToRoute('app_login');
         }
 
-        // Rendu du formulaire
+        // Render the registration form
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
     }
-
-    
 }

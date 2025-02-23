@@ -16,17 +16,20 @@ class Agriculteur extends Utilisateur
     #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'agriculteurs')]
     private Collection $evenements;
 
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: "agriculteur")]
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'agriculteur')]
     private Collection $produits;
-    
 
-    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: "agriculteur")]
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'agriculteur')]
     private Collection $tickets;
-    
+
     #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
     private Collection $discussions;
-    private $adresseExploitation;
 
+    /**
+     * Optionally stored in the database if you add a @ORM\Column for it
+     */
+    // #[ORM\Column(length: 255, nullable: true)]
+    private ?string $adresseExploitation = null;
 
     #[ORM\OneToMany(targetEntity: Terrain::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
     private Collection $terrains;
@@ -37,6 +40,7 @@ class Agriculteur extends Utilisateur
     public function __construct()
     {
         parent::__construct();
+
         $this->evenements = new ArrayCollection();
         $this->produits = new ArrayCollection();
         $this->tickets = new ArrayCollection();
@@ -45,18 +49,24 @@ class Agriculteur extends Utilisateur
         $this->reclamations = new ArrayCollection();
     }
 
+    // ──────────────────────────
+    // AdresseExploitation (Optional DB)
+    // ──────────────────────────
 
-
-    public function setAdresseExploitation($adresseExploitation): self
+    public function setAdresseExploitation(?string $adresseExploitation): self
     {
         $this->adresseExploitation = $adresseExploitation;
         return $this;
     }
 
-    public function getAdresseExploitation()
+    public function getAdresseExploitation(): ?string
     {
         return $this->adresseExploitation;
     }
+
+    // ──────────────────────────
+    // Localisation
+    // ──────────────────────────
 
     public function getLocalisation(): ?string
     {
@@ -69,33 +79,41 @@ class Agriculteur extends Utilisateur
         return $this;
     }
 
-    // Evenements
+    // ──────────────────────────
+    // Evenements (ManyToMany)
+    // ──────────────────────────
+
     public function getEvenements(): Collection
     {
         return $this->evenements;
     }
 
-    public function addEvenement(Evenement $evenement): static
+    public function addEvenement(Evenement $evenement): self
     {
         if (!$this->evenements->contains($evenement)) {
             $this->evenements->add($evenement);
+            // If you need a bidirectional link, you'd set $evenement->addAgriculteur($this) as well
         }
         return $this;
     }
 
-    public function removeEvenement(Evenement $evenement): static
+    public function removeEvenement(Evenement $evenement): self
     {
         $this->evenements->removeElement($evenement);
+        // If you need to remove the bidirectional link, call $evenement->removeAgriculteur($this)
         return $this;
     }
 
-    // Produits
+    // ──────────────────────────
+    // Produits (OneToMany)
+    // ──────────────────────────
+
     public function getProduits(): Collection
     {
         return $this->produits;
     }
 
-    public function addProduit(Produit $produit): static
+    public function addProduit(Produit $produit): self
     {
         if (!$this->produits->contains($produit)) {
             $this->produits->add($produit);
@@ -104,7 +122,7 @@ class Agriculteur extends Utilisateur
         return $this;
     }
 
-    public function removeProduit(Produit $produit): static
+    public function removeProduit(Produit $produit): self
     {
         if ($this->produits->removeElement($produit)) {
             if ($produit->getAgriculteur() === $this) {
@@ -114,27 +132,38 @@ class Agriculteur extends Utilisateur
         return $this;
     }
 
-    // Tickets
+    // ──────────────────────────
+    // Tickets (OneToMany)
+    // ──────────────────────────
+
     public function getTickets(): Collection
     {
         return $this->tickets;
     }
 
-    public function addTicket(Ticket $ticket): static
+    public function addTicket(Ticket $ticket): self
     {
         if (!$this->tickets->contains($ticket)) {
             $this->tickets->add($ticket);
+            $ticket->setAgriculteur($this);
         }
         return $this;
     }
 
-    public function removeTicket(Ticket $ticket): static
+    public function removeTicket(Ticket $ticket): self
     {
-        $this->tickets->removeElement($ticket);
+        if ($this->tickets->removeElement($ticket)) {
+            if ($ticket->getAgriculteur() === $this) {
+                $ticket->setAgriculteur(null);
+            }
+        }
         return $this;
     }
 
-    // Discussions
+    // ──────────────────────────
+    // Discussions (OneToMany)
+    // ──────────────────────────
+
     public function getDiscussions(): Collection
     {
         return $this->discussions;
@@ -159,7 +188,10 @@ class Agriculteur extends Utilisateur
         return $this;
     }
 
-    // Terrains
+    // ──────────────────────────
+    // Terrains (OneToMany)
+    // ──────────────────────────
+
     public function getTerrains(): Collection
     {
         return $this->terrains;
@@ -184,28 +216,14 @@ class Agriculteur extends Utilisateur
         return $this;
     }
 
-    // Reclamations
+    // ──────────────────────────
+    // Reclamations (OneToMany)
+    // ──────────────────────────
+
     public function getReclamations(): Collection
     {
         return $this->reclamations;
     }
 
-    public function addReclamation(Reclamation $reclamation): static
-    {
-        if (!$this->reclamations->contains($reclamation)) {
-            $this->reclamations->add($reclamation);
-            $reclamation->setAgriculteur($this);
-        }
-        return $this;
-    }
 
-    public function removeReclamation(Reclamation $reclamation): static
-    {
-        if ($this->reclamations->removeElement($reclamation)) {
-            if ($reclamation->getAgriculteur() === $this) {
-                $reclamation->setAgriculteur(null);
-            }
-        }
-        return $this;
-    }
 }
