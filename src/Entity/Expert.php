@@ -2,71 +2,48 @@
 
 namespace App\Entity;
 
+use App\Repository\ExpertRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\Repository\ExpertRepository;
 
 #[ORM\Entity(repositoryClass: ExpertRepository::class)]
 class Expert extends Utilisateur
 {
-    #[ORM\Column(length: 255, nullable: false)]
-    #[Assert\NotBlank(message: "Le domaine d'expertise est requis.")]
-    #[Assert\Length(
-        max: 255,
-        maxMessage: "Le domaine d'expertise ne doit pas dépasser {{ limit }} caractères."
-    )]
-    private ?string $domaineExpertise = null;
+
+    #[ORM\Column(length: 55)]
+    private ?string $DomaineExpertise = null;
 
     /**
-     * @var Collection<int, Evenement>
-     */
-    #[ORM\ManyToMany(targetEntity: Evenement::class, mappedBy: "experts")]
-    private Collection $evenements;
-    
-    #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: "expert")]
-    private Collection $reclamations;
-        /**
      * @var Collection<int, Discussion>
      */
-    #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'expert', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'expert')]
     private Collection $discussions;
 
     /**
-     * @var Collection<int, Reclamation>
+     * @var Collection<int, Ticket>
      */
-
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'expert')]
+    private Collection $tickets;
 
     public function __construct()
     {
-        parent::__construct();
-        $this->evenements = new ArrayCollection();
         $this->discussions = new ArrayCollection();
-        $this->reclamations = new ArrayCollection();
+        $this->tickets = new ArrayCollection();
     }
+
 
     public function getDomaineExpertise(): ?string
     {
-        return $this->domaineExpertise;
+        return $this->DomaineExpertise;
     }
 
-    public function setDomaineExpertise(string $domaineExpertise): static
+    public function setDomaineExpertise(string $DomaineExpertise): static
     {
-        $this->domaineExpertise = $domaineExpertise;
+        $this->DomaineExpertise = $DomaineExpertise;
 
         return $this;
     }
-
-    /**
-     * @return Collection<int, Evenement>
-     */
-    public function getEvenements(): Collection
-    {
-        return $this->evenements;
-    }
-
-
 
     /**
      * @return Collection<int, Discussion>
@@ -89,6 +66,7 @@ class Expert extends Utilisateur
     public function removeDiscussion(Discussion $discussion): static
     {
         if ($this->discussions->removeElement($discussion)) {
+            // set the owning side to null (unless already changed)
             if ($discussion->getExpert() === $this) {
                 $discussion->setExpert(null);
             }
@@ -98,13 +76,32 @@ class Expert extends Utilisateur
     }
 
     /**
-     * @return Collection<int, Reclamation>
+     * @return Collection<int, Ticket>
      */
-    public function getReclamations(): Collection
+    public function getTickets(): Collection
     {
-        return $this->reclamations;
+        return $this->tickets;
     }
 
-   
+    public function addTicket(Ticket $ticket): static
+    {
+        if (!$this->tickets->contains($ticket)) {
+            $this->tickets->add($ticket);
+            $ticket->setExpert($this);
+        }
 
+        return $this;
+    }
+
+    public function removeTicket(Ticket $ticket): static
+    {
+        if ($this->tickets->removeElement($ticket)) {
+            // set the owning side to null (unless already changed)
+            if ($ticket->getExpert() === $this) {
+                $ticket->setExpert(null);
+            }
+        }
+
+        return $this;
+    }
 }

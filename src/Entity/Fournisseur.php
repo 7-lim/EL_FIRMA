@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Repository\FournisseurRepository; // Ensure this class exists in the specified namespace
+use App\Repository\FournisseurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,81 +10,58 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: FournisseurRepository::class)]
 class Fournisseur extends Utilisateur
 {
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $entreprise = null;
+    #[ORM\Column(length: 55)]
+    private ?string $NomEntreprise = null;
 
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: "fournisseur")]
+    #[ORM\Column(length: 55)]
+    private ?string $Id_fiscale = null;
+
+    /**
+     * @var Collection<int, Produit>
+     */
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'Fournisseur', orphanRemoval: true)]
     private Collection $produits;
-    
+
+    /**
+     * @var Collection<int, Evenement>
+     */
     #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'fournisseurs')]
-    private Collection $evenements;
-    private $nomEntreprise;
-
-    private $idFiscale;
-
-    public function getIdFiscale(): ?string
-    {       
-        return $this->idFiscale;
-            
-
-
-       }
-
-       private $categorieProduit;
-
-    // existing properties and methods
-
-    public function setCategorieProduit($categorieProduit): self
-    {
-        $this->categorieProduit = $categorieProduit;
-        return $this;
-    }
-
-    public function getCategorieProduit(): ?string
-    {
-        return $this->categorieProduit; 
-    }
-        
-    
-
-        public function setIdFiscale(string $idFiscale): self
-    {
-        $this->idFiscale = $idFiscale;
-        return $this;
-    }
-
-    public function setNomEntreprise(string $nomEntreprise): self
-    {
-        $this->nomEntreprise = $nomEntreprise;
-        return $this;
-    }
-
-    public function getNomEntreprise(): ?string
-    {
-        return $this->nomEntreprise;
-    }
-
+    private Collection $Evenements;
 
     public function __construct()
     {
-        parent::__construct();
         $this->produits = new ArrayCollection();
-        $this->evenements = new ArrayCollection();
+        $this->Evenements = new ArrayCollection();
     }
 
-    // Entreprise
-    public function getEntreprise(): ?string
+
+    public function getNomEntreprise(): ?string
     {
-        return $this->entreprise;
+        return $this->NomEntreprise;
     }
 
-    public function setEntreprise(?string $entreprise): static
+    public function setNomEntreprise(string $NomEntreprise): static
     {
-        $this->entreprise = $entreprise;
+        $this->NomEntreprise = $NomEntreprise;
+
         return $this;
     }
 
-    // Produits
+    public function getIdFiscale(): ?string
+    {
+        return $this->Id_fiscale;
+    }
+
+    public function setIdFiscale(string $Id_fiscale): static
+    {
+        $this->Id_fiscale = $Id_fiscale;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Produit>
+     */
     public function getProduits(): Collection
     {
         return $this->produits;
@@ -96,36 +73,43 @@ class Fournisseur extends Utilisateur
             $this->produits->add($produit);
             $produit->setFournisseur($this);
         }
+
         return $this;
     }
 
     public function removeProduit(Produit $produit): static
     {
         if ($this->produits->removeElement($produit)) {
+            // set the owning side to null (unless already changed)
             if ($produit->getFournisseur() === $this) {
                 $produit->setFournisseur(null);
             }
         }
+
         return $this;
     }
 
-    // Evenements
+    /**
+     * @return Collection<int, Evenement>
+     */
     public function getEvenements(): Collection
     {
-        return $this->evenements;
+        return $this->Evenements;
     }
 
     public function addEvenement(Evenement $evenement): static
     {
-        if (!$this->evenements->contains($evenement)) {
-            $this->evenements->add($evenement);
+        if (!$this->Evenements->contains($evenement)) {
+            $this->Evenements->add($evenement);
         }
+
         return $this;
     }
 
     public function removeEvenement(Evenement $evenement): static
     {
-        $this->evenements->removeElement($evenement);
+        $this->Evenements->removeElement($evenement);
+
         return $this;
     }
 }

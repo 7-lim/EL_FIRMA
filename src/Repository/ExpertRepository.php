@@ -22,72 +22,75 @@ class ExpertRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find an expert by email.
+     * Find an expert by their email.
+     *
+     * @param string $email
+     * @return Expert|null
      */
     public function findByEmail(string $email): ?Expert
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.email = :email')
-            ->setParameter('email', $email)
-            ->getQuery()
-            ->getOneOrNullResult();
+        return $this->findOneBy(['email' => $email]);
     }
 
     /**
-     * Find all active experts.
+     * Find experts by their specialization.
+     *
+     * @param string $specialization
+     * @return Expert[]
      */
-    public function findActiveExperts(): array
+    public function findBySpecialization(string $specialization): array
     {
         return $this->createQueryBuilder('e')
-            ->andWhere('e.actif = :active')
-            ->setParameter('active', true)
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * Find experts who are part of a discussion.
-     */
-    public function findExpertsInDiscussions(): array
-    {
-        return $this->createQueryBuilder('e')
-            ->join('e.discussions', 'd')
+            ->andWhere('e.specialization = :specialization')
+            ->setParameter('specialization', $specialization)
+            ->orderBy('e.lastName', 'ASC')
             ->getQuery()
             ->getResult();
     }
 
     /**
-     * Find experts by ticket involvement.
+     * Find experts with a minimum rating.
+     *
+     * @param float $minRating
+     * @return Expert[]
      */
-    public function findExpertsByTicket(int $ticketId): array
+    public function findByMinRating(float $minRating): array
     {
         return $this->createQueryBuilder('e')
-            ->join('e.tickets', 't')
-            ->andWhere('t.id = :ticketId')
-            ->setParameter('ticketId', $ticketId)
+            ->andWhere('e.rating >= :minRating')
+            ->setParameter('minRating', $minRating)
+            ->orderBy('e.rating', 'DESC')
             ->getQuery()
             ->getResult();
     }
 
     /**
-     * Save an expert to the database.
+     * Count the total number of experts.
+     *
+     * @return int
      */
-    public function save(Expert $expert, bool $flush = true): void
+    public function countExperts(): int
     {
-        $this->getEntityManager()->persist($expert);
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        return $this->createQueryBuilder('e')
+            ->select('COUNT(e.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     /**
-     * Remove an expert from the database.
+     * Find experts available for consultation.
+     *
+     * @return Expert[]
      */
-    public function remove(Expert $expert, bool $flush = true): void
+    public function findAvailableExperts(): array
     {
-        $this->getEntityManager()->remove($expert);
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.isAvailable = :isAvailable')
+            ->setParameter('isAvailable', true)
+            ->orderBy('e.lastName', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
+
+    // Add more custom query methods here as needed
 }

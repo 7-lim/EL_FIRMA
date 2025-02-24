@@ -2,109 +2,64 @@
 
 namespace App\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use App\Entity\Categorie;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class CategorieRepository extends EntityRepository
+/**
+ * @extends ServiceEntityRepository<Categorie>
+ *
+ * @method Categorie|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Categorie|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Categorie[]    findAll()
+ * @method Categorie[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class CategorieRepository extends ServiceEntityRepository
 {
-    // Add your custom repository methods here
-}
-
-namespace App\Entity;
-
-use App\Repository\CategorieRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
-
-#[ORM\Entity(repositoryClass: CategorieRepository::class)]
-#[ORM\Table(name: "categorie")]
-class Categorie
-{
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 55)]
-    #[Assert\NotBlank(message: "Le nom de la catégorie est obligatoire.")]
-    #[Assert\Length(
-        max: 55,
-        maxMessage: "Le nom de la catégorie ne peut pas dépasser {{ limit }} caractères."
-    )]
-    private ?string $nomCategorie = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Length(
-        max: 255,
-        maxMessage: "La description ne peut pas dépasser {{ limit }} caractères."
-    )]
-    private ?string $description = null;
-
-    /**
-     * @var Collection<int, Produit>
-     */
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'categorie')]
-    private Collection $produits;
-
-    public function __construct()
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->produits = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getNomCategorie(): ?string
-    {
-        return $this->nomCategorie;
-    }
-
-    public function setNomCategorie(string $nomCategorie): static
-    {
-        $this->nomCategorie = $nomCategorie;
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): static
-    {
-        $this->description = $description;
-        return $this;
+        parent::__construct($registry, Categorie::class);
     }
 
     /**
-     * @return Collection<int, Produit>
+     * Find a category by its name.
+     *
+     * @param string $nomCategorie
+     * @return Categorie|null
      */
-    public function getProduits(): Collection
+    public function findByName(string $nomCategorie): ?Categorie
     {
-        return $this->produits;
+        return $this->findOneBy(['nomCategorie' => $nomCategorie]);
     }
 
-    public function addProduit(Produit $produit): static
+    /**
+     * Find all categories ordered by name.
+     *
+     * @return Categorie[]
+     */
+    public function findAllOrderedByName(): array
     {
-        if (!$this->produits->contains($produit)) {
-            $this->produits->add($produit);
-            $produit->setCategorie($this);
-        }
-
-        return $this;
+        return $this->createQueryBuilder('c')
+            ->orderBy('c.nomCategorie', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
-    public function removeProduit(Produit $produit): static
+    /**
+     * Find categories containing a specific keyword in their description.
+     *
+     * @param string $keyword
+     * @return Categorie[]
+     */
+    public function findByDescriptionContaining(string $keyword): array
     {
-        if ($this->produits->removeElement($produit)) {
-            if ($produit->getCategorie() === $this) {
-                $produit->setCategorie(null);
-            }
-        }
-
-        return $this;
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.description LIKE :keyword')
+            ->setParameter('keyword', '%' . $keyword . '%')
+            ->orderBy('c.nomCategorie', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
+
+    // Add more custom query methods here as needed
 }

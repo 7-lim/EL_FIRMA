@@ -22,73 +22,61 @@ class AgriculteurRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find an agriculteur by email.
+     * Find an agriculteur by their email.
+     *
+     * @param string $email
+     * @return Agriculteur|null
      */
     public function findByEmail(string $email): ?Agriculteur
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.email = :email')
-            ->setParameter('email', $email)
-            ->getQuery()
-            ->getOneOrNullResult();
+        return $this->findOneBy(['email' => $email]);
     }
 
     /**
-     * Find all active agriculteurs.
+     * Find agriculteurs by their region.
+     *
+     * @param string $region
+     * @return Agriculteur[]
      */
-    public function findActiveAgriculteurs(): array
+    public function findByRegion(string $region): array
     {
         return $this->createQueryBuilder('a')
-            ->andWhere('a.actif = :active')
-            ->setParameter('active', true)
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * Find agriculteurs by location.
-     */
-    public function findByLocalisation(string $localisation): array
-    {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.localisation = :localisation')
-            ->setParameter('localisation', $localisation)
+            ->andWhere('a.region = :region')
+            ->setParameter('region', $region)
+            ->orderBy('a.nom', 'ASC')
             ->getQuery()
             ->getResult();
     }
 
     /**
-     * Find agriculteurs participating in an event.
+     * Find agriculteurs with a specific crop type.
+     *
+     * @param string $cropType
+     * @return Agriculteur[]
      */
-    public function findAgriculteursByEvenement(int $evenementId): array
+    public function findByCropType(string $cropType): array
     {
         return $this->createQueryBuilder('a')
-            ->join('a.evenements', 'e')
-            ->andWhere('e.id = :evenementId')
-            ->setParameter('evenementId', $evenementId)
+            ->innerJoin('a.crops', 'c') // Assuming 'crops' is a relationship in the Agriculteur entity
+            ->andWhere('c.type = :cropType')
+            ->setParameter('cropType', $cropType)
+            ->orderBy('a.nom', 'ASC')
             ->getQuery()
             ->getResult();
     }
 
     /**
-     * Save an agriculteur to the database.
+     * Count the total number of agriculteurs.
+     *
+     * @return int
      */
-    public function save(Agriculteur $agriculteur, bool $flush = true): void
+    public function countAgriculteurs(): int
     {
-        $this->getEntityManager()->persist($agriculteur);
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        return $this->createQueryBuilder('a')
+            ->select('COUNT(a.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
-    /**
-     * Remove an agriculteur from the database.
-     */
-    public function remove(Agriculteur $agriculteur, bool $flush = true): void
-    {
-        $this->getEntityManager()->remove($agriculteur);
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
+    // Add more custom query methods here as needed
 }

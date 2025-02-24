@@ -26,16 +26,10 @@ final class PageController extends AbstractController
         return $this->render('products.html.twig');
     }
 
-    #[Route(path: '/store', name: 'store')]
+    #[Route('/store', name: 'store')]
     public function store(): Response
     {
         return $this->render('store.html.twig');
-    }
-
-    #[Route(path: '/Terrains', name: 'store')]
-    public function Terrain(): Response
-    {
-        return $this->render('/terrain/index.html.twig');
     }
 
     #[Route('/features', name: 'features')]

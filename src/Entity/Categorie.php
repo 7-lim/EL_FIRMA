@@ -2,25 +2,29 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use App\Repository\CategorieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: CategorieRepository::class)]
 class Categorie
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 55)]
+    #[ORM\Column(length: 55)]
     private ?string $nomCategorie = null;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: "categorie", cascade: ["remove"])]
+    /**
+     * @var Collection<int, Produit>
+     */
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'categorie')]
     private Collection $produits;
 
     public function __construct()
@@ -31,14 +35,14 @@ class Categorie
     public function getId(): ?int
     {
         return $this->id;
-    }   
+    }
 
     public function getNomCategorie(): ?string
     {
         return $this->nomCategorie;
     }
 
-    public function setNomCategorie(string $nomCategorie): self
+    public function setNomCategorie(string $nomCategorie): static
     {
         $this->nomCategorie = $nomCategorie;
         return $this;
@@ -49,7 +53,7 @@ class Categorie
         return $this->description;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
         return $this;
@@ -63,7 +67,7 @@ class Categorie
         return $this->produits;
     }
 
-    public function addProduit(Produit $produit): self
+    public function addProduit(Produit $produit): static
     {
         if (!$this->produits->contains($produit)) {
             $this->produits->add($produit);
@@ -73,10 +77,10 @@ class Categorie
         return $this;
     }
 
-    public function removeProduit(Produit $produit): self
+    public function removeProduit(Produit $produit): static
     {
         if ($this->produits->removeElement($produit)) {
-            // Set the owning side to null (unless already changed)
+            // set the owning side to null (unless already changed)
             if ($produit->getCategorie() === $this) {
                 $produit->setCategorie(null);
             }

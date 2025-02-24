@@ -16,7 +16,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 #[Route('/admin')]
 class AdminController extends AbstractController
 {
-    #[Route('/dashboard', name: 'dashboard')]
+    #[Route('/homeadmin', name: 'homeadmin')]
     #[IsGranted('ROLE_ADMIN')]
     public function dashboard(): Response
     {
@@ -35,24 +35,26 @@ class AdminController extends AbstractController
         $admin = new Administrateur();
         $form = $this->createForm(AdminFormType::class, $admin);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
             // Hash the password before saving
             $hashedPassword = $passwordHasher->hashPassword($admin, $form->get('plainPassword')->getData());
             $admin->setPassword($hashedPassword);
-
+    
             $entityManager->persist($admin);
             $entityManager->flush();
-
+    
             $this->addFlash('success', 'Administrateur créé avec succès !');
             return $this->redirectToRoute('admin_list');
         }
-
+    
         return $this->render('admin/create.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
+
+    
     #[Route('/list', name: 'admin_list')]
     #[IsGranted('ROLE_ADMIN')]
     public function listAdmins(AdministrateurRepository $adminRepository): Response

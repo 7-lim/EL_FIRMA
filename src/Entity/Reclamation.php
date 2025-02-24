@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use App\Repository\ReclamationRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 class Reclamation
 {
     #[ORM\Id]
@@ -12,17 +14,30 @@ class Reclamation
     #[ORM\Column]
     private ?int $id = null;
 
-    // Example fields...
+    #[ORM\Column(length: 100)]
+    private ?string $Objet = null;
+
     #[ORM\Column(length: 255)]
-    private ?string $objet = null;
+    private ?string $Description = null;
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'reclamations')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Utilisateur $utilisateur = null;
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $DateSoumission = null;
 
-    
+    #[ORM\Column(length: 55)]
+    private ?string $statut = null;
 
-    // Getters & Setters...
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $DateTraitement = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $ReponseAdmin = null;
+
+    #[ORM\ManyToOne(inversedBy: 'reclamations')]
+    private ?Agriculteur $agriculteur = null;
+
+    #[ORM\ManyToOne(inversedBy: 'reclamations')]
+    private ?Administrateur $administrateur = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -30,23 +45,97 @@ class Reclamation
 
     public function getObjet(): ?string
     {
-        return $this->objet;
+        return $this->Objet;
     }
 
-    public function setObjet(?string $objet): self
+    public function setObjet(string $Objet): static
     {
-        $this->objet = $objet;
+        $this->Objet = $Objet;
+
         return $this;
     }
 
-    public function getUtilisateur(): ?Utilisateur
+    public function getDescription(): ?string
     {
-        return $this->utilisateur;
+        return $this->Description;
     }
 
-    public function setUtilisateur(?Utilisateur $utilisateur): self
+    public function setDescription(string $Description): static
     {
-        $this->utilisateur = $utilisateur;
+        $this->Description = $Description;
+
+        return $this;
+    }
+
+    public function getDateSoumission(): ?\DateTimeInterface
+    {
+        return $this->DateSoumission;
+    }
+
+    public function setDateSoumission(\DateTimeInterface $DateSoumission): static
+    {
+        $this->DateSoumission = $DateSoumission;
+
+        return $this;
+    }
+
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): static
+    {
+        $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getDateTraitement(): ?\DateTimeInterface
+    {
+        return $this->DateTraitement;
+    }
+
+    public function setDateTraitement(?\DateTimeInterface $DateTraitement): static
+    {
+        $this->DateTraitement = $DateTraitement;
+
+        return $this;
+    }
+
+    public function getReponseAdmin(): ?string
+    {
+        return $this->ReponseAdmin;
+    }
+
+    public function setReponseAdmin(?string $ReponseAdmin): static
+    {
+        $this->ReponseAdmin = $ReponseAdmin;
+
+        return $this;
+    }
+
+    public function getAgriculteur(): ?Agriculteur
+    {
+        return $this->agriculteur;
+    }
+
+    public function setAgriculteur(?Agriculteur $agriculteur): static
+    {
+        $this->agriculteur = $agriculteur;
+
+        return $this;
+    }
+
+    public function getAdministrateur(): ?Administrateur
+    {
+        return $this->administrateur;
+    }
+
+    public function setAdministrateur(?Administrateur $administrateur): static
+    {
+        $this->administrateur = $administrateur;
+
         return $this;
     }
 }

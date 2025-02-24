@@ -1,4 +1,5 @@
 security:
+    
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
         App\Entity\Utilisateur: 'auto'
@@ -21,7 +22,7 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
-                default_target_path: custom_redirect
+                default_target_path: app_home
             logout:
                 path: app_logout
                 target: app_login
@@ -33,7 +34,9 @@ security:
     access_control:
         # Admin routes
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/homeadmin, roles: ROLE_ADMIN }
         - { path: ^/dashboard, roles: ROLE_ADMIN }
+
 
         # Public login route
         - { path: ^/login, roles: PUBLIC_ACCESS }
@@ -47,4 +50,5 @@ security:
         # Public routes
         - { path: ^/register, roles: PUBLIC_ACCESS }
     
+
 

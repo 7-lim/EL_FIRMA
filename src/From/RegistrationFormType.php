@@ -32,14 +32,17 @@ class RegistrationFormType extends AbstractType
             ->add('nomEntreprise', TextType::class, [
                 'label' => 'Nom de l\'entreprise',
                 'required' => false,
+                'mapped' => false,
             ])
             ->add('idFiscale', TextType::class, [
                 'label' => 'ID Fiscale',
                 'required' => false,
+                'mapped' => false,
             ])
             ->add('categorieProduit', TextType::class, [
                 'label' => 'Catégorie de produit',
                 'required' => false,
+                 'mapped' => false,
             ])
 
             // FIELDS NOT MAPPED to the entity

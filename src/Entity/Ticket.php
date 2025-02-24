@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;        
+use App\Repository\TicketRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
-
-
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: TicketRepository::class)]
 class Ticket
 {
     #[ORM\Id]
@@ -14,70 +15,76 @@ class Ticket
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: "integer")]
-    private ?int $prix = null;
+    #[ORM\Column]
+    private ?int $Prix = null;
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
-    private ?Utilisateur $expert = null;
+    /**
+     * @var Collection<int, Agriculteur>
+     */
+    #[ORM\ManyToMany(targetEntity: Agriculteur::class, mappedBy: 'tickets')]
+    private Collection $agriculteurs;
 
-    #[ORM\ManyToOne(targetEntity: Agriculteur::class, inversedBy: "tickets")]
-    private ?Agriculteur $agriculteur = null;
-    
-    #[ORM\ManyToOne(targetEntity: Evenement::class, inversedBy: "tickets")]
-    private ?Evenement $evenement = null;
-        public function getId(): ?int
+    #[ORM\ManyToOne(inversedBy: 'tickets')]
+    private ?Expert $expert = null;
+
+    public function __construct()
+    {
+        $this->agriculteurs = new ArrayCollection();
+    }
+
+    public function getId(): ?int
     {
         return $this->id;
     }
 
     public function getPrix(): ?int
     {
-        return $this->prix;
+        return $this->Prix;
     }
 
-    public function setPrix(int $prix): self
+    public function setPrix(int $Prix): static
     {
-        $this->prix = $prix;
+        $this->Prix = $Prix;
 
         return $this;
     }
 
-    public function getExpert(): ?Utilisateur
+    /**
+     * @return Collection<int, Agriculteur>
+     */
+    public function getAgriculteurs(): Collection
+    {
+        return $this->agriculteurs;
+    }
+
+    public function addDiscussion(Agriculteur $agriculteur): static
+    {
+        if (!$this->agriculteurs->contains($agriculteur)) {
+            $this->agriculteurs->add($agriculteur);
+            $agriculteur->addTicket($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDiscussion(Agriculteur $agriculteur): static
+    {
+        if ($this->agriculteurs->removeElement($agriculteur)) {
+            $agriculteur->removeTicket($this);
+        }
+
+        return $this;
+    }
+
+    public function getExpert(): ?Expert
     {
         return $this->expert;
     }
 
-    public function setExpert(?Utilisateur $expert): self
+    public function setExpert(?Expert $expert): static
     {
         $this->expert = $expert;
 
         return $this;
     }
-
-    public function getAgriculteur(): ?Utilisateur
-    {
-        return $this->agriculteur;
-    }
-
-    public function setAgriculteur(?Utilisateur $agriculteur): self
-    {
-        $this->agriculteur = $agriculteur;
-
-        return $this;
-    }
-
-    public function getEvenement(): ?Evenement
-    {
-        return $this->evenement;
-    }
-
-    public function setEvenement(?Evenement $evenement): self
-    {
-        $this->evenement = $evenement;
-
-        return $this;
-    }
-    
-
-    
 }

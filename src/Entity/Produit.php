@@ -2,110 +2,117 @@
 
 namespace App\Entity;
 
+use App\Repository\ProduitRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ProduitRepository::class)]
 class Produit
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private string $nom;
+    #[ORM\Column(length: 255)]
+    private ?string $NomProduit = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $description = null;
+    #[ORM\Column(length: 255)]
+    private ?string $Description = null;
 
-    #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
-    private string $prix;
-    
-    #[ORM\Column(type: 'integer')]
-    private int $stock;
+    #[ORM\Column(type: Types::OBJECT, nullable: true)]
+    private ?object $Image = null;
 
-    #[ORM\ManyToOne(targetEntity: Fournisseur::class, inversedBy: 'produits')]
+    #[ORM\Column]
+    private ?int $quantite = null;
+
+    #[ORM\Column]
+    private ?float $Prix = null;
+
+    #[ORM\ManyToOne(inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Fournisseur $fournisseur = null;
+    private ?Fournisseur $Fournisseur = null;
 
-    #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'produits')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Categorie $categorie = null;
-
-    #[ORM\ManyToOne(targetEntity: Agriculteur::class, inversedBy: 'produits')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\ManyToOne(inversedBy: 'produits')]
     private ?Agriculteur $agriculteur = null;
 
-    public function getId(): ?int
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Categorie $categorie = null;
+
+      public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNom(): string
+    public function getNomProduit(): ?string
     {
-        return $this->nom;
+        return $this->NomProduit;
     }
 
-    public function setNom(string $nom): self
+    public function setNomProduit(string $NomProduit): static
     {
-        $this->nom = $nom;
+        $this->NomProduit = $NomProduit;
+
         return $this;
     }
 
     public function getDescription(): ?string
     {
-        return $this->description;
+        return $this->Description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(string $Description): static
     {
-        $this->description = $description;
+        $this->Description = $Description;
+
         return $this;
     }
 
-    public function getPrix(): float
+    public function getImage(): ?object
     {
-        return $this->prix;
+        return $this->Image;
     }
 
-    public function setPrix(float $prix): self
+    public function setImage(?object $Image): static
     {
-        $this->prix = $prix;
+        $this->Image = $Image;
+
         return $this;
     }
 
-    public function getStock(): int
+    public function getQuantite(): ?int
     {
-        return $this->stock;
+        return $this->quantite;
     }
 
-    public function setStock(int $stock): self
+    public function setQuantite(int $quantite): static
     {
-        $this->stock = $stock;
+        $this->quantite = $quantite;
+
+        return $this;
+    }
+
+    public function getPrix(): ?float
+    {
+        return $this->Prix;
+    }
+
+    public function setPrix(float $Prix): static
+    {
+        $this->Prix = $Prix;
+
         return $this;
     }
 
     public function getFournisseur(): ?Fournisseur
     {
-        return $this->fournisseur;
+        return $this->Fournisseur;
     }
 
-    public function setFournisseur(?Fournisseur $fournisseur): self
+    public function setFournisseur(?Fournisseur $Fournisseur): static
     {
-        $this->fournisseur = $fournisseur;
-        return $this;
-    }
+        $this->Fournisseur = $Fournisseur;
 
-    public function getCategorie(): ?Categorie
-    {
-        return $this->categorie;
-    }
-
-    public function setCategorie(?Categorie $categorie): self
-    {
-        $this->categorie = $categorie;
         return $this;
     }
 
@@ -114,9 +121,22 @@ class Produit
         return $this->agriculteur;
     }
 
-    public function setAgriculteur(?Agriculteur $agriculteur): self
+    public function setAgriculteur(?Agriculteur $agriculteur): static
     {
         $this->agriculteur = $agriculteur;
+
+        return $this;
+    }
+
+    public function getCategorie(): ?Categorie
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(?Categorie $categorie): static
+    {
+        $this->categorie = $categorie;
+
         return $this;
     }
 }

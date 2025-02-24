@@ -2,15 +2,14 @@
 
 namespace App\Controller;
 
-use App\Entity\Agriculteur;
-use App\Entity\Fournisseur;
+use App\Entity\Utilisateur;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 class RegistrationController extends AbstractController
 {
@@ -18,49 +17,43 @@ class RegistrationController extends AbstractController
     public function register(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $em
     ): Response {
-        // Create the registration form
-        $form = $this->createForm(RegistrationFormType::class);
+        // Create the form with a new Utilisateur as the initial data
+        $user = new Utilisateur();
+        $form = $this->createForm(RegistrationFormType::class, $user);
+
+        // Handle the POST data
         $form->handleRequest($request);
 
-        // Handle form submission
+        // If form is submitted & valid, proceed
         if ($form->isSubmitted() && $form->isValid()) {
-            // Get the selected user type
-            $userType = $form->get('user_type')->getData();
+            // 1) The mapped fields are already in $user at this point.
 
-            // Create the user based on the selected type
-            if ($userType === 'agriculteur') {
-                $user = new Agriculteur();
-            } elseif ($userType === 'fournisseur') {
-                $user = new Fournisseur();
-                // Set additional fields for Fournisseur
-                $user->setNomEntreprise($form->get('nomEntreprise')->getData());
-                $user->setIdFiscale($form->get('idFiscale')->getData());
-                $user->setCategorieProduit($form->get('categorieProduit')->getData());
-            } else {
-                throw new \Exception('Type d\'utilisateur invalide');
-            }
-
-            // Set common fields
-            $user->setEmail($form->get('email')->getData());
-            $user->setNom($form->get('nom')->getData());
-            $user->setPrenom($form->get('prenom')->getData());
-            $user->setTelephone($form->get('telephone')->getData());
-
-            // Hash the password
-            $hashedPassword = $passwordHasher->hashPassword($user, $form->get('plainPassword')->getData());
+            // 2) Handle the plain password (unmapped field)
+            $plainPassword = $form->get('plainPassword')->getData();
+            $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
 
-            // Save the user to the database
-            $entityManager->persist($user);
-            $entityManager->flush();
+            // 3) Handle the user_type (unmapped field) to set roles or other logic
+            $userTypeValue = $form->get('user_type')->getData();
+            if ($userTypeValue === 'fournisseur') {
+                // e.g. give them ROLE_USER, or a special role if you prefer
+                $user->setRoles(['ROLE_USER']);
+            } else {
+                // e.g. 'agriculteur'
+                $user->setRoles(['ROLE_USER']);
+            }
 
-            // Redirect to the login page after successful registration
+            // 4) Persist to DB
+            $em->persist($user);
+            $em->flush();
+
+            // 5) Redirect to login
             return $this->redirectToRoute('app_login');
         }
 
-        // Render the registration form
+        // Render the form (which is part of your 'Sign Up' section)
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);

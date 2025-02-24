@@ -10,37 +10,48 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: AgriculteurRepository::class)]
 class Agriculteur extends Utilisateur
 {
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $localisation = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $Localisation = null;
+
+    /**
+     * @var Collection<int, Evenement>
+     */
     #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'agriculteurs')]
     private Collection $evenements;
 
+    /**
+     * @var Collection<int, Produit>
+     */
     #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'agriculteur')]
     private Collection $produits;
 
-    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'agriculteur')]
+    /**
+     * @var Collection<int, Ticket>
+     */
+    #[ORM\ManyToMany(targetEntity: Ticket::class, inversedBy: 'discussions')]
     private Collection $tickets;
 
-    #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
+    /**
+     * @var Collection<int, Discussion>
+     */
+    #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'agriculteur')]
     private Collection $discussions;
 
     /**
-     * Optionally stored in the database if you add a @ORM\Column for it
+     * @var Collection<int, Terrain>
      */
-    // #[ORM\Column(length: 255, nullable: true)]
-    private ?string $adresseExploitation = null;
-
-    #[ORM\OneToMany(targetEntity: Terrain::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: Terrain::class, mappedBy: 'agriculteur')]
     private Collection $terrains;
 
-    #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'agriculteur', cascade: ['persist', 'remove'])]
+    /**
+     * @var Collection<int, Reclamation>
+     */
+    #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'agriculteur')]
     private Collection $reclamations;
 
     public function __construct()
     {
-        parent::__construct();
-
         $this->evenements = new ArrayCollection();
         $this->produits = new ArrayCollection();
         $this->tickets = new ArrayCollection();
@@ -49,121 +60,99 @@ class Agriculteur extends Utilisateur
         $this->reclamations = new ArrayCollection();
     }
 
-    // ──────────────────────────
-    // AdresseExploitation (Optional DB)
-    // ──────────────────────────
-
-    public function setAdresseExploitation(?string $adresseExploitation): self
-    {
-        $this->adresseExploitation = $adresseExploitation;
-        return $this;
-    }
-
-    public function getAdresseExploitation(): ?string
-    {
-        return $this->adresseExploitation;
-    }
-
-    // ──────────────────────────
-    // Localisation
-    // ──────────────────────────
-
     public function getLocalisation(): ?string
     {
-        return $this->localisation;
+        return $this->Localisation;
     }
 
-    public function setLocalisation(?string $localisation): static
+    public function setLocalisation(?string $Localisation): static
     {
-        $this->localisation = $localisation;
+        $this->Localisation = $Localisation;
+
         return $this;
     }
 
-    // ──────────────────────────
-    // Evenements (ManyToMany)
-    // ──────────────────────────
-
+    /**
+     * @return Collection<int, Evenement>
+     */
     public function getEvenements(): Collection
     {
         return $this->evenements;
     }
 
-    public function addEvenement(Evenement $evenement): self
+    public function addEvenement(Evenement $evenement): static
     {
         if (!$this->evenements->contains($evenement)) {
             $this->evenements->add($evenement);
-            // If you need a bidirectional link, you'd set $evenement->addAgriculteur($this) as well
         }
+
         return $this;
     }
 
-    public function removeEvenement(Evenement $evenement): self
+    public function removeEvenement(Evenement $evenement): static
     {
         $this->evenements->removeElement($evenement);
-        // If you need to remove the bidirectional link, call $evenement->removeAgriculteur($this)
+
         return $this;
     }
 
-    // ──────────────────────────
-    // Produits (OneToMany)
-    // ──────────────────────────
-
+    /**
+     * @return Collection<int, Produit>
+     */
     public function getProduits(): Collection
     {
         return $this->produits;
     }
 
-    public function addProduit(Produit $produit): self
+    public function addProduit(Produit $produit): static
     {
         if (!$this->produits->contains($produit)) {
             $this->produits->add($produit);
             $produit->setAgriculteur($this);
         }
+
         return $this;
     }
 
-    public function removeProduit(Produit $produit): self
+    public function removeProduit(Produit $produit): static
     {
         if ($this->produits->removeElement($produit)) {
+            // set the owning side to null (unless already changed)
             if ($produit->getAgriculteur() === $this) {
                 $produit->setAgriculteur(null);
             }
         }
+
         return $this;
     }
 
-    // ──────────────────────────
-    // Tickets (OneToMany)
-    // ──────────────────────────
-
+    /**
+     * @return Collection<int, Ticket>
+     */
     public function getTickets(): Collection
     {
         return $this->tickets;
     }
 
-    public function addTicket(Ticket $ticket): self
+    public function addTicket(Ticket $ticket): static
     {
         if (!$this->tickets->contains($ticket)) {
             $this->tickets->add($ticket);
-            $ticket->setAgriculteur($this);
         }
+
         return $this;
     }
 
-    public function removeTicket(Ticket $ticket): self
+    public function removeTicket(Ticket $ticket): static
     {
-        if ($this->tickets->removeElement($ticket)) {
-            if ($ticket->getAgriculteur() === $this) {
-                $ticket->setAgriculteur(null);
-            }
-        }
+        $this->tickets->removeElement($ticket);
+
         return $this;
     }
 
-    // ──────────────────────────
-    // Discussions (OneToMany)
-    // ──────────────────────────
-
+    /**
+     * @return Collection<int, Discussion>
+     */
     public function getDiscussions(): Collection
     {
         return $this->discussions;
@@ -175,23 +164,25 @@ class Agriculteur extends Utilisateur
             $this->discussions->add($discussion);
             $discussion->setAgriculteur($this);
         }
+
         return $this;
     }
 
     public function removeDiscussion(Discussion $discussion): static
     {
         if ($this->discussions->removeElement($discussion)) {
+            // set the owning side to null (unless already changed)
             if ($discussion->getAgriculteur() === $this) {
                 $discussion->setAgriculteur(null);
             }
         }
+
         return $this;
     }
 
-    // ──────────────────────────
-    // Terrains (OneToMany)
-    // ──────────────────────────
-
+    /**
+     * @return Collection<int, Terrain>
+     */
     public function getTerrains(): Collection
     {
         return $this->terrains;
@@ -203,27 +194,49 @@ class Agriculteur extends Utilisateur
             $this->terrains->add($terrain);
             $terrain->setAgriculteur($this);
         }
+
         return $this;
     }
 
     public function removeTerrain(Terrain $terrain): static
     {
         if ($this->terrains->removeElement($terrain)) {
+            // set the owning side to null (unless already changed)
             if ($terrain->getAgriculteur() === $this) {
                 $terrain->setAgriculteur(null);
             }
         }
+
         return $this;
     }
 
-    // ──────────────────────────
-    // Reclamations (OneToMany)
-    // ──────────────────────────
-
+    /**
+     * @return Collection<int, Reclamation>
+     */
     public function getReclamations(): Collection
     {
         return $this->reclamations;
     }
 
+    public function addReclamation(Reclamation $reclamation): static
+    {
+        if (!$this->reclamations->contains($reclamation)) {
+            $this->reclamations->add($reclamation);
+            $reclamation->setAgriculteur($this);
+        }
 
+        return $this;
+    }
+
+    public function removeReclamation(Reclamation $reclamation): static
+    {
+        if ($this->reclamations->removeElement($reclamation)) {
+            // set the owning side to null (unless already changed)
+            if ($reclamation->getAgriculteur() === $this) {
+                $reclamation->setAgriculteur(null);
+            }
+        }
+
+        return $this;
+    }
 }

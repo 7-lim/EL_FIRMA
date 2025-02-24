@@ -14,7 +14,7 @@ class LoginController extends AbstractController
     {
         // If user is already logged in, redirect them
         if ($this->getUser()) {
-            return $this->redirectToRoute('custom_redirect');
+            return $this->render('terrain/index.html.twig');
         }
 
         // Get the login error if any
@@ -28,7 +28,7 @@ class LoginController extends AbstractController
         ]);
     }
 
-    #[Route('/redirect', name: 'custom_redirect')]
+    #[Route(path: '/redirect', name: 'custom_redirect')]
     public function redirectAfterLogin(): Response
     {
         $user = $this->getUser();
