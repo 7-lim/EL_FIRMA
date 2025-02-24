@@ -2,77 +2,85 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
+use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity]
-#[ORM\Table(name: 'utilisateur')]
-#[ORM\InheritanceType('SINGLE_TABLE')]
+#[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
+#[ORM\InheritanceType(value: 'JOINED')]
 #[ORM\DiscriminatorColumn(name: 'disc', type: 'string')]
 #[ORM\DiscriminatorMap([
-    'Agriculteur'    => Agriculteur::class,
+    'Agriculteur' => Agriculteur::class,
     'Administrateur' => Administrateur::class,
-    'Fournisseur'    => Fournisseur::class,
-    'Expert'         => Expert::class,
+    'Fournisseur' => Fournisseur::class,
+    'Expert' => Expert::class,
 ])]
-abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
+class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
+
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    protected ?string $nom = null;
+    #[ORM\Column(length: 55)]
+    private ?string $Nom = null;
+
+    #[ORM\Column(length: 55)]
+    private ?string $Prenom = null;
+
+    #[ORM\Column(length: 55, unique: true)]
+    private ?string $email = null;
+
+    #[ORM\Column]
+    private ?int $Telephone = null;
+
+    #[ORM\Column(type: 'json')]
+    private array $roles = [];
 
     #[ORM\Column(length: 255)]
-    protected ?string $prenom = null;
-
-    #[ORM\Column(length: 180)]
-    protected ?string $email = null;
-
-    #[ORM\Column(length: 50, nullable: true)]
-    protected ?string $telephone = null;
-
-    // Changed property to "password" to follow common convention.
-    #[ORM\Column(length: 255)]
-    protected ?string $password = null;
+    private ?string $password;
 
     #[ORM\Column(length: 255, nullable: true)]
-    protected ?string $disc = null;
+    private ?string $type = null;
 
-    #[ORM\Column(length: 50, nullable: true)]
-    protected ?string $type = null;
 
-    #[ORM\Column(type: Types::JSON)]
-    protected array $roles = [];
+
+    
 
     public function getId(): ?int
     {
         return $this->id;
+
+    }
+
+    public function setId(int $id): static
+    {
+        $this->id = $id;
+        return $this;
     }
 
     public function getNom(): ?string
     {
-        return $this->nom;
+        return $this->Nom;
     }
 
-    public function setNom(?string $nom): self
+    public function setNom(string $Nom): static
     {
-        $this->nom = $nom;
+        $this->Nom = $Nom;
         return $this;
     }
 
     public function getPrenom(): ?string
     {
-        return $this->prenom;
+        return $this->Prenom;
     }
 
-    public function setPrenom(?string $prenom): self
+    public function setPrenom(string $Prenom): static
     {
-        $this->prenom = $prenom;
+        $this->Prenom = $Prenom;
         return $this;
     }
 
@@ -85,41 +93,42 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
     {
         $this->email = $email;
         return $this;
+
     }
 
-    public function getTelephone(): ?string
+    public function getTelephone(): ?int
     {
-        return $this->telephone;
+        return $this->Telephone;
     }
 
-    public function setTelephone(?string $telephone): self
+    public function setTelephone(int $Telephone): static
     {
-        $this->telephone = $telephone;
+        $this->Telephone = $Telephone;
         return $this;
     }
 
-    /**
-     * Returns the hashed password.
-     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // Guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+        return $this;
+    }
+
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function setPassword(?string $password): self
+    public function setPassword(string $password): static
     {
         $this->password = $password;
-        return $this;
-    }
-
-    public function getDisc(): ?string
-    {
-        return $this->disc;
-    }
-
-    public function setDisc(?string $disc): self
-    {
-        $this->disc = $disc;
         return $this;
     }
 
@@ -134,28 +143,13 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
         return $this;
     }
 
-    public function getRoles(): array
+    public function eraseCredentials(): void
     {
-        $roles = $this->roles;
-        if (empty($roles)) {
-            $roles[] = 'ROLE_USER';
-        }
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-        return $this;
+        // If you store any temporary sensitive data, clear it here
     }
 
     public function getUserIdentifier(): string
     {
-        return $this->email ?? '';
-    }
-
-    public function eraseCredentials(): void
-    {
-        // Clear temporary sensitive data if needed.
+        return (string) $this->email;
     }
 }

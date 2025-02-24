@@ -2,7 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Utilisateur;
+use App\Entity\Agriculteur;
+use App\Entity\Fournisseur;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,41 +20,45 @@ class RegistrationController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $em
     ): Response {
-        // Create the form with a new Utilisateur as the initial data
-        $user = new Utilisateur();
-        $form = $this->createForm(RegistrationFormType::class, $user);
-
-        // Handle the POST data
+        // Création du formulaire sans lier d'objet pour l'instant
+        $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
 
-        // If form is submitted & valid, proceed
         if ($form->isSubmitted() && $form->isValid()) {
-            // 1) The mapped fields are already in $user at this point.
+            // Récupérer la valeur du type d'utilisateur (champ unmapped)
+            $userTypeValue = $form->get('user_type')->getData();
 
-            // 2) Handle the plain password (unmapped field)
+            // En fonction du type, instancier la classe concrète appropriée
+            if ($userTypeValue === 'fournisseur') {
+                $user = new Fournisseur();
+            } else {
+                // Par défaut, nous créons un Agriculteur (ou adapter selon vos besoins)
+                $user = new Agriculteur();
+            }
+
+            // Remplir manuellement les champs mappés
+            $user->setNom($form->get('nom')->getData());
+            $user->setPrenom($form->get('prenom')->getData());
+            $user->setEmail($form->get('email')->getData());
+            $user->setTelephone($form->get('telephone')->getData());
+            // Vous pouvez également stocker le type dans l'entité si nécessaire
+            $user->setType($userTypeValue);
+
+            // Gérer le mot de passe brut (unmapped)
             $plainPassword = $form->get('plainPassword')->getData();
             $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
 
-            // 3) Handle the user_type (unmapped field) to set roles or other logic
-            $userTypeValue = $form->get('user_type')->getData();
-            if ($userTypeValue === 'fournisseur') {
-                // e.g. give them ROLE_USER, or a special role if you prefer
-                $user->setRoles(['ROLE_USER']);
-            } else {
-                // e.g. 'agriculteur'
-                $user->setRoles(['ROLE_USER']);
-            }
+            // Définir les rôles (stocké en JSON)
+            $user->setRoles(['ROLE_USER']);
 
-            // 4) Persist to DB
+            // Persister l'utilisateur (la colonne 'disc' sera automatiquement renseignée)
             $em->persist($user);
             $em->flush();
 
-            // 5) Redirect to login
             return $this->redirectToRoute('app_login');
         }
 
-        // Render the form (which is part of your 'Sign Up' section)
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);

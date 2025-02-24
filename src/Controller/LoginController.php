@@ -12,23 +12,23 @@ class LoginController extends AbstractController
     #[Route('/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // If user is already logged in, redirect them
+        // Si l'utilisateur est déjà connecté, redirigez-le (ici, vers la page d'accueil ou un autre template)
         if ($this->getUser()) {
-            return $this->render('terrain/index.html.twig');
+            return $this->redirectToRoute('home');
         }
 
-        // Get the login error if any
+        // Récupère l'erreur de connexion (s'il y en a une)
         $error = $authenticationUtils->getLastAuthenticationError();
-        // Last entered username
+        // Récupère le dernier nom d'utilisateur saisi
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('login/index.html.twig', [
             'last_username' => $lastUsername,
-            'error' => $error,
+            'error'         => $error,
         ]);
     }
 
-    #[Route(path: '/redirect', name: 'custom_redirect')]
+    #[Route('/redirect', name: 'custom_redirect')]
     public function redirectAfterLogin(): Response
     {
         $user = $this->getUser();
@@ -36,21 +36,19 @@ class LoginController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        // Redirige en fonction des rôles de l'utilisateur
         $roles = $user->getRoles();
-
         if (in_array('ROLE_ADMIN', $roles, true)) {
-            // Admin route
             return $this->redirectToRoute('dashboard');
         }
 
-        // By default, ROLE_USER => home
         return $this->redirectToRoute('home');
     }
 
     #[Route('/logout', name: 'app_logout', methods: ['GET'])]
     public function logout(): void
     {
-        // This is handled by Symfony, so the method should never be called
-        throw new \LogicException('This method should not be called directly.');
+        // La déconnexion est gérée par Symfony via la configuration de sécurité.
+        throw new \LogicException('Cette méthode ne doit pas être appelée directement.');
     }
 }
