@@ -7,6 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
+use Twig\Environment;
+use Doctrine\ORM\EntityManagerInterface;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -114,12 +121,9 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
     }
 
     public function getRoles(): array
-    {
-        $roles = $this->roles;
-        $roles[] = 'ROLE_USER'; // garantit que chaque utilisateur a au moins ROLE_USER
-        return array_unique($roles);
-    }
-
+{
+    return $this->roles; // Return ONLY explicitly assigned roles
+}
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -158,4 +162,35 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
     }
    
 
+    #[Route('/utilisateurs/pdf', name: 'export_utilisateurs_pdf')]
+    public function exportPdf(Environment $twig, EntityManagerInterface $entityManager): Response
+    {
+        // Récupérer les utilisateurs depuis la base de données
+        $utilisateurs = $entityManager->getRepository(Utilisateur::class)->findAll();
+
+        // Générer le HTML à partir du template
+        $html = $twig->render('utilisateurs/pdf.html.twig', [
+            'utilisateurs' => $utilisateurs
+        ]);
+
+        // Options pour Dompdf
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+
+        // Initialiser Dompdf
+        $dompdf = new Dompdf($pdfOptions);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+
+        // Retourner le fichier PDF en réponse
+        return new Response($dompdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="utilisateurs.pdf"',
+        ]);
+        
+
+    }
 }
+
+

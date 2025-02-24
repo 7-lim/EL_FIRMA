@@ -1,14 +1,13 @@
-/*login.css*/
 @import url('https://fonts.googleapis.com/css2?family=Clicker+Script&family=Poppins:wght@200;300;500;600&family=Quicksand:wght@300..700&family=Roboto:wght@300;400;500;700;900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
 }
 
-a{
+a {
     text-decoration: none;
 }
 
@@ -17,13 +16,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color:whitesmoke;
-    background-size: cover; 
-    background-position: center; 
+    background-image: url('{{ asset("img/login.png") }}'); /* Corrected path */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: whitesmoke; /* Fallback color */
 }
 
-
-.container{
+.container {
     position: relative;
     width: 500px;
     height: 1220px;
@@ -35,7 +35,6 @@ body {
     margin: 20px;
     align-items: center;
     justify-content: center;
-    
 }
 
 .login-section{
@@ -208,3 +207,4 @@ form .btn {
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
+

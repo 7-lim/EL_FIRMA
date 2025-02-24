@@ -3,3 +3,11 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+app_dashboard:
+    path: /app_dashboard
+    controller: App\Controller\PageController::dashboard
+    # config/routes.yaml
+admin_statistics:
+    path: /admin/statistics
+    controller: App\Controller\RegistrationController::statistics
+    

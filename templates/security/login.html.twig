@@ -1,0 +1,36 @@
+{# templates/security/login.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/style1.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="login-section">
+        <header>Sign in</header>
+        <div class="social-buttons">
+            <button><i class='bx bxl-google'></i> Use Google</button>
+            <button><i class='bx bxl-apple'></i> Use Apple</button>
+        </div>
+        
+        <div class="separator">
+            <div class="line"></div>
+            <p>Or</p>
+            <div class="line"></div>
+        </div>
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ path('app_login') }}">
+            <input type="email" name="_username" value="{{ last_username }}" placeholder="Email" required>
+            <input type="password" name="_password" placeholder="Password" required>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <button type="submit" class="btn">Login</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

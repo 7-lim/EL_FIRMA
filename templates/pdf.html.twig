@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Utilisateurs</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h2>Liste des Utilisateurs</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Rôle</th>
+                <th>Entreprise</th>
+                <th>ID Fiscale</th>
+                <th>Catégorie</th>
+                <th>Domaine</th>
+                <th>Adresse</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for utilisateur in utilisateurs %}
+                <tr>
+                    <td>{{ utilisateur.id }}</td>
+                    <td>{{ utilisateur.email }}</td>
+                    <td>{{ utilisateur.getRoles()|join(', ') }}</td>
+                    <td>{{ utilisateur.nomEntreprise ?? 'N/A' }}</td>
+                    <td>{{ utilisateur.idFiscale ?? 'N/A' }}</td>
+                    <td>{{ utilisateur.categorieProduit ?? 'N/A' }}</td>
+                    <td>{{ utilisateur.domaineExpertise ?? 'N/A' }}</td>
+                    <td>{{ utilisateur.adresseExploitation ?? 'N/A' }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

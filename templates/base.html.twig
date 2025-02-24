@@ -49,6 +49,9 @@
                             <a href="{{ path('about') }}" class="nav-item nav-link {% if app.request.get('_route') == 'about' %}active{% endif %}">About</a>
                             <a href="{{ path('products') }}" class="nav-item nav-link {% if app.request.get('_route') == 'products' %}active{% endif %}">Products</a>
                             <a href="{{ path('store') }}" class="nav-item nav-link {% if app.request.get('_route') == 'store' %}active{% endif %}">Store</a>
+                            <a href="#" class="nav-item nav-link {% if app.request.get('_route') == 'store' %}active{% endif %}">conseil-expert</a>
+                            <a href="#" class="nav-item nav-link {% if app.request.get('_route') == 'store' %}active{% endif %}">Terrain</a>
+                            <a href="#" class="nav-item nav-link {% if app.request.get('_route') == 'store' %}active{% endif %}">Evenement</a>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                                 <div class="dropdown-menu bg-light rounded-0 m-0">
@@ -64,6 +67,7 @@
                             <button type="button" class="btn btn-sm p-0"><i class="fa fa-search"></i></button>
                         </div>
                          <a href="{{ path('app_register') }}" class="nav-item nav-link {% if app.request.get('_route') == 'app_register' %}active{% endif %}">login</a>
+                         <a href="{{ path('app_logout') }}" class="nav-item nav-link {% if app.request.get('_route') == 'app_register' %}active{% endif %}">logout</a>
                     </div>
                 </nav>
             </div>
@@ -95,6 +99,7 @@
                         <a class="btn btn-link" href="{{ path('services') }}">Our Services</a>
                         <a class="btn btn-link" href="{{ path('terms') }}">Terms & Condition</a>
                         <a class="btn btn-link" href="{{ path('support') }}">Support</a>
+                        
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <h4 class="text-primary mb-4">Business Hours</h4>

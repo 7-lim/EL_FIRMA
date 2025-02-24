@@ -9,16 +9,19 @@ use App\Entity\Administrateur;
 use App\Entity\Utilisateur;
 use App\Form\EditFormType;
 use App\Form\RegistrationFormType;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Twig\Environment;
 use App\Repository\UtilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response; // Utilisez Response au lieu de RedirectResponse
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserRepository;
+
+
 
 
 class RegistrationController extends AbstractController
@@ -27,47 +30,42 @@ class RegistrationController extends AbstractController
     public function register(
         Request $request,
         UtilisateurRepository $utilisateurRepository,
-        UserPasswordHasherInterface $passwordHasher // Injection du service de hachage
-    ): Response
-    {
+        UserPasswordHasherInterface $passwordHasher
+    ): Response {
         // Création du formulaire d'inscription
         $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $userType = $form->get('user_type')->getData(); // Récupère le rôle sélectionné
+            $userType = $form->get('user_type')->getData();
     
             // En fonction du rôle, créer l'entité correspondante
             if ($userType === 'fournisseur') {
                 $user = new Fournisseur();
-                $user->setNomEntreprise($data['nomEntreprise']); // Utilisez le bon nom
-                $user->setIdFiscale($data['idFiscale']); // Utilisez le bon nom
-                $user->setCategorieProduit($data['categorieProduit']); // Utilisez le bon nom
+                $user->setNomEntreprise($data['nomEntreprise']);
+                $user->setIdFiscale($data['idFiscale']);
+                $user->setCategorieProduit($data['categorieProduit']);
             } elseif ($userType === 'expert') {
                 $user = new Expert();
                 $user->setDomaineExpertise($data['domaine_expertise']);
             } elseif ($userType === 'agriculteur') {
                 $user = new Agriculteur();
                 $user->setAdresseExploitation($data['adresse_exploitation']);
-                
-
             } elseif ($userType === 'administrateur') {
                 $user = new Administrateur();
-                // Ajoutez des champs spécifiques à l'administrateur si nécessaire
+                // Attribution explicite du rôle administrateur
+                $user->setRoles(['ROLE_ADMIN']);
             }
-          
     
             // Enregistrement des informations communes
             $user->setEmail($data['email']);
             $user->setNom($data['nom']);
             $user->setPrenom($data['prenom']);
             $user->setTelephone($data['telephone']);
-
-
-            
+    
             // Hachage du mot de passe avant de l'enregistrer
-            $plainPassword = $form->get('plainPassword')->getData(); // Récupère le mot de passe
+            $plainPassword = $form->get('plainPassword')->getData();
             $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
     
@@ -75,7 +73,7 @@ class RegistrationController extends AbstractController
             $utilisateurRepository->save($user, true);
     
             // Redirection après l'enregistrement
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('app_dashboard');
         }
     
         // Rendu du formulaire d'inscription
@@ -83,6 +81,13 @@ class RegistrationController extends AbstractController
             'registrationForm' => $form->createView(),
         ]);
     }
+
+
+
+
+
+
+    
     #[Route('/dashboard', name: 'app_dashboard')]
 
  public function dashboard(UtilisateurRepository $utilisateurRepository): Response
@@ -94,10 +99,18 @@ class RegistrationController extends AbstractController
     ]);
 }
 
+
+
+
+
+
+
+
+
+
 #[Route('/create-admin', name: 'create_admin')]
 public function createAdmin(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
 {
-    // Check if admin already exists
     $existingAdmin = $entityManager->getRepository(Administrateur::class)->findOneBy(['email' => 'admin@admin.com']);
     if ($existingAdmin) {
         return new Response('Admin already exists.');
@@ -105,7 +118,7 @@ public function createAdmin(EntityManagerInterface $entityManager, UserPasswordH
 
     $admin = new Administrateur();
     $admin->setEmail('admin@admin.com');
-    $admin->setRoles(['ROLE_ADMIN']);
+    $admin->setRoles(['ROLE_ADMIN']); // Ensure this is set
     $hashedPassword = $passwordHasher->hashPassword($admin, '123456');
     $admin->setPassword($hashedPassword);
 
@@ -114,6 +127,13 @@ public function createAdmin(EntityManagerInterface $entityManager, UserPasswordH
 
     return new Response('Admin user created successfully!');
 }
+
+
+
+
+
+
+
 
 #[Route('/utilisateur/delete/{id}', name: 'delete_utilisateur')]
 public function deleteUtilisateur(int $id, UtilisateurRepository $utilisateurRepository, EntityManagerInterface $entityManager): Response
@@ -129,6 +149,19 @@ public function deleteUtilisateur(int $id, UtilisateurRepository $utilisateurRep
 
     return $this->redirectToRoute('app_dashboard');
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #[Route('/utilisateur/edit/{id}', name: 'edit_utilisateur')]
@@ -159,7 +192,66 @@ public function editUtilisateur(int $id, Request $request, UtilisateurRepository
         'form' => $form->createView(),
     ]);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#[Route('/utilisateurs/pdf', name: 'export_utilisateurs_pdf')]
+public function exportPdf(Environment $twig, EntityManagerInterface $entityManager): Response
+{
+    // Récupérer les utilisateurs depuis la base de données
+    $utilisateurs = $entityManager->getRepository(Utilisateur::class)->findAll();
+
+    // Générer le HTML à partir du template
+    $html = $twig->render('pdf.html.twig', [ // Update the template path here
+        'utilisateurs' => $utilisateurs
+    ]);
+
+    // Options pour Dompdf
+    $pdfOptions = new Options();
+    $pdfOptions->set('defaultFont', 'Arial');
+
+    // Initialiser Dompdf
+    $dompdf = new Dompdf($pdfOptions);
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'landscape');
+    $dompdf->render();
+
+    // Retourner le fichier PDF en réponse
+    return new Response($dompdf->output(), 200, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="utilisateurs.pdf"',
+    ]);
 }
 
+
+
+#[Route('/admin/statistics', name: 'admin_statistics')]
+public function statistics(UtilisateurRepository $utilisateurRepository): Response
+{
+    // Fetch the number of users for each role
+    $roles = ['ROLE_EXPERT', 'ROLE_AGRICULTEUR', 'ROLE_FOURNISSEUR', 'ROLE_ADMIN'];
+    $statistics = [];
+
+    foreach ($roles as $role) {
+        $statistics[$role] = $utilisateurRepository->countUsersByRole($role);
+    }
+
+    return $this->render('admin/statistics.html.twig', [
+        'statistics' => $statistics,
+    ]);
+}
+}
 
 
