@@ -53,6 +53,25 @@ class Terrain
     #[ORM\ManyToOne(inversedBy: 'terrains')]
     private ?Agriculteur $agriculteur = null;
 
+
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(name: 'utilisateur_id', referencedColumnName: 'id')]
+    private ?Utilisateur $utilisateur = null;
+
+    // Getter and Setter
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): self
+    {
+        $this->utilisateur = $utilisateur;
+        return $this;
+    }
+
+
+
     /**
      * @var Collection<int, Location>
      */
