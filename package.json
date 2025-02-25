@@ -1,0 +1,26 @@
+{
+  "name": "pidev",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/7-lim/EL_FIRMA.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/7-lim/EL_FIRMA/issues"
+  },
+  "homepage": "https://github.com/7-lim/EL_FIRMA#readme",
+  "description": "",
+  "devDependencies": {
+    "@popperjs/core": "^2.11.8",
+    "jquery": "^3.7.1"
+  }
+}

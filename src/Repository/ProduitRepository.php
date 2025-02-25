@@ -33,7 +33,7 @@ class ProduitRepository extends ServiceEntityRepository
     }
 
     if ($name) {
-        $qb->andWhere('p.name LIKE :name')
+        $qb->andWhere('p.NomProduit LIKE :name')
            ->setParameter('name', "%$name%");
     }
 

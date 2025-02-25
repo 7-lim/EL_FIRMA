@@ -20,7 +20,7 @@
     <div class="card border-0 shadow-lg overflow-hidden">
         <div class="row g-0">
             <!-- Image du produit -->
-            <div class="col-md-4" style="background: linear-gradient(rgba(112, 154, 65, 0.9), rgba(112, 154, 65, 0.8)), url('{{ produit.Image ? asset(produit.Image) : 'path/to/default/image.jpg' }}') center/cover;">
+            <div class="col-md-4" style="background: linear-gradient(rgba(112, 154, 65, 0.9), rgba(112, 154, 65, 0.8)), url('{{ produit.Image ? asset(produit.Image) : 'path/to/default/image.jpg' }}') center/cover;" >
                 <div class="d-flex flex-column h-100 p-4 text-white">
                     <div class="mb-auto">
                         <h3 class="h5">Détails du produit</h3>
@@ -47,6 +47,11 @@
             <div class="col-md-8">
                 <div class="card-body p-4">
                     <h3 class="h4 mb-4" style="color: #709A41;">À propos du produit</h3>
+                    {% if produit.image %}
+                        <div class="mb-3">
+                            <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="{{ produit.NomProduit }}" class="img-fluid">
+                        </div>
+                    {% endif %}
                     <p class="lead">{{ produit.Description }}</p>
                 </div>
             </div>

@@ -16,9 +16,9 @@ class Categorie
     private ?int $id = null;
 
     #[ORM\Column(length: 55)]
-    private ?string $NomCategorie = null;
+    private ?string $nom_categorie = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $description = null;
 
     /**
@@ -39,12 +39,12 @@ class Categorie
 
     public function getNomCategorie(): ?string
     {
-        return $this->NomCategorie;
+        return $this->nom_categorie;
     }
 
-    public function setNomCategorie(string $NomCategorie): static
+    public function setNomCategorie(string $nomCategorie): static
     {
-        $this->NomCategorie = $NomCategorie;
+        $this->nom_categorie = $nomCategorie;
         return $this;
     }
 

@@ -1,65 +1,70 @@
-{% block css %}
-<style>
-    .border-success:focus {
-        box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
-        border-color: #28a745;
-    }
-    .btn-success:hover {
-        background-color: #218838;
-        border-color: #1e7e34;
-    }
-    .card {
-        border-radius: 15px;
-    }
-</style>
-{% endblock %}
-
 {% block body %}
 <body class="bg-light">
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-md-8"> {# Increased width for better form layout #}
                 <div class="card shadow-lg border-0">
-                    <div class="card-header bg-success text-white text-center">
-                        <h2>Créer un Nouveau Produit</h2>
+                    <div class="card-header bg-success text-white text-center py-3">
+                        <h2 class="mb-0">{% block form_title %}Créer un Nouveau Produit{% endblock %}</h2>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body px-5">
                         {{ form_start(form, {'attr': {'class': 'form_container', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
 
-                        <div class="mb-3">
-                            {{ form_label(form.NomProduit, 'Nom Produit', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
-                            {{ form_widget(form.NomProduit, {'attr': {'class': 'form-control border-success', 'placeholder': 'Nom du produit'}}) }}
-                            {{ form_errors(form.NomProduit) }}
+                        <div class="row g-3"> {# Added grid layout #}
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form_label(form.NomProduit, 'Nom Produit', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
+                                    {{ form_widget(form.NomProduit, {'attr': {'class': 'form-control border-success' ~ (form.NomProduit.vars.errors|length ? ' is-invalid' : ''), 'placeholder': 'Nom du produit'}}) }}
+                                    {{ form_errors(form.NomProduit) }}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form_label(form.quantite, 'Quantité', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
+                                    {{ form_widget(form.quantite, {'attr': {'class': 'form-control border-success' ~ (form.quantite.vars.errors|length ? ' is-invalid' : ''), 'placeholder': 'Quantité disponible'}}) }}
+                                    {{ form_errors(form.quantite) }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form_label(form.prix, 'Prix ($)', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
+                                    {{ form_widget(form.prix, {'attr': {'class': 'form-control border-success' ~ (form.prix.vars.errors|length ? ' is-invalid' : ''), 'placeholder': 'Prix en Dollar', 'step': '0.01'}}) }}
+                                    {{ form_errors(form.prix) }}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form_label(form.categorie, 'Catégorie', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
+                                    {{ form_widget(form.categorie, {'attr': {'class': 'form-select border-success' ~ (form.categorie.vars.errors|length ? ' is-invalid' : '')}}) }}
+                                    {{ form_errors(form.categorie) }}
+                                </div>
+                            </div>
                         </div>
 
-                        {# Uncomment this section if you want the description field #}
                         <div class="mb-3">
                             {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
-                            {{ form_widget(form.description, {'attr': {'class': 'form-control border-success', 'rows': '4', 'placeholder': 'Description du produit'}}) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control border-success' ~ (form.description.vars.errors|length ? ' is-invalid' : ''), 'rows': '4', 'placeholder': 'Description du produit'}}) }}
                             {{ form_errors(form.description) }}
                         </div>
 
                         <div class="mb-3">
-                            {{ form_label(form.quantite, 'Quantité', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
-                            {{ form_widget(form.quantite, {'attr': {'class': 'form-control border-success', 'placeholder': 'Quantité disponible'}}) }}
-                            {{ form_errors(form.quantite) }}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_label(form.prix, 'Prix (€)', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
-                            {{ form_widget(form.prix, {'attr': {'class': 'form-control border-success', 'placeholder': 'Prix en Euro', 'step': '0.01'}}) }}
-                            {{ form_errors(form.prix) }}
-                        </div>      
-
-
-                        {# Uncomment this section if you want the image upload field #}
-                        {#<div class="mb-3">
                             {{ form_label(form.image, 'Image du produit', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
                             {{ form_widget(form.image, {'attr': {'class': 'form-control border-success'}}) }}
                             {{ form_errors(form.image) }}
-                        </div>#}
+                        </div>
 
-                        <button type="submit" class="btn btn-success w-100 mt-3">Créer le Produit</button>
+                        <div class="d-flex gap-3 mt-4 justify-content-between">
+                            <a href="{{ path('app_categorie_new') }}" class="btn btn-success">
+                                <i class="fas fa-plus me-2"></i>Nouvelle catégorie
+                            </a>
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn btn-success px-4">
+                                    <i class="fas fa-save me-2"></i>{% block submit_button %}Créer{% endblock %}
+                                </button>
+                                <a href="{{ path('dbfrsproduit') }}" class="btn btn-outline-success px-4">
+                                    <i class="fas fa-arrow-left me-2"></i>Retour
+                                </a>
+                            </div>
+                        </div>
                         {{ form_end(form) }}
                     </div>
                 </div>

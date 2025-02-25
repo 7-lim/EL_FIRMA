@@ -366,8 +366,9 @@
                                     {% for produit in produits %}
                                     <div class="col-md-6 col-lg-6 col-xl-4">
                                         <div class="rounded position-relative fruite-item shadow">
-                                            <div class="fruite-img">
-                                                <img src="{{ asset('img/dithane.jpg') }}" class="img-fluid w-100 rounded-top" alt="Product Image">
+                                            <div class="fruite-img">  
+                                            </div>
+                                                <img src="{{ asset('uploads/images/' ~ produit.image) }}" class="img-fluid w-100 rounded-top" alt="Product Image">
                                             </div>
                                             <div class="p-4 border border-success border-top-0 rounded-bottom bg-light-green">
                                                 <h4 class="text-success">{{ produit.NomProduit }}</h4>

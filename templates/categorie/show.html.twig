@@ -1,12 +1,19 @@
-<h2>{{ categorie.name }}</h2>
+{% extends 'base.html.twig' %}
 
-<ul>
-    {% for produit in produits %}
-        <li>{{ produit.name }}</li>
-    {% else %}
-        <li>No products in this category.</li>
-    {% endfor %}
-</ul>
-
-<!-- Back to categories list -->
-<a href="{{ path('app_categorie_index') }}">Back to Categories</a>
+{% block body %}
+<div class="container mt-5">
+    <h2 class="text-success">{{ categorie.getNomCategorie() }}</h2>
+    
+    <h4 class="mt-4">Produits de cette catégorie</h4>
+    <ul class="list-group">
+        {% for produit in produits %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ produit.NomProduit }}
+                <span class="badge bg-success">{{ produit.Prix ~ ' €' }}</span>
+            </li>
+        {% else %}
+            <li class="list-group-item text-muted">Aucun produit disponible.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

@@ -13,6 +13,18 @@
             "./src/Repository/.gitignore"
         ]
     },
+    "doctrine/doctrine-fixtures-bundle": {
+        "version": "4.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "3.0",
+            "ref": "1f5514cfa15b947298df4d771e694e578d4c204d"
+        },
+        "files": [
+            "./src/DataFixtures/AppFixtures.php"
+        ]
+    },
     "doctrine/doctrine-migrations-bundle": {
         "version": "3.4",
         "recipe": {
@@ -248,8 +260,14 @@
             "./templates/base.html.twig"
         ]
     },
+    "symfony/ux-live-component": {
+        "version": "v2.23.0"
+    },
     "symfony/ux-turbo": {
         "version": "v2.22.1"
+    },
+    "symfony/ux-twig-component": {
+        "version": "v2.23.0"
     },
     "symfony/validator": {
         "version": "6.4",

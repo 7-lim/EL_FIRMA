@@ -24,11 +24,18 @@ class Produit
         maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères."
     )]
     private ?string $NomProduit = null;
-
+        
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "La description est obligatoire.")]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: "La description doit contenir au moins {{ limit }} caractères.",
+        maxMessage: "La description ne peut pas dépasser {{ limit }} caractères."
+    )]
     private ?string $Description = null;
 
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     private ?string $Image = null;
     
     #[ORM\Column]
@@ -36,7 +43,7 @@ class Produit
     #[Assert\Positive(message: "La quantité doit être un nombre positif.")]
     private ?int $quantite = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: Types::FLOAT)]
     #[Assert\NotBlank(message: "Le prix est obligatoire.")]
     #[Assert\Positive(message: "Le prix doit être un nombre positif.")]
     #[Assert\GreaterThan(value: 0, message: "Le prix doit être supérieur à 0.")]
@@ -49,7 +56,8 @@ class Produit
     private ?Agriculteur $agriculteur = null;
 
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'produits')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Assert\NotNull(message: "SVP sélectionner une catégorie")]
     private ?Categorie $categorie = null;
 
       public function getId(): ?int
