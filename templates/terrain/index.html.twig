@@ -3,45 +3,34 @@
 {% block title %}Liste des Terrains{% endblock %}
 
 {% block body %}
-<!-- Page Header -->
-<div class="container-fluid page-header py-5 mb-5 bg-light">
-    <div class="container text-center py-5">
-        <h1 class="display-4 text-dark animated slideInDown">Liste des Terrains</h1>
-        <nav aria-label="breadcrumb" class="animated slideInDown">
-            <ol class="breadcrumb justify-content-center mb-0">
-                <li class="breadcrumb-item active" aria-current="page">Terrains</li>
-            </ol>
-        </nav>
-    </div>
-</div>
+    <div class="container">
+        <h1 class="text-center">Liste des Terrains</h1>
 
-<div class="container py-5">
-    {% if terrains|length > 0 %}
-        <div class="row">
-            {% for terrain in terrains %}
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ terrain.localisation }}</h5>
-                            <p class="card-text">
-                                Superficie: {{ terrain.superficie }} m²<br>
-                                Type de sol: {{ terrain.typeSol }}<br>
-                                Statut: {{ terrain.statut }}
-                            </p>
-                        </div>
-                        <div class="card-footer text-center">
-                            <a href="{{ path('terrain_show', {id: terrain.id}) }}" class="btn btn-outline-primary btn-sm">Voir détails</a>
-                            <a href="{{ path('terrain_edit', {id: terrain.id}) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p class="text-center">Aucun terrain disponible.</p>
-    {% endif %}
-    <div class="text-center mt-4">
-        <a href="{{ path('terrain_new') }}" class="btn btn-primary rounded-pill py-3 px-5">Ajouter un Terrain</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Localisation</th>
+                    <th>Photo</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for terrain in terrains %}
+                    <tr>
+                        <td>{{ terrain.localisation }}</td>
+                        <td>
+                            {% if terrain.photo %}
+                                <img src="{{ asset('uploads/terrains/' ~ terrain.photo) }}" class="img-thumbnail" style="max-width: 100px;">
+                            {% else %}
+                                Pas d'image
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ path('terrain_show', {'id': terrain.id}) }}" class="btn btn-info btn-sm">Voir</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-</div>
 {% endblock %}

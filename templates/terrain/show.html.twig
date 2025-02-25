@@ -36,6 +36,18 @@
                 {% endif %}
             </p>
         </div>
+
+        
+        
+                <div class="col-md-6 text-center">
+                    {% if terrain.photo %}
+                        <img src="{{ asset('uploads/terrains/' ~ terrain.photo) }}" class="img-fluid rounded" style="max-width: 300px;">
+                    {% else %}
+                        <p>Aucune photo disponible</p>
+                    {% endif %}
+                </div>
+
+
         <div class="card-footer text-center">
             <a href="{{ path('terrain_edit', {id: terrain.id}) }}" class="btn btn-secondary btn-sm">Modifier</a>
             <a href="{{ path('terrain_list') }}" class="btn btn-outline-primary btn-sm">Retour à la liste</a>

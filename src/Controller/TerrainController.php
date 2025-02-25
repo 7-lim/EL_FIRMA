@@ -21,7 +21,7 @@ class TerrainController extends AbstractController
         $this->entityManager = $entityManager;
     }
     
-    #[Route('/terrain/new', name: 'terrain_new', methods: ['GET', 'POST'])]
+    #[Route(path: '/terrain/new', name: 'terrain_new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response
     {
         $terrain = new Terrain();

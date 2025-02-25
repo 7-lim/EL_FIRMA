@@ -52,7 +52,7 @@ class TerrainType extends AbstractType
             ])
             ->add('photo', FileType::class, [
                 'label' => 'Photo du terrain (JPEG, PNG, GIF)',
-                'mapped' => false, // On gère l'upload manuellement dans le contrôleur
+                'mapped' => true,
                 'required' => false,
                 'constraints' => [
                     new File([
