@@ -2,25 +2,31 @@
 
 {% block title %}Ajouter un Terrain{% endblock %}
 
+
 {% block body %}
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
-                <h1 class="h3 mb-4 text-gray-800 text-center">Ajouter un Terrain</h1>
+            <div class="col-md-10">
+                
+                {# Centrer le titre #}
+                <div class="title-container">
+                <h1 class="text-center">Ajouter un Terrain</h1>
+                </div>
 
-                {# Flash messages for errors #}
+                {# Flash messages #}
                 {% for message in app.flashes('error') %}
-                    <div class="alert alert-danger text-center">
+                    <div class="alert alert-danger">
                         {{ message }}
                     </div>
                 {% endfor %}
 
-                <div class="card shadow mb-4">
+                {# Formulaire #}
+                <div class="card">
                     <div class="card-body">
                         {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
 
                         {# Localisation Field #}
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             {{ form_label(form.localisation, 'Localisation', {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_widget(form.localisation, {'attr': {'class': 'form-control'}}) }}
                             <div class="invalid-feedback">
@@ -29,7 +35,7 @@
                         </div>
 
                         {# Superficie Field #}
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             {{ form_label(form.superficie, 'Superficie (m²)', {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_widget(form.superficie, {'attr': {'class': 'form-control'}}) }}
                             <div class="invalid-feedback">
@@ -38,7 +44,7 @@
                         </div>
 
                         {# Type de Sol Field #}
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             {{ form_label(form.typeSol, 'Type de Sol', {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_widget(form.typeSol, {'attr': {'class': 'form-control'}}) }}
                             <div class="invalid-feedback">
@@ -47,7 +53,7 @@
                         </div>
 
                         {# Statut Field #}
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             {{ form_label(form.statut, 'Statut', {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_widget(form.statut, {'attr': {'class': 'form-control'}}) }}
                             <div class="invalid-feedback">
@@ -55,8 +61,8 @@
                             </div>
                         </div>
 
-                                                {# Photo Field #}
-                        <div class="form-group">
+                        {# Photo Field #}
+                        <div class="form-group mb-3">
                             {{ form_label(form.photo, 'Photo', {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
                             <div class="invalid-feedback">
@@ -64,9 +70,8 @@
                             </div>
                         </div>
 
-
                         {# Submit Button #}
-                        <div class="form-group text-center">
+                        <div class="form-group text-center mt-4">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Enregistrer
                             </button>

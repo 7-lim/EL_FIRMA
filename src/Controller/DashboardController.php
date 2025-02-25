@@ -17,16 +17,14 @@ class DashboardController extends AbstractController
         LocationRepository $locationRepository,
         UtilisateurRepository $utilisateurRepository
     ): Response {
-        // Récupération des 5 terrains les plus récents
-        $terrains = $terrainRepository->findBy([], ['id' => 'DESC'], 5);
-        $totalTerrains = count($terrainRepository->findAll());
+        // Récupération des statistiques et des dernières entrées en base
+        $terrains = $terrainRepository->findLatest(5);
+        $totalTerrains = $terrainRepository->countTotal();
 
-        // Récupération des 5 locations les plus récentes
-        $locations = $locationRepository->findBy([], ['id' => 'DESC'], 5);
-        $totalLocations = count($locationRepository->findAll());
+        $locations = $locationRepository->findLatest(5);
+        $totalLocations = $locationRepository->countTotal();
 
-        // Récupération du nombre total d'utilisateurs
-        $totalUsers = count($utilisateurRepository->findAll());
+        $totalUsers = $utilisateurRepository->countTotal();
 
         return $this->render('dashboard/index.html.twig', [
             'terrains'       => $terrains,

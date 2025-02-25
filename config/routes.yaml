@@ -3,3 +3,38 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+
+
+
+# Terrain routes
+terrain_new:
+    path: /terrain/new
+    controller: App\Controller\TerrainController::new
+    methods: [GET, POST]
+
+terrain_list:
+    path: /terrains
+    controller: App\Controller\TerrainController::index
+    methods: [GET]
+
+terrain_show:
+    path: /terrain/{id}
+    controller: App\Controller\TerrainController::show
+    methods: [GET]
+
+terrain_edit:
+    path: /terrain/{id}/edit
+    controller: App\Controller\TerrainController::edit
+    methods: [GET, POST]
+
+terrain_delete:
+    path: /terrain/{id}
+    controller: App\Controller\TerrainController::delete
+    methods: [POST]
+
+terrain_search:
+    path: /recherche
+    controller: App\Controller\TerrainController::search
+    methods: [GET]
+

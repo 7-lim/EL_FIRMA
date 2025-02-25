@@ -65,4 +65,23 @@ class LocationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+
+    public function findLatest(int $limit): array
+{
+    return $this->createQueryBuilder('l')
+        ->orderBy('l.id', 'DESC')
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+}
+
+public function countTotal(): int
+{
+    return $this->createQueryBuilder('l')
+        ->select('COUNT(l.id)')
+        ->getQuery()
+        ->getSingleScalarResult();
+}
+
 }

@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche de Terrains{% endblock %}
+
+{% block body %}
+    <h1>Recherche de Terrains</h1>
+
+    <form action="{{ path('terrain_search') }}" method="get">
+        <input type="text" name="q" value="{{ query }}" placeholder="Rechercher un terrain...">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    {% if results|length > 0 %}
+        <ul>
+            {% for terrain in results %}
+                <li>
+                    <h2>{{ terrain.name }}</h2>
+                    <p>Localisation : {{ terrain.localisation }}</p>
+                    <p>Superficie : {{ terrain.superficie }} hectares</p>
+                    <p>Type de sol : {{ terrain.typeSol }}</p>
+                    <p>Irrigation disponible : {{ terrain.irrigationDisponible ? 'Oui' : 'Non' }}</p>
+                    <p>Statut : {{ terrain.statut }}</p>
+                    <p><a href="{{ path('terrain_show', {'id': terrain.id}) }}">Voir les détails</a></p>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {# Pagination #}
+        <div class="pagination">
+            {{ pagerfanta(results, 'twitter_bootstrap4') }}
+        </div>
+    {% else %}
+        <p>Aucun résultat trouvé.</p>
+    {% endif %}
+{% endblock %}
