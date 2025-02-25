@@ -45,18 +45,12 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav ms-auto">
-                            <a href="{{ path('home') }}" class="nav-item nav-link {% if app.request.get('_route') == 'home' %}active{% endif %}">Home</a>
-                            <a href="{{ path('about') }}" class="nav-item nav-link {% if app.request.get('_route') == 'about' %}active{% endif %}">About</a>
-<<<<<<< HEAD
+                            <a href="{{ path('about') }}" class="nav-item nav-link {% if app.request.get('_route') == 'about' %}active{% endif %}">Home</a>
                             <a href="{{ path('app_evenement_index') }}" class="nav-item nav-link {% if app.request.get('_route') == 'evenement' %}active{% endif %}">Évènements</a>
                             <a href="{{ path('store') }}" class="nav-item nav-link {% if app.request.get('_route') == 'store' %}active{% endif %}">Produits</a>
-=======
-                            <a href="{{ path('products') }}" class="nav-item nav-link {% if app.request.get('_route') == 'products' %}active{% endif %}">Products</a>
                             <a href="{{ path('store') }}" class="nav-item nav-link {% if app.request.get('_route') == 'store' %}active{% endif %}">Store</a>
-                            <a href="#" class="nav-item nav-link {% if app.request.get('_route') == 'store' %}active{% endif %}">conseil-expert</a>
+                            <a href="#" class="nav-item nav-link {% if app.request.get('_route') == 'blog' %}active{% endif %}">Conseil expert</a>
                             <a href="#" class="nav-item nav-link {% if app.request.get('_route') == 'store' %}active{% endif %}">Terrain</a>
-                            <a href="#" class="nav-item nav-link {% if app.request.get('_route') == 'store' %}active{% endif %}">Evenement</a>
->>>>>>> origin/user_crud_finale
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                                 <div class="dropdown-menu bg-light rounded-0 m-0">

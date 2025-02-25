@@ -15,9 +15,9 @@ services:
             - '../src/Entity/'
         
     # Explicit service definition
-        App\Security\AuthenticationSuccessHandler:
-            arguments:
-                 $urlGenerator: '@router'
+        # App\Security\AuthenticationSuccessHandler:
+        #     arguments:
+        #          $urlGenerator: '@router'
 
 
     # add more service definitions when explicit configuration is needed

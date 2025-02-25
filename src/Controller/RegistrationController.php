@@ -6,6 +6,7 @@ use App\Entity\Agriculteur;
 use App\Entity\Fournisseur;
 use App\Entity\Expert;
 use App\Entity\Administrateur;
+use App\Entity\Utilisateur;
 use App\Form\EditFormType;
 use App\Form\RegistrationFormType;
 use Dompdf\Dompdf;
@@ -14,7 +15,7 @@ use Twig\Environment;
 use App\Repository\UtilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Response; // Utilisez Response au lieu de RedirectResponse
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,6 +40,7 @@ class RegistrationController extends AbstractController
             $data = $form->getData();
             $userType = $form->get('user_type')->getData();
     
+            // En fonction du rôle, créer l'entité correspondante
             if ($userType === 'fournisseur') {
                 $user = new Fournisseur();
                 $user->setNomEntreprise($data['nomEntreprise']);
@@ -67,12 +69,14 @@ class RegistrationController extends AbstractController
             $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
     
+            // Sauvegarde de l'utilisateur dans la base de données
             $utilisateurRepository->save($user, true);
     
             // Redirection après l'enregistrement
             return $this->redirectToRoute('app_dashboard');
         }
     
+        // Rendu du formulaire d'inscription
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
@@ -85,9 +89,10 @@ class RegistrationController extends AbstractController
 
     
     #[Route('/dashboard', name: 'app_dashboard')]
-    public function dashboard(UtilisateurRepository $utilisateurRepository): Response
-    {
-        $utilisateurs = $utilisateurRepository->findAll();
+
+ public function dashboard(UtilisateurRepository $utilisateurRepository): Response
+{
+    $utilisateurs = $utilisateurRepository->findAll();
 
     return $this->render('dashboardadmin.html.twig', [
         'utilisateurs' => $utilisateurs,
@@ -117,8 +122,8 @@ public function createAdmin(EntityManagerInterface $entityManager, UserPasswordH
     $hashedPassword = $passwordHasher->hashPassword($admin, '123456');
     $admin->setPassword($hashedPassword);
 
-        $entityManager->persist($admin);
-        $entityManager->flush();
+    $entityManager->persist($admin);
+    $entityManager->flush();
 
     return new Response('Admin user created successfully!');
 }
@@ -130,17 +135,17 @@ public function createAdmin(EntityManagerInterface $entityManager, UserPasswordH
 
 
 
-    #[Route('/utilisateur/delete/{id}', name: 'delete_utilisateur')]
-    public function deleteUtilisateur(int $id, UtilisateurRepository $utilisateurRepository, EntityManagerInterface $entityManager): Response
-    {
-        $utilisateur = $utilisateurRepository->find($id);
+#[Route('/utilisateur/delete/{id}', name: 'delete_utilisateur')]
+public function deleteUtilisateur(int $id, UtilisateurRepository $utilisateurRepository, EntityManagerInterface $entityManager): Response
+{
+    $utilisateur = $utilisateurRepository->find($id);
 
-        if (!$utilisateur) {
-            throw $this->createNotFoundException('Utilisateur non trouvé.');
-        }
+    if (!$utilisateur) {
+        throw $this->createNotFoundException('Utilisateur non trouvé.');
+    }
 
-        $entityManager->remove($utilisateur);
-        $entityManager->flush();
+    $entityManager->remove($utilisateur);
+    $entityManager->flush();
 
     return $this->redirectToRoute('app_dashboard');
 }
@@ -159,28 +164,29 @@ public function createAdmin(EntityManagerInterface $entityManager, UserPasswordH
 
 
 
-    #[Route('/utilisateur/edit/{id}', name: 'edit_utilisateur')]
-    public function editUtilisateur(int $id, Request $request, UtilisateurRepository $utilisateurRepository, EntityManagerInterface $entityManager): Response
-    {
-        $utilisateur = $utilisateurRepository->find($id);
+#[Route('/utilisateur/edit/{id}', name: 'edit_utilisateur')]
+public function editUtilisateur(int $id, Request $request, UtilisateurRepository $utilisateurRepository, EntityManagerInterface $entityManager): Response
+{
+    $utilisateur = $utilisateurRepository->find($id);
 
-        if (!$utilisateur) {
-            throw $this->createNotFoundException('Utilisateur non trouvé.');
-        }
+    if (!$utilisateur) {
+        throw $this->createNotFoundException('Utilisateur non trouvé.');
+    }
 
-        $userType = $utilisateur->getType(); // Ensure this method exists in the Utilisateur entity
+    // Déterminez le type d'utilisateur
+    $userType = $utilisateur->getType(); // Assurez-vous que cette méthode existe dans l'entité Utilisateur
 
-        $form = $this->createForm(EditFormType::class, $utilisateur, [
-            'user_type' => $userType,
-            'is_edit' => true,
-        ]);
+    $form = $this->createForm(EditFormType::class, $utilisateur, [
+        'user_type' => $userType,
+        'is_edit' => true,
+    ]);
 
-        $form->handleRequest($request);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-            return $this->redirectToRoute('app_dashboard');
-        }
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->flush();
+        return $this->redirectToRoute('app_dashboard');
+    }
 
     return $this->render('edit_utilisateur.html.twig', [
         'form' => $form->createView(),
@@ -247,5 +253,4 @@ public function statistics(UtilisateurRepository $utilisateurRepository): Respon
     ]);
 }
 }
-
 

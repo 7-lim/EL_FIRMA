@@ -54,11 +54,8 @@ class Evenement
     #[Assert\Positive (message:"Le prix doit être positif")]
     private ?int $prix = null;
 
-    #[ORM\ManyToOne(inversedBy: 'Evenements')]
-    private ?Fournisseur $fournisseurs = null;
-
     #[ORM\ManyToOne(inversedBy: 'evenements')]
-    private ?Administrateur $administrateur = null;
+    private ?Utilisateur $utilisateur = null;
 
     /**
      * @var Collection<int, Ticket>
@@ -164,20 +161,14 @@ class Evenement
         return $this;
     }
 
-    public function getFournisseurs(): ?Fournisseur
+    public function getUtilisateur(): ?Utilisateur
     {
-        return $this->fournisseurs;
+        return $this->utilisateur;
     }
 
-    public function getAdministrateur(): ?Administrateur
+    public function setUtilisateur(?Utilisateur $utilisateur): static
     {
-        return $this->administrateur;
-    }
-
-    public function setAdministrateur(?Administrateur $administrateur): static
-    {
-        $this->administrateur = $administrateur;
-
+        $this->utilisateur = $utilisateur;
         return $this;
     }
 

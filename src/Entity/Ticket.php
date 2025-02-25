@@ -93,7 +93,7 @@ class Ticket
     {
         return json_encode([
             'event_id' => $this->getEvenement()->getId(),
-            // 'user_id' => $this->getAgriculteur()->getId(),
+            'user_id' => $this->getAgriculteur()->getId(),
             'price' => $this->getPrix(),
         ]);
     }
