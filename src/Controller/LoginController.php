@@ -33,7 +33,7 @@ class LoginController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user) {
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login    ');
         }
 
         // Redirige en fonction des rôles de l'utilisateur

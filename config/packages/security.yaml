@@ -22,7 +22,7 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
-                default_target_path: app_home
+                default_target_path: home
             logout:
                 path: app_logout
                 target: app_login
@@ -33,7 +33,8 @@ security:
 
     access_control:
         # Admin routes
-        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: PUBLIC_ACCESS }
+
         - { path: ^/homeadmin, roles: ROLE_ADMIN }
         - { path: ^/dashboard, roles: ROLE_ADMIN }
 

@@ -20,45 +20,49 @@ class RegistrationController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $em
     ): Response {
-        // Création du formulaire sans lier d'objet pour l'instant
+        // Create the form without binding it to an entity initially
         $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer la valeur du type d'utilisateur (champ unmapped)
+            // Get the user type value from the form (unmapped field)
             $userTypeValue = $form->get('user_type')->getData();
 
-            // En fonction du type, instancier la classe concrète appropriée
+            // Instantiate the appropriate user entity based on the selected type
             if ($userTypeValue === 'fournisseur') {
                 $user = new Fournisseur();
             } else {
-                // Par défaut, nous créons un Agriculteur (ou adapter selon vos besoins)
+                // Default to Agriculteur if no valid type is selected
                 $user = new Agriculteur();
             }
 
-            // Remplir manuellement les champs mappés
+            // Map the form data to the user entity
             $user->setNom($form->get('nom')->getData());
             $user->setPrenom($form->get('prenom')->getData());
             $user->setEmail($form->get('email')->getData());
             $user->setTelephone($form->get('telephone')->getData());
-            // Vous pouvez également stocker le type dans l'entité si nécessaire
+
+            // Optionally, store the user type in the entity if needed
             $user->setType($userTypeValue);
 
-            // Gérer le mot de passe brut (unmapped)
+            // Handle the plain password (unmapped field)
             $plainPassword = $form->get('plainPassword')->getData();
             $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
 
-            // Définir les rôles (stocké en JSON)
+            // Set default roles (stored as JSON)
             $user->setRoles(['ROLE_USER']);
 
-            // Persister l'utilisateur (la colonne 'disc' sera automatiquement renseignée)
+            // Persist the user (the 'disc' column will be automatically set due to inheritance)
             $em->persist($user);
             $em->flush();
 
+            // Redirect to the login page after successful registration
+            $this->addFlash('success', 'Registration successful! Please log in.');
             return $this->redirectToRoute('app_login');
         }
 
+        // Render the registration form
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);

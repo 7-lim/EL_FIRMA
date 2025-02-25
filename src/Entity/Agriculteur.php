@@ -10,9 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: AgriculteurRepository::class)]
 class Agriculteur extends Utilisateur
 {
-
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $Localisation = null;
+    private ?string $localisation = null;
 
     /**
      * @var Collection<int, Evenement>
@@ -62,13 +61,12 @@ class Agriculteur extends Utilisateur
 
     public function getLocalisation(): ?string
     {
-        return $this->Localisation;
+        return $this->localisation;
     }
 
-    public function setLocalisation(?string $Localisation): static
+    public function setLocalisation(?string $localisation): static
     {
-        $this->Localisation = $Localisation;
-
+        $this->localisation = $localisation;
         return $this;
     }
 
@@ -85,14 +83,12 @@ class Agriculteur extends Utilisateur
         if (!$this->evenements->contains($evenement)) {
             $this->evenements->add($evenement);
         }
-
         return $this;
     }
 
     public function removeEvenement(Evenement $evenement): static
     {
         $this->evenements->removeElement($evenement);
-
         return $this;
     }
 
@@ -110,19 +106,16 @@ class Agriculteur extends Utilisateur
             $this->produits->add($produit);
             $produit->setAgriculteur($this);
         }
-
         return $this;
     }
 
     public function removeProduit(Produit $produit): static
     {
         if ($this->produits->removeElement($produit)) {
-            // set the owning side to null (unless already changed)
             if ($produit->getAgriculteur() === $this) {
                 $produit->setAgriculteur(null);
             }
         }
-
         return $this;
     }
 
@@ -139,14 +132,12 @@ class Agriculteur extends Utilisateur
         if (!$this->tickets->contains($ticket)) {
             $this->tickets->add($ticket);
         }
-
         return $this;
     }
 
     public function removeTicket(Ticket $ticket): static
     {
         $this->tickets->removeElement($ticket);
-
         return $this;
     }
 
@@ -164,19 +155,16 @@ class Agriculteur extends Utilisateur
             $this->discussions->add($discussion);
             $discussion->setAgriculteur($this);
         }
-
         return $this;
     }
 
     public function removeDiscussion(Discussion $discussion): static
     {
         if ($this->discussions->removeElement($discussion)) {
-            // set the owning side to null (unless already changed)
             if ($discussion->getAgriculteur() === $this) {
                 $discussion->setAgriculteur(null);
             }
         }
-
         return $this;
     }
 
@@ -194,19 +182,16 @@ class Agriculteur extends Utilisateur
             $this->terrains->add($terrain);
             $terrain->setAgriculteur($this);
         }
-
         return $this;
     }
 
     public function removeTerrain(Terrain $terrain): static
     {
         if ($this->terrains->removeElement($terrain)) {
-            // set the owning side to null (unless already changed)
             if ($terrain->getAgriculteur() === $this) {
                 $terrain->setAgriculteur(null);
             }
         }
-
         return $this;
     }
 
@@ -224,19 +209,16 @@ class Agriculteur extends Utilisateur
             $this->reclamations->add($reclamation);
             $reclamation->setAgriculteur($this);
         }
-
         return $this;
     }
 
     public function removeReclamation(Reclamation $reclamation): static
     {
         if ($this->reclamations->removeElement($reclamation)) {
-            // set the owning side to null (unless already changed)
             if ($reclamation->getAgriculteur() === $this) {
                 $reclamation->setAgriculteur(null);
             }
         }
-
         return $this;
     }
 }

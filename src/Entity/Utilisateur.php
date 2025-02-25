@@ -15,15 +15,16 @@ use Symfony\Component\Security\Core\User\UserInterface;
     'Administrateur' => Administrateur::class,
     'Fournisseur' => Fournisseur::class,
     'Expert' => Expert::class,
+    'Terrain' => Terrain::class,
 ])]
-class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
+
+
+ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
     #[ORM\Column(type: 'integer')]
-
-    private ?int $id = null;
+    private ?int $id = null;    
 
     #[ORM\Column(length: 55)]
     private ?string $Nom = null;
@@ -45,7 +46,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $type = null;
-
 
 
     

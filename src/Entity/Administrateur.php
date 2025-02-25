@@ -25,6 +25,7 @@ class Administrateur extends Utilisateur
      */
     #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'administrateur')]
     private Collection $reclamations;
+    
 
     public function __construct()
     {
