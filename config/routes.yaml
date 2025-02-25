@@ -10,4 +10,3 @@ app_dashboard:
 admin_statistics:
     path: /admin/statistics
     controller: App\Controller\RegistrationController::statistics
-    

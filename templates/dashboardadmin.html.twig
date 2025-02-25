@@ -5,15 +5,20 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
 {% endblock %}
 
 {% block body %}
     <div class="container-fluid">
+        <!-- Search Bar -->
+       
+
         <!-- En-tête de page -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Gestion des Utilisateurs</h1>
-            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-download fa-sm text-white-50"></i> Exporter
+            <a href="{{ path('export_utilisateurs_pdf') }}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm" title="Exporter en PDF">
+                <i class="fas fa-file-pdf fa-sm text-white-50"></i> Exporter en PDF
             </a>
         </div>
 
@@ -30,6 +35,7 @@
                                 <th>ID</th>
                                 <th>Email</th>
                                 <th>Rôle</th>
+                                <th>Nom</th>
                                 <th>Entreprise</th>
                                 <th>ID Fiscale</th>
                                 <th>Catégorie</th>
@@ -38,12 +44,13 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="userTableBody">
                             {% for utilisateur in utilisateurs %}
                                 <tr>
                                     <td>{{ utilisateur.id }}</td>
                                     <td>{{ utilisateur.email }}</td>
                                     <td>{{ utilisateur.getRoles()|join(', ') }}</td>
+                                    <td>{{ utilisateur.nom }}</td>
                                     <td>{{ utilisateur.nomEntreprise ?? 'N/A' }}</td>
                                     <td>{{ utilisateur.idFiscale ?? 'N/A' }}</td>
                                     <td>{{ utilisateur.categorieProduit ?? 'N/A' }}</td>
@@ -51,16 +58,16 @@
                                     <td>{{ utilisateur.adresseExploitation ?? 'N/A' }}</td>
                                     <td class="text-center">
                                         <a href="{{ path('edit_utilisateur', {id: utilisateur.id}) }}" 
-                                           class="btn btn-sm btn-primary btn-circle">
+                                           class="btn btn-sm btn-primary btn-circle" title="Modifier l'utilisateur">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                         <form action="{{ path('delete_utilisateur', {id: utilisateur.id}) }}" method="post" class="d-inline">
-                                         <input type="hidden" name="_method" value="DELETE">
-                                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.id) }}">
-                                         <button type="submit" class="btn btn-sm btn-danger btn-circle">
-                                         <i class="fas fa-trash"></i>
-        </button>
-    </form>
+                                        <form action="{{ path('delete_utilisateur', {id: utilisateur.id}) }}" method="post" class="d-inline">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.id) }}">
+                                            <button type="submit" class="btn btn-sm btn-danger btn-circle" title="Supprimer l'utilisateur">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -69,25 +76,14 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal de suppression -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Confirmation de suppression</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    Êtes-vous sûr de vouloir supprimer cet utilisateur ?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                    <a id="delete-confirm" href="#" class="btn btn-danger">Confirmer</a>
-                </div>
+        <!-- Chart Section -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">User Statistics by Role</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="roleChart" width="400" height="200"></canvas>
             </div>
         </div>
     </div>
@@ -95,24 +91,53 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script>
-        $(document).ready(function() {
-            // Gestion de la suppression
-            $('.delete-btn').click(function() {
-                const url = $(this).data('url');
-                $('#delete-confirm').attr('href', url');
-                $('#deleteModal').modal('show');
-            });
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <!-- Bootstrap JS (for modal functionality) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-            // Initialisation de DataTables
-            $('#dataTable').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/French.json"
-                },
-                "columnDefs": [
-                    { "orderable": false, "targets": [8] }
-                ]
-            });
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('roleChart').getContext('2d');
+        const roleChart = new Chart(ctx, {
+            type: 'pie', // Use 'pie' for a pie chart or 'doughnut' for a doughnut chart
+            data: {
+                labels: {{ statistics|keys|json_encode|raw }}, // Roles (e.g., ROLE_EXPERT, ROLE_ADMIN)
+                datasets: [{
+                    label: 'Number of Users',
+                    data: {{ statistics|map(value => value)|json_encode|raw }}, // Number of users for each role
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)', // Red
+                        'rgba(54, 162, 235, 0.6)', // Blue
+                        'rgba(75, 192, 192, 0.6)', // Green
+                        'rgba(153, 102, 255, 0.6)', // Purple
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top', // Position of the legend
+                    },
+                    title: {
+                        display: true,
+                        text: 'User Statistics by Role'
+                    }
+                }
+            }
         });
-    </script>
+    });
+</script>
 {% endblock %}

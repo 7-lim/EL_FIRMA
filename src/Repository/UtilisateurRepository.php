@@ -55,6 +55,23 @@ class UtilisateurRepository extends ServiceEntityRepository implements PasswordU
             'utilisateurs' => $utilisateurs,
         ]);
     }
+    public function findByNom(string $nom): array
+{
+    return $this->createQueryBuilder('u')
+        ->andWhere('u.nom LIKE :nom')
+        ->setParameter('nom', '%' . $nom . '%')
+        ->getQuery()
+        ->getResult();
+}
+public function countUsersByRole(string $role): int
+{
+    return $this->createQueryBuilder('u')
+        ->select('COUNT(u.id)')
+        ->where('u.roles LIKE :role')
+        ->setParameter('role', '%"' . $role . '"%')
+        ->getQuery()
+        ->getSingleScalarResult();
+}
 }
 
 
