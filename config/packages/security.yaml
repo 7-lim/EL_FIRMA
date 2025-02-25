@@ -33,7 +33,7 @@ security:
 
     access_control:
         # Admin routes
-        - { path: ^/admin, roles: PUBLIC_ACCESS }
+        - { path: ^/admin, roles:   ROLE_ADMIN }
 
         - { path: ^/homeadmin, roles: ROLE_ADMIN }
         - { path: ^/dashboard, roles: ROLE_ADMIN }
@@ -46,7 +46,7 @@ security:
         - { path: ^/home, roles: ROLE_USER }
 
         # Everything else requires auth
-        - { path: ^/, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: ROLE_USER }
 
         # Public routes
         - { path: ^/register, roles: PUBLIC_ACCESS }

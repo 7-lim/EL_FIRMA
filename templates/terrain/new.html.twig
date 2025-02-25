@@ -1,60 +1,76 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Créer un Utilisateur{% endblock %}
+{% block title %}Ajouter un Terrain{% endblock %}
 
 {% block body %}
-    {# Page Header Start #}
-    <div class="container-fluid page-header py-5 mb-5 bg-light">
-        <div class="container text-center py-5">
-            <h1 class="display-2 text-dark mb-4 animated slideInDown">Créer un nouvel utilisateur</h1>
-            <nav aria-label="breadcrumb" class="animated slideInDown">
-                <ol class="breadcrumb justify-content-center mb-0">
-                    <li class="breadcrumb-item active" aria-current="page">Créer un utilisateur</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-    {# Page Header End #}
-
-    <div class="container py-5">
-        {# Flash Messages #}
-        {% for message in app.flashes('success') %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-
+    <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card shadow-sm">
+                <h1 class="h3 mb-4 text-gray-800 text-center">Ajouter un Terrain</h1>
+
+                {# Flash messages for errors #}
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger text-center">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+
+                <div class="card shadow mb-4">
                     <div class="card-body">
-                        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-                            <div class="mb-3">
-                                {{ form_label(form.nom, 'Nom') }}
-                                {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(form.nom) }}
+                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+                        {# Localisation Field #}
+                        <div class="form-group">
+                            {{ form_label(form.localisation, 'Localisation', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.localisation, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.localisation) }}
                             </div>
-                            <div class="mb-3">
-                                {{ form_label(form.email, 'Email') }}
-                                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(form.email) }}
+                        </div>
+
+                        {# Superficie Field #}
+                        <div class="form-group">
+                            {{ form_label(form.superficie, 'Superficie (m²)', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.superficie, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.superficie) }}
                             </div>
-                            <div class="mb-3">
-                                {{ form_label(form.password, 'Mot de passe') }}
-                                {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
-                                {{ form_errors(form.password) }}
+                        </div>
+
+                        {# Type de Sol Field #}
+                        <div class="form-group">
+                            {{ form_label(form.typeSol, 'Type de Sol', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.typeSol, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.typeSol) }}
                             </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary rounded-pill py-3 px-5">
-                                    {{ button_label|default('Créer le compte') }}
-                                </button>
+                        </div>
+
+                        {# Statut Field #}
+                        <div class="form-group">
+                            {{ form_label(form.statut, 'Statut', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.statut, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.statut) }}
                             </div>
+                        </div>
+
+                        {# Submit Button #}
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Enregistrer
+                            </button>
+                        </div>
+
                         {{ form_end(form) }}
                     </div>
                 </div>
-                <div class="text-center mt-4">
-                    <a href="{{ path('user_index') }}" class="btn btn-link">Retour à la liste des utilisateurs</a>
+
+                {# Back Button #}
+                <div class="text-center mt-3">
+                    <a href="{{ path('terrain_list') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour à la liste
+                    </a>
                 </div>
             </div>
         </div>

@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Agriculteur;
 
 class TerrainController extends AbstractController
 {
@@ -20,14 +21,21 @@ class TerrainController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-        // Créer un nouveau terrain
-
+    // Créer un nouveau terrain
     #[Route('/terrain/new', name: 'terrain_new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response
     {
         $terrain = new Terrain();
-        // Associe l'agriculteur actuel (si un utilisateur est connecté) à l'entité Terrain
-        $terrain->setAgriculteur($this->getUser());
+
+        // Vérifie si l'utilisateur connecté est un Agriculteur
+        $user = $this->getUser();
+        if ($user instanceof Agriculteur) {
+            $terrain->setAgriculteur($user);
+        } else {
+            // Si l'utilisateur n'est pas un Agriculteur, redirigez-le ou affichez une erreur
+            $this->addFlash('error', 'Seuls les agriculteurs peuvent ajouter des terrains.');
+            return $this->redirectToRoute('login'); //dirigez vers une page appropriée
+        }
 
         // Crée le formulaire
         $form = $this->createForm(TerrainType::class, $terrain);
@@ -48,8 +56,7 @@ class TerrainController extends AbstractController
         return $this->render('terrain/new.html.twig', [
             'form' => $form->createView(),
         ]);
-            }
-
+    }
 
     // Afficher la liste des terrains
     #[Route('/terrains', name: 'terrain_list', methods: ['GET'])]
@@ -62,9 +69,7 @@ class TerrainController extends AbstractController
         ]);
     }
 
-
-// Afficher le détail d'un terrain
-
+    // Afficher le détail d'un terrain
     #[Route('/terrain/{id}', name: 'terrain_show', methods: ['GET'])]
     public function show(Terrain $terrain): Response
     {
@@ -73,8 +78,7 @@ class TerrainController extends AbstractController
         ]);
     }
 
-
-     // Modifier un terrain existant
+    // Modifier un terrain existant
     #[Route('/terrain/{id}/edit', name: 'terrain_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Terrain $terrain, EntityManagerInterface $entityManager): Response
     {
@@ -96,7 +100,7 @@ class TerrainController extends AbstractController
     }
 
     // Supprimer un terrain
-    #[Route('/terrain/{id}', name: 'terrain_delete', methods: ['POST'])] 
+    #[Route('/terrain/{id}', name: 'terrain_delete', methods: ['POST'])]
     public function delete(Request $request, Terrain $terrain): Response
     {
         if ($this->isCsrfTokenValid('delete'.$terrain->getId(), $request->request->get('_token'))) {
@@ -107,8 +111,6 @@ class TerrainController extends AbstractController
 
         $this->addFlash('success', 'Terrain supprimé avec succès.');
 
-        return $this->redirectToRoute('terrain_index');
-    }   
-
-
+        return $this->redirectToRoute('terrain_list');
+    }
 }
