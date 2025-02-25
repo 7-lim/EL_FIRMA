@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Location;
 use App\Form\LocationType;
-use App\Repository\LocationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,10 +14,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class LocationController extends AbstractController
 {
     #[Route('/', name: 'location_index', methods: ['GET'])]
-    public function index(LocationRepository $locationRepository): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
-        $locations = $locationRepository->findAll();
-        
+        $locations = $entityManager->getRepository(Location::class)->findAll();
         return $this->render('location/index.html.twig', [
             'locations' => $locations,
         ]);
@@ -32,11 +30,17 @@ class LocationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // At this point, the form fields are mapped to:
+            // - date_debut → $location->dateDebut
+            // - date_fin → $location->dateFin
+            // - prix_location → $location->prixLocation
+            // - paiement_effectue → $location->paiementEffectue
+            // - mode_paiement → $location->modePaiement
+            // - terrain → $location->terrain (which maps to the foreign key "terrain_id")
             $entityManager->persist($location);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Location créée avec succès.');
-
+            $this->addFlash('success', 'Location ajoutée avec succès !');
             return $this->redirectToRoute('location_index');
         }
 
@@ -61,26 +65,23 @@ class LocationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
-            $this->addFlash('success', 'Location mise à jour avec succès.');
-
+            $this->addFlash('success', 'Location modifiée avec succès !');
             return $this->redirectToRoute('location_index');
         }
 
         return $this->render('location/edit.html.twig', [
             'location' => $location,
-            'form' => $form->createView(),
+            'form'     => $form->createView(),
         ]);
     }
 
     #[Route('/{id}', name: 'location_delete', methods: ['POST'])]
     public function delete(Request $request, Location $location, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$location->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $location->getId(), $request->request->get('_token'))) {
             $entityManager->remove($location);
             $entityManager->flush();
-
-            $this->addFlash('success', 'Location supprimée avec succès.');
+            $this->addFlash('success', 'Location supprimée avec succès !');
         }
 
         return $this->redirectToRoute('location_index');

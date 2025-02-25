@@ -8,57 +8,63 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LocationRepository::class)]
+#[ORM\Table(name: 'location')]
 class Location
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Assert\NotNull(message: "La date de début est obligatoire.")]
-    #[Assert\Date(message: "La date de début doit être une date valide.")]
+    
+    #[ORM\ManyToOne(targetEntity: Terrain::class, inversedBy: 'locations')]
+    #[ORM\JoinColumn(name: 'terrain_id', referencedColumnName: 'id', nullable: false)]
+    private ?Terrain $terrain = null;
+    
+
+    #[ORM\Column(name: 'date_debut', type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank(message: "La date de début est obligatoire.")]
+    #[Assert\Type(type: "\DateTimeInterface", message: "La date de début doit être une date valide.")]
     private ?\DateTimeInterface $dateDebut = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Assert\NotNull(message: "La date de fin est obligatoire.")]
-    #[Assert\Date(message: "La date de fin doit être une date valide.")]
-    #[Assert\GreaterThan(propertyPath: "dateDebut", message: "La date de fin doit être postérieure à la date de début.")]
+    #[ORM\Column(name: 'date_fin', type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank(message: "La date de fin est obligatoire.")]
+    #[Assert\Type(type: "\DateTimeInterface", message: "La date de fin doit être une date valide.")]
     private ?\DateTimeInterface $dateFin = null;
 
-    #[ORM\Column]
-    #[Assert\NotNull(message: "Le prix de location est obligatoire.")]
-    #[Assert\Positive(message: "Le prix de location doit être un nombre positif.")]
+    #[ORM\Column(name: 'prix_location', type: Types::FLOAT)]
+    #[Assert\NotBlank(message: "Le prix de location est obligatoire.")]
+    #[Assert\Type(type: "numeric", message: "Le prix doit être un nombre.")]
+    #[Assert\Positive(message: "Le prix doit être positif.")]
     private ?float $prixLocation = null;
 
-    #[ORM\Column]
-    #[Assert\NotNull(message: "Le statut du paiement est obligatoire.")]
-    private ?bool $paiementEffectue = null;
+    #[ORM\Column(name: 'paiement_effectue', type: Types::BOOLEAN)]
+    private bool $paiementEffectue = false;
 
-    #[ORM\Column(length: 55)]
-    #[Assert\NotBlank(message: "Le mode de paiement est obligatoire.")]
-    #[Assert\Length(
-        max: 55,
-        maxMessage: "Le mode de paiement ne peut pas dépasser {{ limit }} caractères."
-    )]
-    private ?string $modePaiement = null;
+    #[ORM\Column(name: 'mode_paiement', type: Types::STRING, length: 255, nullable: true)]
+    // Optionnel : si fourni, on peut vérifier qu'il n'est pas vide.
+        private ?string $modePaiement = null;
 
-    #[ORM\Column(length: 55)]
+    #[ORM\Column(name: 'statut', type: Types::STRING, length: 255)]
     #[Assert\NotBlank(message: "Le statut est obligatoire.")]
-    #[Assert\Length(
-        max: 55,
-        maxMessage: "Le statut ne peut pas dépasser {{ limit }} caractères."
-    )]
     private ?string $statut = null;
 
-    #[ORM\ManyToOne(targetEntity: Terrain::class, inversedBy: 'locations')]
-    #[Assert\NotNull(message: "La sélection d'un terrain est obligatoire.")]
-    private ?Terrain $terrain = null;
-
     // Getters and Setters
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getTerrain(): ?Terrain
+    {
+        return $this->terrain;
+    }
+
+    public function setTerrain(?Terrain $terrain): self
+    {
+        $this->terrain = $terrain;
+        return $this;
     }
 
     public function getDateDebut(): ?\DateTimeInterface
@@ -94,7 +100,7 @@ class Location
         return $this;
     }
 
-    public function isPaiementEffectue(): ?bool
+    public function isPaiementEffectue(): bool
     {
         return $this->paiementEffectue;
     }
@@ -110,7 +116,7 @@ class Location
         return $this->modePaiement;
     }
 
-    public function setModePaiement(string $modePaiement): self
+    public function setModePaiement(?string $modePaiement): self
     {
         $this->modePaiement = $modePaiement;
         return $this;
@@ -126,17 +132,4 @@ class Location
         $this->statut = $statut;
         return $this;
     }
-
-    public function getTerrain(): ?Terrain
-    {
-        return $this->terrain;
-    }
-
-    public function setTerrain(?Terrain $terrain): self
-    {
-        $this->terrain = $terrain;
-        return $this;
-    }
-
-    
 }

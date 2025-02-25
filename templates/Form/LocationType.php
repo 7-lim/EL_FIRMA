@@ -14,7 +14,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-
 class LocationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -60,8 +59,6 @@ class LocationType extends AbstractType
                 ],
                 'attr' => ['class' => 'form-control'],
             ])
-
-            
             ->add('terrain', EntityType::class, [
                 'class' => Terrain::class,
                 'choice_label' => 'localisation',  // Change to a descriptive field (e.g., "localisation")

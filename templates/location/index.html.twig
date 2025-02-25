@@ -1,77 +1,54 @@
+{# templates/location/index.html.twig #}
 {% extends 'base.html.twig' %}
-
 
 {% block title %}Liste des Locations{% endblock %}
 
 {% block body %}
-<div class="container-fluid px-4">
+<div class="container">
     <h1 class="mt-4">Liste des Locations</h1>
-    
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <a href="{{ path('location_new') }}" class="btn btn-primary mb-3">Ajouter une Location</a>
+    {% if locations|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Terrain</th>
+                        <th>Date Début</th>
+                        <th>Date Fin</th>
+                        <th>Prix</th>
+                        <th>Paiement Effectué</th>
+                        <th>Mode Paiement</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for location in locations %}
+                        <tr>
+                            <td>{{ location.id }}</td>
+                            <td>{{ location.terrain.localisation }}</td>
+                            <td>{{ location.DateDebut|date('d/m/Y') }}</td>
+                            <td>{{ location.DateFin|date('d/m/Y') }}</td>
+                            <td>{{ location.PrixLocation }}</td>
+                            <td>{{ location.PaiementEffectue ? 'Oui' : 'Non' }}</td>
+                            <td>{{ location.ModePaiement }}</td>
+                            <td>{{ location.Statut }}</td>
+                            <td>
+                                <a href="{{ path('location_show', {'id': location.id}) }}" class="btn btn-info btn-sm">Voir</a>
+                                <a href="{{ path('location_edit', {'id': location.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                                <form method="post" action="{{ path('location_delete', {'id': location.id}) }}" style="display:inline-block;" onsubmit="return confirm('Êtes-vous sûr ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ location.id) }}">
+                                    <button class="btn btn-danger btn-sm">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    {% endfor %}
-
-    <div class="card shadow-sm mt-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="m-0 text-primary"><i class="fas fa-calendar-alt"></i> Locations en cours</h5>
-            <a href="{{ path('location_new') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Nouvelle Location
-            </a>
-        </div>
-        <div class="card-body">
-            {% if locations|length > 0 %}
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>ID</th>
-                                <th>Date Début</th>
-                                <th>Date Fin</th>
-                                <th>Prix (€)</th>
-                                <th>Mode de Paiement</th>
-                                <th>Statut</th>
-                                <th>Terrain</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for location in locations %}
-                                <tr>
-                                    <td>{{ location.id }}</td>
-                                    <td>{{ location.dateDebut|date('d/m/Y') }}</td>
-                                    <td>{{ location.dateFin|date('d/m/Y') }}</td>
-                                    <td>{{ location.prixLocation }}</td>
-                                    <td>{{ location.modePaiement }}</td>
-                                    <td>
-                                        {% if location.statut == 'Confirmée' %}
-                                            <span class="badge bg-success">{{ location.statut }}</span>
-                                        {% elseif location.statut == 'En attente' %}
-                                            <span class="badge bg-warning text-dark">{{ location.statut }}</span>
-                                        {% else %}
-                                            <span class="badge bg-danger">{{ location.statut }}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ location.terrain ? location.terrain.localisation : 'N/A' }}</td>
-                                    <td>
-                                        <a href="{{ path('location_show', {'id': location.id}) }}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
-                                        <a href="{{ path('location_edit', {'id': location.id}) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
-                                        <form method="post" action="{{ path('location_delete', {'id': location.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette location ?');" style="display:inline;">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ location.id) }}">
-                                            <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <p class="text-center">Aucune location enregistrée.</p>
-            {% endif %}
-        </div>
-    </div>
+    {% else %}
+        <p class="text-center">Aucune location disponible.</p>
+    {% endif %}
 </div>
 {% endblock %}

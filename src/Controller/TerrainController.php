@@ -5,60 +5,63 @@ namespace App\Controller;
 use App\Entity\Terrain;
 use App\Form\TerrainType;
 use App\Repository\TerrainRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Agriculteur;
 
 class TerrainController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
-
+    
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
-
-    // Créer un nouveau terrain
+    
     #[Route('/terrain/new', name: 'terrain_new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response
     {
         $terrain = new Terrain();
-
-        // Vérifie si l'utilisateur connecté est un Agriculteur
-        $user = $this->getUser();
-        if ($user instanceof Agriculteur) {
-            $terrain->setAgriculteur($user);
-        } else {
-            // Si l'utilisateur n'est pas un Agriculteur, redirigez-le ou affichez une erreur
-            $this->addFlash('error', 'Seuls les agriculteurs peuvent ajouter des terrains.');
-            return $this->redirectToRoute('login'); //dirigez vers une page appropriée
-        }
-
-        // Crée le formulaire
         $form = $this->createForm(TerrainType::class, $terrain);
-
-        // Traite la requête et sauvegarde les données
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Gestion de l'upload de la photo
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate(
+                    'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
+                    $originalFilename
+                );
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$photoFile->guessExtension();
+
+                try {
+                    $photoFile->move(
+                        $this->getParameter('terrain_photos_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Erreur lors de l\'upload de la photo.');
+                }
+                $terrain->setPhoto($newFilename);
+            }
+
             $this->entityManager->persist($terrain);
             $this->entityManager->flush();
 
-            // Message de succès et redirection
-            $this->addFlash('success', 'Votre terrain a été ajouté avec succès !');
+            $this->addFlash('success', 'Terrain créé avec succès !');
             return $this->redirectToRoute('terrain_list');
         }
 
-        // Affiche le formulaire dans la vue
         return $this->render('terrain/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
-    // Afficher la liste des terrains
     #[Route('/terrains', name: 'terrain_list', methods: ['GET'])]
     public function index(TerrainRepository $terrainRepository): Response
     {
@@ -69,7 +72,6 @@ class TerrainController extends AbstractController
         ]);
     }
 
-    // Afficher le détail d'un terrain
     #[Route('/terrain/{id}', name: 'terrain_show', methods: ['GET'])]
     public function show(Terrain $terrain): Response
     {
@@ -78,18 +80,36 @@ class TerrainController extends AbstractController
         ]);
     }
 
-    // Modifier un terrain existant
     #[Route('/terrain/{id}/edit', name: 'terrain_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Terrain $terrain, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Terrain $terrain): Response
     {
         $form = $this->createForm(TerrainType::class, $terrain);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            // Gestion de l'upload de la photo lors de la modification (optionnel)
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate(
+                    'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
+                    $originalFilename
+                );
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$photoFile->guessExtension();
 
+                try {
+                    $photoFile->move(
+                        $this->getParameter('terrain_photos_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Erreur lors de l\'upload de la photo.');
+                }
+                $terrain->setPhoto($newFilename);
+            }
+
+            $this->entityManager->flush();
             $this->addFlash('success', 'Terrain modifié avec succès.');
-
             return $this->redirectToRoute('terrain_list');
         }
 
@@ -99,17 +119,14 @@ class TerrainController extends AbstractController
         ]);
     }
 
-    // Supprimer un terrain
     #[Route('/terrain/{id}', name: 'terrain_delete', methods: ['POST'])]
     public function delete(Request $request, Terrain $terrain): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$terrain->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->entityManager;
-            $entityManager->remove($terrain);
-            $entityManager->flush();
+        if ($this->isCsrfTokenValid('delete' . $terrain->getId(), $request->request->get('_token'))) {
+            $this->entityManager->remove($terrain);
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Terrain supprimé avec succès.');
         }
-
-        $this->addFlash('success', 'Terrain supprimé avec succès.');
 
         return $this->redirectToRoute('terrain_list');
     }

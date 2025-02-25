@@ -48,7 +48,8 @@
                             <a href="{{ path('home') }}" class="nav-item nav-link {% if app.request.get('_route') == 'home' %}active{% endif %}">Home</a>
                             <a href="{{ path('about') }}" class="nav-item nav-link {% if app.request.get('_route') == 'about' %}active{% endif %}">About</a>
                             <a href="{{ path('products') }}" class="nav-item nav-link {% if app.request.get('_route') == 'products' %}active{% endif %}">Products</a>
-                            <a href="{{ path('store') }}" class="nav-item nav-link {% if app.request.get('_route') == 'store' %}active{% endif %}">Store</a>
+                            <a href="{{ path('terrain_list') }}" class="nav-item nav-link {% if app.request.get('_route') == 'terrains' %}active{% endif %}">Terrains</a>
+                            <a href="{{ path('location_index') }}" class="nav-item nav-link {% if app.request.get('_route') == 'location_show' %}active{% endif %}">Locations</a>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                                 <div class="dropdown-menu bg-light rounded-0 m-0">

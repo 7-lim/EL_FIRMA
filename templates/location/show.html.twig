@@ -1,46 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Location{% endblock %}
+{% block title %}Détails de la Location{% endblock %}
 
 {% block body %}
-    <h1>Location</h1>
-
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ location.id }}</td>
-            </tr>
-            <tr>
-                <th>DateDebut</th>
-                <td>{{ location.DateDebut ? location.DateDebut|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>DateFin</th>
-                <td>{{ location.DateFin ? location.DateFin|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>PrixLocation</th>
-                <td>{{ location.PrixLocation }}</td>
-            </tr>
-            <tr>
-                <th>PaiementEffectue</th>
-                <td>{{ location.PaiementEffectue ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>ModePaiement</th>
-                <td>{{ location.ModePaiement }}</td>
-            </tr>
-            <tr>
-                <th>Statut</th>
-                <td>{{ location.Statut }}</td>
-            </tr>
-        </tbody>
+<div class="container">
+    <h1 class="mt-4">Détails de la Location</h1>
+    <table class="table table-bordered">
+        <tr>
+            <th>ID</th>
+            <td>{{ location.id }}</td>
+        </tr>
+        <tr>
+            <th>Terrain associé</th>
+            <td>{{ location.terrain.localisation }}</td>
+        </tr>
+        <tr>
+            <th>Date de début</th>
+            <td>{{ location.DateDebut|date('d/m/Y') }}</td>
+        </tr>
+        <tr>
+            <th>Date de fin</th>
+            <td>{{ location.DateFin|date('d/m/Y') }}</td>
+        </tr>
+        <tr>
+            <th>Prix de location</th>
+            <td>{{ location.PrixLocation }}</td>
+        </tr>
+        <tr>
+            <th>Paiement effectué</th>
+            <td>{{ location.PaiementEffectue ? 'Oui' : 'Non' }}</td>
+        </tr>
+        <tr>
+            <th>Mode de paiement</th>
+            <td>{{ location.ModePaiement }}</td>
+        </tr>
+        <tr>
+            <th>Statut</th>
+            <td>{{ location.Statut }}</td>
+        </tr>
     </table>
-
-    <a href="{{ path('app_location_index') }}">back to list</a>
-
-    <a href="{{ path('app_location_edit', {'id': location.id}) }}">edit</a>
-
-    {{ include('location/_delete_form.html.twig') }}
+    <div class="mt-3">
+        <a href="{{ path('location_index') }}" class="btn btn-secondary">Retour à la liste</a>
+        <a href="{{ path('location_edit', {'id': location.id}) }}" class="btn btn-warning">Modifier</a>
+    </div>
+</div>
 {% endblock %}

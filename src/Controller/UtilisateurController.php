@@ -14,19 +14,18 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 #[Route('/utilisateur')]
 class UtilisateurController extends AbstractController
 {
+    // Liste des utilisateurs
     #[Route('/', name: 'app_utilisateur_index', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        // Fetch all users from the database
-        $utilisateurs = $entityManager
-            ->getRepository(Utilisateur::class)
-            ->findAll();
+        $utilisateurs = $entityManager->getRepository(Utilisateur::class)->findAll();
 
         return $this->render('utilisateur/index.html.twig', [
             'utilisateurs' => $utilisateurs,
         ]);
     }
 
+    // Créer un nouvel utilisateur
     #[Route('/new', name: 'app_utilisateur_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
@@ -35,8 +34,8 @@ class UtilisateurController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Hash the password before saving the user
-            $hashedPassword = $passwordHasher->hashPassword($utilisateur, $utilisateur->getPassword());
+            // Hachage du mot de passe avant sauvegarde
+            $hashedPassword = $passwordHasher->hashPassword($utilisateur, $form->get('password')->getData());
             $utilisateur->setPassword($hashedPassword);
 
             $entityManager->persist($utilisateur);
@@ -51,7 +50,9 @@ class UtilisateurController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    #[Route('/{id}', name: 'user_list', methods: ['GET'])]
+
+    // Afficher un utilisateur spécifique
+    #[Route('/{id}', name: 'app_utilisateur_show', methods: ['GET'])]
     public function show(Utilisateur $utilisateur): Response
     {
         return $this->render('utilisateur/show.html.twig', [
@@ -59,6 +60,7 @@ class UtilisateurController extends AbstractController
         ]);
     }
 
+    // Modifier un utilisateur
     #[Route('/{id}/edit', name: 'app_utilisateur_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
@@ -66,9 +68,9 @@ class UtilisateurController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Hash the password if it has been changed
+            // Vérifier si un nouveau mot de passe a été saisi
             if ($form->get('password')->getData()) {
-                $hashedPassword = $passwordHasher->hashPassword($utilisateur, $utilisateur->getPassword());
+                $hashedPassword = $passwordHasher->hashPassword($utilisateur, $form->get('password')->getData());
                 $utilisateur->setPassword($hashedPassword);
             }
 
@@ -84,7 +86,8 @@ class UtilisateurController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_utilisateur_delete', methods: ['POST'])]
+    // Supprimer un utilisateur
+    #[Route('/{id}/delete', name: 'app_utilisateur_delete', methods: ['POST'])]
     public function delete(Request $request, Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $utilisateur->getId(), $request->request->get('_token'))) {

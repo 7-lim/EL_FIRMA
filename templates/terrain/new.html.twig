@@ -55,6 +55,16 @@
                             </div>
                         </div>
 
+                                                {# Photo Field #}
+                        <div class="form-group">
+                            {{ form_label(form.photo, 'Photo', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.photo) }}
+                            </div>
+                        </div>
+
+
                         {# Submit Button #}
                         <div class="form-group text-center">
                             <button type="submit" class="btn btn-primary">

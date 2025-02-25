@@ -1,57 +1,55 @@
+{# templates/location/edit.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Modifier la Location{% endblock %}
 
 {% block body %}
 <div class="container">
-    <h1 class="h3 mb-4 text-gray-800">Modifier la Location</h1>
-
+    <h1 class="mt-4">Modifier la Location</h1>
     {{ form_start(form) }}
-        <div class="form-group mb-3">
-            {{ form_label(form.DateDebut, 'Date de début') }}
-            {{ form_widget(form.DateDebut, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.DateDebut) }}
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.DateDebut, 'Date de début', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.DateDebut, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.DateDebut) }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form_label(form.DateFin, 'Date de fin', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.DateFin, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.DateFin) }}
+            </div>
         </div>
-        <div class="form-group mb-3">
-            {{ form_label(form.DateFin, 'Date de fin') }}
-            {{ form_widget(form.DateFin, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.DateFin) }}
-        </div>
-        <div class="form-group mb-3">
-            {{ form_label(form.PrixLocation, 'Prix de location (€)') }}
+        <div class="mb-3">
+            {{ form_label(form.PrixLocation, 'Prix de location (€)', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.PrixLocation, {'attr': {'class': 'form-control'}}) }}
             {{ form_errors(form.PrixLocation) }}
         </div>
-        <div class="form-group mb-3">
-            {{ form_label(form.PaiementEffectue, 'Paiement effectué ?') }}
+        <div class="mb-3">
             <div class="form-check">
                 {{ form_widget(form.PaiementEffectue, {'attr': {'class': 'form-check-input'}}) }}
+                {{ form_label(form.PaiementEffectue, 'Paiement effectué ?', {'label_attr': {'class': 'form-check-label'}}) }}
+                {{ form_errors(form.PaiementEffectue) }}
             </div>
-            {{ form_errors(form.PaiementEffectue) }}
         </div>
-        <div class="form-group mb-3">
-            {{ form_label(form.ModePaiement, 'Mode de paiement') }}
+        <div class="mb-3">
+            {{ form_label(form.ModePaiement, 'Mode de paiement', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.ModePaiement, {'attr': {'class': 'form-control'}}) }}
             {{ form_errors(form.ModePaiement) }}
         </div>
-        <div class="form-group mb-3">
-            {{ form_label(form.Statut, 'Statut') }}
+        <div class="mb-3">
+            {{ form_label(form.Statut, 'Statut', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.Statut, {'attr': {'class': 'form-control'}}) }}
             {{ form_errors(form.Statut) }}
         </div>
-        <div class="form-group mb-3">
-            {{ form_label(form.terrain, 'Terrain associé') }}
+        <div class="mb-3">
+            {{ form_label(form.terrain, 'Terrain associé', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.terrain, {'attr': {'class': 'form-control'}}) }}
             {{ form_errors(form.terrain) }}
         </div>
-
-        <button type="submit" class="btn btn-primary">Mettre à jour</button>
-        <a href="{{ path('location_index') }}" class="btn btn-secondary">Retour à la liste</a>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success px-4">Enregistrer les modifications</button>
+            <a href="{{ path('location_index') }}" class="btn btn-secondary px-4">Retour à la liste</a>
+        </div>
     {{ form_end(form) }}
-
-    <form method="post" action="{{ path('location_delete', {'id': location.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette location ?');">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ location.id) }}">
-        <button class="btn btn-danger mt-3">Supprimer</button>
-    </form>
 </div>
 {% endblock %}

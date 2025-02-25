@@ -53,6 +53,21 @@ class Terrain
     #[ORM\ManyToOne(inversedBy: 'terrains')]
     private ?Agriculteur $agriculteur = null;
 
+        // Ajout de la propriété photo
+    #[ORM\Column(length: 255, nullable: true)]
+        private ?string $photo = null;
+    
+        // Getter and Setter
+        public function getPhoto(): ?string
+        {
+            return $this->photo;
+        }   
+        public function setPhoto(?string $photo): self
+        {
+            $this->photo = $photo;
+            return $this;
+        }    
+
 
     #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
     #[ORM\JoinColumn(name: 'utilisateur_id', referencedColumnName: 'id')]
