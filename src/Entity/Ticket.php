@@ -33,8 +33,6 @@ class Ticket
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')] // Add referential integrity
     private ?Evenement $evenement = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $qrCode = null;
 
     public function getId(): ?int
     {
@@ -53,7 +51,7 @@ class Ticket
         return $this;
     }
 
-    public function getAgriculteurs(): ?Agriculteur
+    public function getAgriculteur(): ?Agriculteur
     {
         return $this->agriculteur;
     }
@@ -90,15 +88,13 @@ class Ticket
         return $this;
     }
 
-    public function getQrCode(): ?string
-    {
-        return $this->qrCode;
-    }
 
-    public function setQrCode(?string $qrCode): static
+    public function getQrCodeContent(): string
     {
-        $this->qrCode = $qrCode;
-
-        return $this;
+        return json_encode([
+            'event_id' => $this->getEvenement()->getId(),
+            // 'user_id' => $this->getAgriculteur()->getId(),
+            'price' => $this->getPrix(),
+        ]);
     }
 }

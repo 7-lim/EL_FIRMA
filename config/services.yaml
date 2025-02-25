@@ -23,10 +23,10 @@ services:
 
 
     # add more service definitions when explicit configuration is needed
-    App\Services\QrCodeGenerator:
-        arguments:
-            $builder: '@Endroid\QrCode\Builder\Builder'
 
+    # App\Services\QrCodeGenerator:
+    #     arguments:
+    #         $builder: '@Endroid\QrCode\Builder\Builder'
     
 
 

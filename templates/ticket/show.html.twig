@@ -47,11 +47,7 @@
                     <tr>
                         <th>QR Code</th>
                         <td>
-                            {% if ticket.qrCode %}
-                                <img src="{{ asset('assets/QrCode/' ~ ticket.qrCode) }}" alt="QR Code" class="img-fluid">
-                            {% else %}
-                                <span class="text-danger">QR Code non disponible</span>
-                            {% endif %}
+                            <img src="{{ qr_code_data_uri(ticket.qrCodeContent, 'default') }}" alt="QR Code">
                         </td>
                     </tr>
                 </tbody>
