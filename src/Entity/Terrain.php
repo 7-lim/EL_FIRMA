@@ -56,9 +56,6 @@ class Terrain
         // Ajout de la propriété photo
     #[ORM\Column(length: 255, nullable: true)]
         private ?string $photo = null;
-
-    
-
     
         // Getter and Setter
         public function getPhoto(): ?string
@@ -75,39 +72,6 @@ class Terrain
     #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
     #[ORM\JoinColumn(name: 'utilisateur_id', referencedColumnName: 'id')]
     private ?Utilisateur $utilisateur = null;
-
-    
-    #[ORM\OneToMany(mappedBy: 'terrain', targetEntity: Avis::class, cascade: ['remove'])]
-    private Collection $avis;
-
-    public function getAvis(): Collection
-    {
-        return $this->avis;
-    }
-
-    public function getMoyenneAvis(): ?float
-    {
-        if ($this->avis->count() === 0) {
-            return null;
-        }
-        $total = array_reduce($this->avis->toArray(), fn($sum, $avis) => $sum + $avis->getNote(), 0);
-        return round($total / $this->avis->count(), 1);
-    }
-
-    
-    public function getAvisCount(): int
-    {
-        return $this->avis->count();
-    }
-
-    public function __toString(): string
-    {
-        return $this->localisation ?? 'Terrain #' . $this->id;
-    }
-
-
-
-
 
     // Getter and Setter
     public function getUtilisateur(): ?Utilisateur
@@ -132,8 +96,6 @@ class Terrain
     public function __construct()
     {
         $this->locations = new ArrayCollection();
-        $this->avis = new ArrayCollection();
-
     }
 
     public function getId(): ?int
@@ -275,4 +237,10 @@ class Terrain
 
 
 
+    public function __toString(): string
+{
+    return $this->name ?? 'Terrain #' . $this->id;
+}
+
+    
 }
