@@ -10,7 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-
+use App\Entity\Agriculteur;
+use App\Entity\Expert;
+use App\Entity\Utilisateur;
 
 #[Route('/ticket')]
 final class TicketController extends AbstractController
@@ -18,13 +20,20 @@ final class TicketController extends AbstractController
     #[Route(name: 'app_ticket_index', methods: ['GET'])]
     public function index(TicketRepository $ticketRepository): Response
     {
-        // Add eager loading to prevent N+1 queries
-        $tickets = $ticketRepository->createQueryBuilder('t')
-            ->leftJoin('t.evenement', 'e')
-            ->addSelect('e')
-            ->getQuery()
-            ->getResult();
-    
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos tickets');
+        }
+
+        // Fetch tickets based on user role
+        if (in_array('ROLE_AGRICULTEUR', $user->getRoles())) {
+            $tickets = $ticketRepository->findBy(['agriculteur' => $user]);
+        } elseif (in_array('ROLE_EXPERT', $user->getRoles())) {
+            $tickets = $ticketRepository->findBy(['expert' => $user]);
+        } else {
+            $tickets = [];
+        }
+
         return $this->render('ticket/index.html.twig', [
             'tickets' => $tickets,
         ]);
@@ -119,10 +128,4 @@ final class TicketController extends AbstractController
 
         return $this->redirectToRoute('app_ticket_index', [], Response::HTTP_SEE_OTHER);
     }
-
- 
-
-
-
-
 }

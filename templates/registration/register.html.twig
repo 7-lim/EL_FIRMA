@@ -78,14 +78,6 @@
                 <div class="line"></div>
                 <p>Or</p>
                 <div class="line"></div>
-<<<<<<< HEAD
-            </div>
-            <form method="POST" action="{{ path('app_dashboard') }}">
-                <input type="email" name="_username" placeholder="Email">
-                <input type="password" name="_password" placeholder="Password">
-                <button type="submit" class="btn">Login</button>
-            </form>
-=======
             </div >
             {# In register.html.twig #}
 <form method="POST" action="{{ path('app_login') }}">
@@ -95,7 +87,6 @@
     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
     <button type="submit" class="btn">Login</button>
 </form>
->>>>>>> origin/user_crud_finale
         </div>
     </div>
 {% endblock %}
