@@ -29,50 +29,66 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>ID</th>
-                                <th>Email</th>
-                                <th>Rôle</th>
-                                <th>Nom</th>
-                                <th>Entreprise</th>
-                                <th>ID Fiscale</th>
-                                <th>Catégorie</th>
-                                <th>Domaine</th>
-                                <th>Adresse</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="userTableBody">
-                            {% for utilisateur in utilisateurs %}
-                                <tr>
-                                    <td>{{ utilisateur.id }}</td>
-                                    <td>{{ utilisateur.email }}</td>
-                                    <td>{{ utilisateur.getRoles()|join(', ') }}</td>
-                                    <td>{{ utilisateur.nom }}</td>
-                                    <td>{{ utilisateur.nomEntreprise ?? 'N/A' }}</td>
-                                    <td>{{ utilisateur.idFiscale ?? 'N/A' }}</td>
-                                    <td>{{ utilisateur.categorieProduit ?? 'N/A' }}</td>
-                                    <td>{{ utilisateur.domaineExpertise ?? 'N/A' }}</td>
-                                    <td>{{ utilisateur.adresseExploitation ?? 'N/A' }}</td>
-                                    <td class="text-center">
-                                        <a href="{{ path('edit_utilisateur', {id: utilisateur.id}) }}" 
-                                           class="btn btn-sm btn-primary btn-circle" title="Modifier l'utilisateur">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ path('delete_utilisateur', {id: utilisateur.id}) }}" method="post" class="d-inline">
-                                            <input type="hidden" name="_method" value="DELETE">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.id) }}">
-                                            <button type="submit" class="btn btn-sm btn-danger btn-circle" title="Supprimer l'utilisateur">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    {# templates/admin/statistics.html.twig #}
+
+<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Rôle</th>
+            <th>Nom</th>
+            <th>Statut</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for utilisateur in utilisateurs %}
+            <tr>
+                <td>{{ utilisateur.id }}</td>
+                <td>{{ utilisateur.email }}</td>
+                <td>{{ utilisateur.getRoles()|join(', ') }}</td>
+                <td>{{ utilisateur.nom }}</td>
+                <td>
+                    {% if utilisateur.isBlocked %}
+                        <span class="badge badge-danger">Bloqué</span>
+                    {% else %}
+                        <span class="badge badge-success">Actif</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if utilisateur.isBlocked %}
+                        <form action="{{ path('unblock_utilisateur', {id: utilisateur.id}) }}" method="post" class="d-inline">
+                            <input type="hidden" name="_method" value="POST">
+                            <input type="hidden" name="_token" value="{{ csrf_token('unblock' ~ utilisateur.id) }}">
+                            <button type="submit" class="btn btn-success btn-sm" title="Débloquer l'utilisateur">
+                                <i class="fas fa-check"></i> Débloquer
+                            </button>
+                        </form>
+                    {% else %}
+                        <form action="{{ path('block_utilisateur', {id: utilisateur.id}) }}" method="post" class="d-inline">
+                            <input type="hidden" name="_method" value="POST">
+                            <input type="hidden" name="_token" value="{{ csrf_token('block' ~ utilisateur.id) }}">
+                            <button type="submit" class="btn btn-warning btn-sm" title="Bloquer l'utilisateur">
+                                <i class="fas fa-ban"></i> Bloquer
+                            </button>
+                        </form>
+                    {% endif %}
+                    <a href="{{ path('edit_utilisateur', {id: utilisateur.id}) }}" class="btn btn-primary btn-sm" title="Modifier l'utilisateur">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <form action="{{ path('delete_utilisateur', {id: utilisateur.id}) }}" method="post" class="d-inline">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.id) }}">
+                        <button type="submit" class="btn btn-danger btn-sm" title="Supprimer l'utilisateur">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
                 </div>
             </div>
         </div>
@@ -95,49 +111,49 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- DataTables -->
     <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-    <!-- Bootstrap JS (for modal functionality) -->
+    <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('roleChart').getContext('2d');
-        const roleChart = new Chart(ctx, {
-            type: 'pie', // Use 'pie' for a pie chart or 'doughnut' for a doughnut chart
-            data: {
-                labels: {{ statistics|keys|json_encode|raw }}, // Roles (e.g., ROLE_EXPERT, ROLE_ADMIN)
-                datasets: [{
-                    label: 'Number of Users',
-                    data: {{ statistics|map(value => value)|json_encode|raw }}, // Number of users for each role
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.6)', // Red
-                        'rgba(54, 162, 235, 0.6)', // Blue
-                        'rgba(75, 192, 192, 0.6)', // Green
-                        'rgba(153, 102, 255, 0.6)', // Purple
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top', // Position of the legend
-                    },
-                    title: {
-                        display: true,
-                        text: 'User Statistics by Role'
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('roleChart');
+            
+            // Données depuis le contrôleur
+            const statisticsData = {{ statistics|json_encode|raw }};
+            
+            // Extraction des clés et valeurs
+            const labels = Object.keys(statisticsData);
+            const data = Object.values(statisticsData);
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nombre d\'utilisateurs',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: { 
+                            display: true,
+                            text: 'Répartition des utilisateurs par rôle'
+                        }
                     }
                 }
-            }
+            });
         });
-    });
-</script>
+    </script>
 {% endblock %}

@@ -96,10 +96,7 @@ final class PageController extends AbstractController
         'utilisateurs' => $utilisateurs,
     ]);
     }
-
-    
-
-    #[Route('/back', name: 'back')]
+   #[Route('/back', name: 'back')]
     public function back(): Response
     {
         return $this->render('back.html.twig');

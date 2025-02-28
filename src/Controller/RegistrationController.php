@@ -20,9 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserRepository;
-
-
-
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class RegistrationController extends AbstractController
 {
@@ -30,7 +28,8 @@ class RegistrationController extends AbstractController
     public function register(
         Request $request,
         UtilisateurRepository $utilisateurRepository,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        AuthenticationUtils $authenticationUtils // Inject AuthenticationUtils
     ): Response {
         // Création du formulaire d'inscription
         $form = $this->createForm(RegistrationFormType::class);
@@ -76,28 +75,43 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_dashboard');
         }
     
+        // Get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+    
         // Rendu du formulaire d'inscription
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
+            'error' => $error, // Pass the error to the template
         ]);
     }
 
 
 
 
-
-
     
     #[Route('/dashboard', name: 'app_dashboard')]
+    public function dashboard(UtilisateurRepository $utilisateurRepository): Response
+    {
+        $roles = ['ROLE_EXPERT', 'ROLE_AGRICULTEUR', 'ROLE_FOURNISSEUR', 'ROLE_ADMIN'];
+        $statistics = [];
+    
+        foreach ($roles as $role) {
+            $count = $utilisateurRepository->countUsersByRole($role);
+            $statistics[$role] = $count;
+    
+            // Afficher le rôle et le nombre d'utilisateurs
+            dump("Rôle : $role, Nombre d'utilisateurs : $count");        
+        }
 
- public function dashboard(UtilisateurRepository $utilisateurRepository): Response
-{
-    $utilisateurs = $utilisateurRepository->findAll();
+            // Afficher le tableau complet des statistiques
+             dump($statistics);
 
-    return $this->render('dashboardadmin.html.twig', [
-        'utilisateurs' => $utilisateurs,
-    ]);
-}
+    
+        return $this->render('admin/statistics.html.twig', [
+            'utilisateurs' => $utilisateurRepository->findAll(),
+            'statistics' => $statistics // <-- Ajoutez cette ligne
+        ]);
+    }
 
 
 
@@ -194,7 +208,41 @@ public function editUtilisateur(int $id, Request $request, UtilisateurRepository
 }
 
 
+#[Route('/utilisateur/block/{id}', name: 'block_utilisateur')]
+public function blockUtilisateur(int $id, UtilisateurRepository $utilisateurRepository, EntityManagerInterface $entityManager): Response
+{
+    $utilisateur = $utilisateurRepository->find($id);
 
+    if (!$utilisateur) {
+        throw $this->createNotFoundException('Utilisateur non trouvé.');
+    }
+
+    // Block the user
+    $utilisateur->setIsBlocked(true);
+
+    $entityManager->flush();
+
+    $this->addFlash('success', 'Utilisateur bloqué avec succès.');
+    return $this->redirectToRoute('app_dashboard');
+}
+
+#[Route('/utilisateur/unblock/{id}', name: 'unblock_utilisateur')]
+public function unblockUtilisateur(int $id, UtilisateurRepository $utilisateurRepository, EntityManagerInterface $entityManager): Response
+{
+    $utilisateur = $utilisateurRepository->find($id);
+
+    if (!$utilisateur) {
+        throw $this->createNotFoundException('Utilisateur non trouvé.');
+    }
+
+    // Unblock the user
+    $utilisateur->setIsBlocked(false);
+
+    $entityManager->flush();
+
+    $this->addFlash('success', 'Utilisateur débloqué avec succès.');
+    return $this->redirectToRoute('app_dashboard');
+}
 
 
 
@@ -237,21 +285,9 @@ public function exportPdf(Environment $twig, EntityManagerInterface $entityManag
 
 
 
-#[Route('/admin/statistics', name: 'admin_statistics')]
-public function statistics(UtilisateurRepository $utilisateurRepository): Response
-{
-    // Fetch the number of users for each role
-    $roles = ['ROLE_EXPERT', 'ROLE_AGRICULTEUR', 'ROLE_FOURNISSEUR', 'ROLE_ADMIN'];
-    $statistics = [];
 
-    foreach ($roles as $role) {
-        $statistics[$role] = $utilisateurRepository->countUsersByRole($role);
-    }
 
-    return $this->render('admin/statistics.html.twig', [
-        'statistics' => $statistics,
-    ]);
-}
+
 }
 
 

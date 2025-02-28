@@ -58,6 +58,8 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
     #[ORM\Column(length: 15, nullable: true)]
     private ?string $telephone = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isBlocked = false;
 
     public function __construct()
     {
@@ -121,9 +123,10 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
     }
 
     public function getRoles(): array
-{
-    return $this->roles; // Return ONLY explicitly assigned roles
-}
+    {
+        return $this->roles; // Return ONLY explicitly assigned roles
+    }
+
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -140,27 +143,39 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
         $this->password = $password;
         return $this;
     }
+
     // Dans Utilisateur.php
-        public function getType(): string
-        {
-            if (in_array('ROLE_FOURNISSEUR', $this->getRoles())) {
-                return 'fournisseur';
-            } elseif (in_array('ROLE_EXPERT', $this->getRoles())) {
-                return 'expert';
-            } elseif (in_array('ROLE_AGRICULTEUR', $this->getRoles())) {
-                return 'agriculteur';
-            } elseif (in_array('ROLE_ADMIN', $this->getRoles())) {
-                return 'administrateur';
-            }
-            return 'default'; // Fallback
+    public function getType(): string
+    {
+        if (in_array('ROLE_FOURNISSEUR', $this->getRoles())) {
+            return 'fournisseur';
+        } elseif (in_array('ROLE_EXPERT', $this->getRoles())) {
+            return 'expert';
+        } elseif (in_array('ROLE_AGRICULTEUR', $this->getRoles())) {
+            return 'agriculteur';
+        } elseif (in_array('ROLE_ADMIN', $this->getRoles())) {
+            return 'administrateur';
         }
+        return 'default'; // Fallback
+    }
 
     public function eraseCredentials(): void
     {
         // Si tu stockes des données sensibles, les effacer ici
         // $this->plainPassword = null;
     }
-   
+
+    // Getter and Setter for isBlocked
+    public function getIsBlocked(): bool
+    {
+        return $this->isBlocked;
+    }
+
+    public function setIsBlocked(bool $isBlocked): static
+    {
+        $this->isBlocked = $isBlocked;
+        return $this;
+    }
 
     #[Route('/utilisateurs/pdf', name: 'export_utilisateurs_pdf')]
     public function exportPdf(Environment $twig, EntityManagerInterface $entityManager): Response
@@ -188,9 +203,5 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="utilisateurs.pdf"',
         ]);
-        
-
     }
 }
-
-

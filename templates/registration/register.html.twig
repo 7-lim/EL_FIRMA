@@ -79,13 +79,19 @@
                 <p>Or</p>
                 <div class="line"></div>
             </div >
-            {# In register.html.twig #}
+            {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+        
 <form method="POST" action="{{ path('app_login') }}">
     <input type="email" name="_username" placeholder="Email">
     <input type="password" name="_password" placeholder="Password">
-    {# Add this hidden CSRF token field #}
+    <div class="form-footer">
+    <a href="{{ path('forgot_password') }}" class="forgot-password-link">Forgot Password?</a>
+</div>
     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
     <button type="submit" class="btn">Login</button>
+    
 </form>
         </div>
     </div>
@@ -103,4 +109,18 @@
         background-repeat: no-repeat;
         background-color: whitesmoke; /* Fallback color */
     }
+    .forgot-password-link {
+    display: block;
+    margin-top: 10px;
+    color: #2e7d32;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s;
+    text-align: center;
+}
+
+.forgot-password-link:hover {
+    color: #1b5e20;
+}
+
 </style>

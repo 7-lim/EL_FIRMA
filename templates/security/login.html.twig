@@ -1,25 +1,12 @@
 {# templates/security/login.html.twig #}
-{% extends 'base.html.twig' %}
-
-{% block stylesheets %}
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/style1.css') }}">
-{% endblock %}
 
 {% block body %}
+
 <div class="container">
     <div class="login-section">
+    <a href="{{ path('app_register') }}" class="login-btn">Sign Up</a>
         <header>Sign in</header>
-        <div class="social-buttons">
-            <button><i class='bx bxl-google'></i> Use Google</button>
-            <button><i class='bx bxl-apple'></i> Use Apple</button>
-        </div>
-        
-        <div class="separator">
-            <div class="line"></div>
-            <p>Or</p>
-            <div class="line"></div>
-        </div>
+       
 
         {% if error %}
             <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -34,3 +21,157 @@
     </div>
 </div>
 {% endblock %}
+
+<style>
+    /* Global Styling */
+    body {
+        background-image: url("{{ asset('img/login.png') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: #f0f8f0; /* Light green background */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 400px;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    /* Login Section */
+    .login-section header {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2e7d32;
+        margin-bottom: 20px;
+    }
+
+    /* Social Buttons */
+    .social-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .social-buttons button {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        border: none;
+        font-weight: bold;
+    }
+
+    .social-buttons .google {
+        background: #ffffff;
+        border: 1px solid #4285f4;
+        color: #4285f4;
+    }
+
+    .social-buttons .apple {
+        background: #000;
+        color: #fff;
+    }
+
+    /* Separator */
+    .separator {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 20px 0;
+    }
+
+    .separator .line {
+        flex: 1;
+        height: 1px;
+        background: #ccc;
+    }
+
+    .separator p {
+        color: #2e7d32;
+        font-weight: bold;
+    }
+
+    /* Form Styling */
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    form input {
+        outline: none;
+        border: 1px solid #ccc;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 8px;
+        background: #f9f9f9;
+    }
+
+    form input:focus {
+        border-color: #2e7d32;
+    }
+
+    .btn {
+        background: #2e7d32;
+        color: white;
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .btn:hover {
+        background: #256029;
+    }
+    /* Bouton Login en haut */
+.login-btn {
+    display: inline-block;
+    background: #2e7d32;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.3s ease;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Effet au survol */
+.login-btn:hover {
+    background: #256029;
+}
+
+/* Positionnement du container pour contenir le bouton */
+.container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+</style>

@@ -10,4 +10,12 @@ app_dashboard:
 admin_statistics:
     path: /admin/statistics
     controller: App\Controller\RegistrationController::statistics
-    
+# config/routes.yaml
+forgot_password:
+    path: /forgot-password
+    controller: App\Controller\SecurityMailController::forgotPassword
+    methods: [GET, POST]
+reset_password:
+    path: /reset-password/{token}
+    controller: App\Controller\SecurityMailController::resetPassword
+    methods: [GET, POST]
