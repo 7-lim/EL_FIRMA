@@ -38,3 +38,10 @@ terrain_search:
     controller: App\Controller\TerrainController::search
     methods: [GET]
 
+
+
+terrain_weather:
+    path: /terrain/{id}/weather
+    controller: App\Controller\TerrainController::showWeather
+    methods: GET
+

@@ -1,0 +1,79 @@
+{# templates/terrain/forecast_card.html.twig #}
+<div class="forecast-card" style="
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    max-width: 800px;
+    margin: 20px auto;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+">
+    <h3>5-Day Forecast for {{ forecast.city.name }}</h3>
+    <canvas id="forecastChart" style="width: 100%; height: 400px;"></canvas>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const forecastData = {{ forecast|json_encode|raw }};
+
+        // Extract data for the chart
+        const labels = forecastData.list.map(item => new Date(item.dt * 1000).toLocaleDateString());
+        const temperatures = forecastData.list.map(item => item.main.temp);
+        const humidities = forecastData.list.map(item => item.main.humidity);
+
+        // Create the chart
+        const ctx = document.getElementById('forecastChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Temperature (°C)',
+                        data: temperatures,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderWidth: 2,
+                        yAxisID: 'temperature',
+                    },
+                    {
+                        label: 'Humidity (%)',
+                        data: humidities,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderWidth: 2,
+                        yAxisID: 'humidity',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    temperature: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Temperature (°C)'
+                        }
+                    },
+                    humidity: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Humidity (%)'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>

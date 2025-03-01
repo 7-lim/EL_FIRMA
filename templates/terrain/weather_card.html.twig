@@ -1,0 +1,20 @@
+{# weather_card.html.twig #}
+<div class="weather-card" style="
+    background: {{ weather.weather[0].main == 'Clear' ? '#87CEEB' : '#A9A9A9' }};
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    max-width: 250px;
+    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+">
+    <h3 style="font-size: 18px; margin: 0 0 10px 0;">Weather in {{ weather.name }}</h3>
+    <img src="http://openweathermap.org/img/wn/{{ weather.weather[0].icon }}@2x.png" alt="{{ weather.weather[0].description }}" style="width: 60px; height: 60px;">
+    <p style="font-size: 24px; font-weight: bold; margin: 10px 0;">{{ weather.main.temp }}°C</p>
+    <p style="font-size: 14px; margin: 5px 0;"><strong>Feels Like:</strong> {{ weather.main.feels_like }}°C</p>
+    <p style="font-size: 14px; margin: 5px 0;"><strong>Humidity:</strong> {{ weather.main.humidity }}%</p>
+    <p style="font-size: 14px; margin: 5px 0;"><strong>Wind:</strong> {{ weather.wind.speed }} m/s</p>
+    <p style="font-size: 14px; margin: 5px 0; font-style: italic;">{{ weather.weather[0].description|capitalize }}</p>
+</div>

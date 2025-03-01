@@ -3,24 +3,66 @@
 {% block title %}Détails du Terrain{% endblock %}
 
 {% block body %}
-<!-- Page Header -->
-<div class="container-fluid page-header py-5 mb-5 bg-light">
-    <div class="container text-center py-5">
-        <h1 class="display-4 text-dark animated slideInDown">Détails du Terrain</h1>
-        <nav aria-label="breadcrumb" class="animated slideInDown">
-            <ol class="breadcrumb justify-content-center mb-0">
-                <li class="breadcrumb-item active" aria-current="page">Détails</li>
-            </ol>
-        </nav>
-    </div>
-</div>
+<style>
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+    }
+    .container {
+        max-width: 900px;
+        margin: auto;
+    }
+    #map {
+        height: 300px; /* Smaller map */
+        width: 100%;
+        border-radius: 15px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        margin-top: 20px;
+    }
+    .weather-card {
+        background: linear-gradient(135deg, #6a11cb, #2575fc); /* New gradient */
+        color: white;
+        border-radius: 15px;
+        padding: 20px; /* Adjusted padding */
+        text-align: center;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease-in-out;
+        max-width: 300px; /* Smaller width */
+        margin: 20px auto; /* Center the card */
+    }
+    .weather-card:hover {
+        transform: scale(1.03); /* Subtle hover effect */
+    }
+    .weather-icon img {
+        width: 60px; /* Smaller icon */
+        margin-bottom: 10px; /* Space below icon */
+    }
+    .temp {
+        font-size: 32px; /* Smaller font */
+        font-weight: bold;
+        margin: 10px 0;
+    }
+    .weather-details {
+        font-size: 14px; /* Smaller font for details */
+        margin: 5px 0;
+    }
+    .btn-container {
+        margin-top: 20px;
+    }
+</style>
 
-{% if terrain %}
 <div class="container py-5">
-    <div class="card shadow-sm">
+    <h2 class="text-center mb-4">Détails du Terrain</h2>
+    <div class="card shadow-lg">
         <div class="card-body">
-            <h2 class="card-title">{{ terrain.localisation|default('Localisation inconnue') }}</h2>
-            <p class="card-text">
+            <h3 class="card-title text-center">{{ terrain.localisation|default('Localisation inconnue') }}</h3>
+            <hr>
+            <p class="card-text text-center">
                 <strong>Superficie :</strong> {{ terrain.superficie|number_format(0, ',', ' ') }} m²<br>
                 <strong>Latitude :</strong> {{ terrain.latitude|default('Non spécifiée') }}<br>
                 <strong>Longitude :</strong> {{ terrain.longitude|default('Non spécifiée') }}<br>
@@ -28,38 +70,89 @@
                 <strong>Irrigation disponible :</strong> {{ terrain.irrigationDisponible ? 'Oui' : 'Non' }}<br>
                 <strong>Statut :</strong> 
                 {% if terrain.statut == 'disponible' %}
-                    <span class="text-success">Disponible</span>
+                    <span class="badge bg-success">Disponible</span>
                 {% elseif terrain.statut == 'occupé' %}
-                    <span class="text-danger">Occupé</span>
+                    <span class="badge bg-danger">Occupé</span>
                 {% else %}
-                    <span class="text-warning">Inconnu</span>
+                    <span class="badge bg-warning text-dark">Inconnu</span>
                 {% endif %}
             </p>
         </div>
+    </div>
 
-        
-        
-                <div class="col-md-6 text-center">
-                    {% if terrain.photo %}
-                        <img src="{{ asset('uploads/terrains/' ~ terrain.photo) }}" class="img-fluid rounded" style="max-width: 300px;">
-                    {% else %}
-                        <p>Aucune photo disponible</p>
-                    {% endif %}
-                </div>
+    <!-- Map Section -->
+    <div id="map"></div>
 
-
-        <div class="card-footer text-center">
-            <a href="{{ path('terrain_edit', {id: terrain.id}) }}" class="btn btn-secondary btn-sm">Modifier</a>
-            <a href="{{ path('terrain_list') }}" class="btn btn-outline-primary btn-sm">Retour à la liste</a>
+    <!-- Weather Card -->
+    <div id="weather-container" class="weather-card">
+        <div class="card-body">
+            <h3 class="text-center">Météo Actuelle</h3>
+            <p class="text-center">Chargement des données météo...</p>
         </div>
     </div>
-</div>
-{% else %}
-<div class="container text-center py-5">
-    <div class="alert alert-warning">
-        <strong>Erreur :</strong> Ce terrain n'existe pas ou a été supprimé.
+
+    <!-- Buttons -->
+    <div class="text-center btn-container">
+        <a href="{{ path('terrain_edit', {id: terrain.id}) }}" class="btn btn-secondary">Modifier</a>
+        <a href="{{ path('terrain_list') }}" class="btn btn-outline-primary">Retour à la liste</a>
     </div>
-    <a href="{{ path('terrain_list') }}" class="btn btn-outline-primary">Retour à la liste</a>
 </div>
-{% endif %}
+
+<!-- Leaflet.js for Map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Initialize the map
+        const map = L.map('map').setView([{{ terrain.latitude }}, {{ terrain.longitude }}], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+        L.marker([{{ terrain.latitude }}, {{ terrain.longitude }}]).addTo(map)
+            .bindPopup('<b>{{ terrain.localisation }}</b><br>Superficie: {{ terrain.superficie }} m²')
+            .openPopup();
+
+        // Fetch weather data
+        const terrainId = {{ terrain.id }};
+        fetch(`/terrain/${terrainId}/weather`)
+            .then(response => response.json())
+            .then(data => {
+                const weatherContainer = document.getElementById('weather-container');
+                if (data.cod !== 200) {
+                    weatherContainer.innerHTML = `
+                        <div class="card-body">
+                            <h3 class="text-center">Météo Actuelle</h3>
+                            <p class="text-center" style="color: red;">Erreur : ${data.message || 'Impossible de récupérer les données météo'}</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Update the weather card with the fetched data
+                weatherContainer.innerHTML = `
+                    <div class="card-body">
+                        <h3 class="text-center">Météo Actuelle</h3>
+                        <div class="weather-icon">
+                            <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="Météo">
+                        </div>
+                        <div class="temp">${data.main.temp}°C</div>
+                        <p class="weather-details">${data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1)}</p>
+                        <p class="weather-details"><strong>Ressenti :</strong> ${data.main.feels_like}°C</p>
+                        <p class="weather-details"><strong>Humidité :</strong> ${data.main.humidity}%</p>
+                        <p class="weather-details"><strong>Vent :</strong> ${data.wind.speed} m/s</p>
+                    </div>
+                `;
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération des données météo :', error);
+                const weatherContainer = document.getElementById('weather-container');
+                weatherContainer.innerHTML = `
+                    <div class="card-body">
+                        <h3 class="text-center">Météo Actuelle</h3>
+                        <p class="text-center" style="color: red;">Erreur : Impossible de récupérer les données météo</p>
+                    </div>
+                `;
+            });
+    });
+</script>
 {% endblock %}

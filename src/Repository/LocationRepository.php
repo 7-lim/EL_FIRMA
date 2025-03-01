@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Location;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\Terrain;
 
 /**
  * @extends ServiceEntityRepository<Location>
@@ -26,6 +27,24 @@ class LocationRepository extends ServiceEntityRepository
             $this->_em->flush();
         }
     }
+
+
+
+    public function isTerrainAvailable(Terrain $terrain, \DateTime $dateDebut, \DateTime $dateFin): bool
+    {
+        $qb = $this->createQueryBuilder('l')
+            ->where('l.terrain = :terrain')
+            ->andWhere('(l.dateDebut < :dateFin AND l.dateFin > :dateDebut)')
+            ->setParameter('terrain', $terrain)
+            ->setParameter('dateDebut', $dateDebut)
+            ->setParameter('dateFin', $dateFin)
+            ->getQuery();
+
+        return empty($qb->getResult());
+    }
+
+
+
 
     /**
      * Remove a Location entity.

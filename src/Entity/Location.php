@@ -56,6 +56,7 @@ class Location
         return $this->id;
     }
 
+        
     public function getTerrain(): ?Terrain
     {
         return $this->terrain;
