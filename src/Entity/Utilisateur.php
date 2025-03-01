@@ -14,6 +14,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -58,10 +60,17 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
     #[ORM\Column(length: 15, nullable: true)]
     private ?string $telephone = null;
 
+      /**
+     * @var Collection<int, Evenement>
+     */
+    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Evenement::class, orphanRemoval: true)]
+    private Collection $evenements;
+
 
     public function __construct()
     {
         $this->roles = ['ROLE_USER']; // Rôle par défaut
+        $this->evenements = new ArrayCollection();
     }
 
     // Méthodes pour les nouvelles propriétés
@@ -159,6 +168,36 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
     {
         // Si tu stockes des données sensibles, les effacer ici
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, Evenement>
+     */
+    public function getEvenements(): Collection
+    {
+        return $this->evenements;
+    }
+
+    public function addEvenement(Evenement $evenement): static
+    {
+        if (!$this->evenements->contains($evenement)) {
+            $this->evenements[] = $evenement;
+            $evenement->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvenement(Evenement $evenement): static
+    {
+        if ($this->evenements->removeElement($evenement)) {
+            // set the owning side to null (unless already changed)
+            if ($evenement->getUtilisateur() === $this) {
+                $evenement->setUtilisateur(null);
+            }
+        }
+
+        return $this;
     }
    
 

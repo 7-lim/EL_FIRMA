@@ -13,11 +13,6 @@ class Administrateur extends Utilisateur
     #[ORM\Column(type: "boolean")]
     private ?bool $actif = true;
 
-    /**
-     * @var Collection<int, Evenement>
-     */
-    #[ORM\OneToMany(targetEntity: Evenement::class, mappedBy: 'administrateur')]
-    private Collection $evenements;
 
     /**
      * @var Collection<int, Reclamation>
@@ -45,35 +40,7 @@ class Administrateur extends Utilisateur
         return $this;
     }
 
-    /**
-     * @return Collection<int, Evenement>
-     */
-    public function getEvenements(): Collection
-    {
-        return $this->evenements;
-    }
 
-    public function addEvenement(Evenement $evenement): static
-    {
-        if (!$this->evenements->contains($evenement)) {
-            $this->evenements->add($evenement);
-            $evenement->setAdministrateur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEvenement(Evenement $evenement): static
-    {
-        if ($this->evenements->removeElement($evenement)) {
-            // set the owning side to null (unless already changed)
-            if ($evenement->getAdministrateur() === $this) {
-                $evenement->setAdministrateur(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Reclamation>

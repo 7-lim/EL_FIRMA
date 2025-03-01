@@ -44,7 +44,7 @@ class LoginController extends AbstractController
             return $this->redirectToRoute('home');
         }
         if (in_array('ROLE_EXPERT', $roles)) {
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('dbfrsevents');
         }
         if (in_array('ROLE_AGRICULTEUR', $roles)) {
             return $this->redirectToRoute('home');

@@ -8,8 +8,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Cocur\Slugify\Slugify;
 
 #[ORM\Entity(repositoryClass: EvenementRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[UniqueEntity('slug', message: 'Ce slug existe déjà')]
 class Evenement
 {
     #[ORM\Id]
@@ -33,7 +38,7 @@ class Evenement
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotNull (message:"La date de fin est obligatoire")]
-    #[Assert\GreaterThan(propertyPath: "dateDebut", message: "La date de fin doit être supérieure à la date de début")]
+    #[Assert\GreaterThanOrEqual(propertyPath: "dateDebut", message: "La date de fin doit être supérieure à la date de début")]
     private ?\DateTimeInterface $dateFin;
 
     #[ORM\Column(length: 55)]
@@ -51,7 +56,7 @@ class Evenement
 
     #[ORM\Column(type: Types::INTEGER)]
     #[Assert\NotNull (message:"Le prix est obligatoire")]
-    #[Assert\Positive (message:"Le prix doit être positif")]
+    #[Assert\PositiveOrZero (message:"Le prix doit être positif")]
     private ?int $prix = null;
 
     #[ORM\ManyToOne(inversedBy: 'evenements')]
@@ -62,6 +67,18 @@ class Evenement
      */
     #[ORM\OneToMany(mappedBy: 'evenement', targetEntity: Ticket::class, orphanRemoval: true)]
     private Collection $tickets;
+
+    #[Gedmo\Slug(fields: ['titre', 'createdAt'], dateFormat: 'd/m/Y H-i-s')]
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    private string $slug;
+
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(type: 'datetime_immutable' , nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[Gedmo\Timestampable(on: 'update')]
+    #[ORM\Column(type: 'datetime_immutable' ,nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {
@@ -201,4 +218,37 @@ class Evenement
 
         return $this;
     }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+        return $this;
+    }
+        public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
 }
