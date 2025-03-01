@@ -103,4 +103,22 @@ public function countTotal(): int
         ->getSingleScalarResult();
 }
 
+
+
+public function searchLocations($query, $sort, $direction)
+{
+    $qb = $this->createQueryBuilder('l')
+        ->leftJoin('l.utilisateur', 'u')
+        ->addSelect('u');
+
+    if ($query) {
+        $qb->where('u.nom LIKE :query OR u.prenom LIKE :query')
+           ->setParameter('query', '%' . $query . '%');
+    }
+
+    $qb->orderBy('l.' . $sort, $direction);
+
+    return $qb->getQuery()->getResult();
+}
+
 }

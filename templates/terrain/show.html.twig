@@ -18,41 +18,45 @@
         margin: auto;
     }
     #map {
-        height: 300px; /* Smaller map */
+        height: 300px;
         width: 100%;
         border-radius: 15px;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
         margin-top: 20px;
     }
     .weather-card {
-        background: linear-gradient(135deg, #6a11cb, #2575fc); /* New gradient */
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
         color: white;
         border-radius: 15px;
-        padding: 20px; /* Adjusted padding */
+        padding: 20px;
         text-align: center;
         box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
         transition: transform 0.3s ease-in-out;
-        max-width: 300px; /* Smaller width */
-        margin: 20px auto; /* Center the card */
+        max-width: 300px;
+        margin: 20px auto;
     }
     .weather-card:hover {
-        transform: scale(1.03); /* Subtle hover effect */
+        transform: scale(1.03);
     }
     .weather-icon img {
-        width: 60px; /* Smaller icon */
-        margin-bottom: 10px; /* Space below icon */
+        width: 60px;
+        margin-bottom: 10px;
     }
     .temp {
-        font-size: 32px; /* Smaller font */
+        font-size: 32px;
         font-weight: bold;
         margin: 10px 0;
     }
     .weather-details {
-        font-size: 14px; /* Smaller font for details */
+        font-size: 14px;
         margin: 5px 0;
     }
     .btn-container {
         margin-top: 20px;
+    }
+    #weatherChart {
+        height: 400px;
+        width: 100%;
     }
 </style>
 
@@ -66,16 +70,6 @@
                 <strong>Superficie :</strong> {{ terrain.superficie|number_format(0, ',', ' ') }} m²<br>
                 <strong>Latitude :</strong> {{ terrain.latitude|default('Non spécifiée') }}<br>
                 <strong>Longitude :</strong> {{ terrain.longitude|default('Non spécifiée') }}<br>
-                <strong>Type de sol :</strong> {{ terrain.typeSol|default('Non spécifié') }}<br>
-                <strong>Irrigation disponible :</strong> {{ terrain.irrigationDisponible ? 'Oui' : 'Non' }}<br>
-                <strong>Statut :</strong> 
-                {% if terrain.statut == 'disponible' %}
-                    <span class="badge bg-success">Disponible</span>
-                {% elseif terrain.statut == 'occupé' %}
-                    <span class="badge bg-danger">Occupé</span>
-                {% else %}
-                    <span class="badge bg-warning text-dark">Inconnu</span>
-                {% endif %}
             </p>
         </div>
     </div>
@@ -83,27 +77,21 @@
     <!-- Map Section -->
     <div id="map"></div>
 
-    <!-- Weather Card -->
-    <div id="weather-container" class="weather-card">
+    <!-- Google Chart for Weather Data -->
+    <div class="card shadow-lg mt-4">
         <div class="card-body">
-            <h3 class="text-center">Météo Actuelle</h3>
-            <p class="text-center">Chargement des données météo...</p>
+            <h3 class="text-center">Analyse Météo</h3>
+            <div id="weatherChart"></div>
         </div>
-    </div>
-
-    <!-- Buttons -->
-    <div class="text-center btn-container">
-        <a href="{{ path('terrain_edit', {id: terrain.id}) }}" class="btn btn-secondary">Modifier</a>
-        <a href="{{ path('terrain_list') }}" class="btn btn-outline-primary">Retour à la liste</a>
     </div>
 </div>
 
 <!-- Leaflet.js for Map -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Initialize the map
         const map = L.map('map').setView([{{ terrain.latitude }}, {{ terrain.longitude }}], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
@@ -112,47 +100,30 @@
             .bindPopup('<b>{{ terrain.localisation }}</b><br>Superficie: {{ terrain.superficie }} m²')
             .openPopup();
 
-        // Fetch weather data
-        const terrainId = {{ terrain.id }};
-        fetch(`/terrain/${terrainId}/weather`)
-            .then(response => response.json())
-            .then(data => {
-                const weatherContainer = document.getElementById('weather-container');
-                if (data.cod !== 200) {
-                    weatherContainer.innerHTML = `
-                        <div class="card-body">
-                            <h3 class="text-center">Météo Actuelle</h3>
-                            <p class="text-center" style="color: red;">Erreur : ${data.message || 'Impossible de récupérer les données météo'}</p>
-                        </div>
-                    `;
-                    return;
-                }
+        // Load Google Charts
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
 
-                // Update the weather card with the fetched data
-                weatherContainer.innerHTML = `
-                    <div class="card-body">
-                        <h3 class="text-center">Météo Actuelle</h3>
-                        <div class="weather-icon">
-                            <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="Météo">
-                        </div>
-                        <div class="temp">${data.main.temp}°C</div>
-                        <p class="weather-details">${data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1)}</p>
-                        <p class="weather-details"><strong>Ressenti :</strong> ${data.main.feels_like}°C</p>
-                        <p class="weather-details"><strong>Humidité :</strong> ${data.main.humidity}%</p>
-                        <p class="weather-details"><strong>Vent :</strong> ${data.wind.speed} m/s</p>
-                    </div>
-                `;
-            })
-            .catch(error => {
-                console.error('Erreur lors de la récupération des données météo :', error);
-                const weatherContainer = document.getElementById('weather-container');
-                weatherContainer.innerHTML = `
-                    <div class="card-body">
-                        <h3 class="text-center">Météo Actuelle</h3>
-                        <p class="text-center" style="color: red;">Erreur : Impossible de récupérer les données météo</p>
-                    </div>
-                `;
-            });
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Météo', 'Valeurs'],
+                ['Température', {{ weatherData.main.temp }}],
+                ['Température ressentie', {{ weatherData.main.feels_like }}],
+                ['Humidité', {{ weatherData.main.humidity }}],
+                ['Pression', {{ weatherData.main.pressure }}],
+                ['Vent', {{ weatherData.wind.speed }}]
+            ]);
+
+            var options = {
+                title: 'Conditions météorologiques',
+                legend: { position: 'bottom' },
+                backgroundColor: 'transparent',
+                chartArea: { width: '85%', height: '70%' }
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('weatherChart'));
+            chart.draw(data, options);
+        }
     });
 </script>
 {% endblock %}

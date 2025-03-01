@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Contrat de Location</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .signature { margin-top: 50px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <h1>Précontrat de Location Agricole</h1>
+
+    <p><strong>Bailleur :</strong> {{ location.terrain.agriculteur.nom }} {{ location.terrain.agriculteur.prenom }}</p>
+    <p><strong>Preneur :</strong> {{ location.terrain.agriculteur.nom }} {{ location.terrain.agriculteur.prenom }}</p>
+    <p><strong>Terrain Loué :</strong> {{ location.terrain.localisation }}</p>
+    <p><strong>Superficie :</strong> {{ location.terrain.superficie }} hectares</p>
+    <p><strong>Durée du Contrat :</strong> du {{ location.dateDebut|date('d-m-Y') }} au {{ location.dateFin|date('d-m-Y') }}</p>
+    <p><strong>Prix :</strong> {{ location.prixLocation }} €</p>
+
+    <h2>Conditions</h2>
+        <p>The Executive Lessee shall be responsible for the diligent maintenance, cultivation, and sustainable management of the leased land, ensuring adherence to all applicable agricultural laws, environmental regulations, and best farming practices as recognized by industry standards and governing authorities. The Lessee is obligated to employ soil conservation techniques, maintain soil fertility, implement proper irrigation and drainage systems, and prevent any degradation of the land’s productivity. Furthermore, the Lessee shall take all reasonable measures to avoid soil erosion, contamination, and depletion, and shall ensure that all agricultural activities are conducted in a manner that preserves the ecological integrity of the terrain. Any failure to uphold these obligations, resulting in damage or loss of agricultural viability, shall render the Lessee liable for restoration costs and any applicable penalties under the law</p> 
+    <div class="signature">
+        <p>______________________</p>
+        <p>Signature du Bailleur</p>
+    </div>
+
+    <div class="signature">
+        <p>______________________</p>
+        <p>Signature du Preneur</p>
+    </div>
+
+</body>
+</html>

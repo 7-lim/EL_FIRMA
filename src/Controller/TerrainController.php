@@ -119,15 +119,22 @@ class TerrainController extends AbstractController
             'terrains' => $terrains,
         ]);
     }
-
-    #[Route('/terrain/{id}', name: 'terrain_show', methods: ['GET'])]
-    public function show(Terrain $terrain): Response
+    #[Route(path: '/terrain/{id}', name: 'terrain_show', methods: ['GET'])]
+    public function show(Terrain $terrain, OpenWeatherService $weatherService): Response
     {
+        // Check if the terrain has latitude and longitude before calling the API
+        if ($terrain->getLatitude() !== null && $terrain->getLongitude() !== null) {
+            $weatherData = $weatherService->getWeather($terrain->getLatitude(), $terrain->getLongitude());
+        } else {
+            $weatherData = null; // If no coordinates, prevent API call
+        }
+    
         return $this->render('terrain/show.html.twig', [
             'terrain' => $terrain,
+            'weatherData' => $weatherData, // Pass weather data to template
         ]);
     }
-
+    
     #[Route('/terrain/{id}/edit', name: 'terrain_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Terrain $terrain): Response
     {

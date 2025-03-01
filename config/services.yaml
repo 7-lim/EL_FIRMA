@@ -7,14 +7,13 @@ parameters:
     terrain_photos_directory: '%kernel.project_dir%/public/uploads/terrain_photos'
 
 services:
-    # default configuration for services in *this* file
+    # Default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
+    # Makes classes in src/ available to be used as services
+    # This creates a service per class whose ID is the fully-qualified class name
     App\:
         resource: '../src/'
         exclude:
@@ -22,10 +21,13 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    # Pdf Contract Generator Service
+    App\Service\PdfContractGenerator: ~
+
+    # OpenWeatherService with API key argument from .env
     App\Service\OpenWeatherService:
         arguments:
             $apiKey: '%env(OPENWEATHER_API_KEY)%'
 
-
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # Add more service definitions when explicit configuration is needed
+    # Please note that last definitions always *replace* previous ones
