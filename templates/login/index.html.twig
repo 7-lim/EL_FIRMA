@@ -1,164 +1,177 @@
-{% extends 'base_admin.html.twig' %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .login-container {
-            width: 100%;
-            max-width: 400px;
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
-            text-align: center;
-            animation: fadeIn 0.8s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .login-container h3 {
-            margin-bottom: 20px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            text-align: left;
-            position: relative;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: #555;
-        }
-
-        .form-control {
-            padding: 12px;
-            font-size: 14px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-
-        .form-control:focus {
-            border-color: #4facfe;
-            box-shadow: 0px 0px 8px rgba(79, 172, 254, 0.4);
-            outline: none;
-        }
-
-        .password-wrapper {
-            position: relative;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #777;
-            transition: color 0.3s;
-        }
-
-        .toggle-password:hover {
-            color: #333;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            border: none;
-            color: #fff;
-            transition: all 0.3s;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(to right, #00f2fe, #4facfe);
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
-        }
-
-        .error-message {
-            color: #d9534f;
-            font-size: 14px;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #d9534f;
-            background: #f2dede;
-            border-radius: 8px;
-            animation: shake 0.3s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-        }
-
-        hr {
-            margin-top: 20px;
-            border-top: 1px solid #ddd;
-        }
-    </style>
-{% endblock %}
+{# templates/security/login.html.twig #}
 
 {% block body %}
-    <div class="login-container">
-        <h3><i class="fa-solid fa-sign-in-alt"></i> Connexion</h3>
+
+<div class="container">
+    <div class="login-section">
+    <a href="{{ path('app_register') }}" class="login-btn">Sign Up</a>
+        <header>Sign in</header>
+       
 
         {% if error %}
-            <p class="error-message"><i class="fa-solid fa-triangle-exclamation"></i> {{ error.messageKey|trans(error.messageData, 'security') }}</p>
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
         {% endif %}
 
-        <form method="post">
-            <div class="form-group">
-                <label for="inputEmail" class="form-label"><i class="fa-solid fa-user"></i> Email</label>
-                <input type="email" id="inputEmail" name="_username" class="form-control" value="{{ last_username }}" required autofocus placeholder="Entrez votre email">
-            </div>
-
-            <div class="form-group password-wrapper">
-                <label for="inputPassword" class="form-label"><i class="fa-solid fa-lock"></i> Mot de passe</label>
-                <input type="password" id="inputPassword" name="_password" class="form-control" required placeholder="Entrez votre mot de passe">
-                <i class="fa-solid fa-eye toggle-password" onclick="togglePassword()"></i>
-            </div>
-
-            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-sign-in-alt"></i> Se connecter</button>
+        <form method="POST" action="{{ path('app_login') }}">
+            <input type="email" name="_username" value="{{ last_username }}" placeholder="Email" required>
+            <input type="password" name="_password" placeholder="Password" required>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <button type="submit" class="btn">Login</button>
         </form>
     </div>
-
-    <script>
-        function togglePassword() {
-            var passwordInput = document.getElementById("inputPassword");
-            var toggleIcon = document.querySelector(".toggle-password");
-            
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-                toggleIcon.classList.remove("fa-eye");
-                toggleIcon.classList.add("fa-eye-slash");
-            } else {
-                passwordInput.type = "password";
-                toggleIcon.classList.remove("fa-eye-slash");
-                toggleIcon.classList.add("fa-eye");
-            }
-        }
-    </script>
+</div>
 {% endblock %}
+
+<style>
+    /* Global Styling */
+    body {
+        background-image: url("{{ asset('img/login.png') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: #f0f8f0; /* Light green background */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 400px;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    /* Login Section */
+    .login-section header {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2e7d32;
+        margin-bottom: 20px;
+    }
+
+    /* Social Buttons */
+    .social-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .social-buttons button {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        border: none;
+        font-weight: bold;
+    }
+
+    .social-buttons .google {
+        background: #ffffff;
+        border: 1px solid #4285f4;
+        color: #4285f4;
+    }
+
+    .social-buttons .apple {
+        background: #000;
+        color: #fff;
+    }
+
+    /* Separator */
+    .separator {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 20px 0;
+    }
+
+    .separator .line {
+        flex: 1;
+        height: 1px;
+        background: #ccc;
+    }
+
+    .separator p {
+        color: #2e7d32;
+        font-weight: bold;
+    }
+
+    /* Form Styling */
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    form input {
+        outline: none;
+        border: 1px solid #ccc;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 8px;
+        background: #f9f9f9;
+    }
+
+    form input:focus {
+        border-color: #2e7d32;
+    }
+
+    .btn {
+        background: #2e7d32;
+        color: white;
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .btn:hover {
+        background: #256029;
+    }
+    /* Bouton Login en haut */
+.login-btn {
+    display: inline-block;
+    background: #2e7d32;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.3s ease;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Effet au survol */
+.login-btn:hover {
+    background: #256029;
+}
+
+/* Positionnement du container pour contenir le bouton */
+.container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+</style>
