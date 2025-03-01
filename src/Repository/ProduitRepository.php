@@ -15,30 +15,63 @@ class ProduitRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Produit::class);
     }
-
-    public function save(Produit $produit): void
+    public function findSearch($search): array
     {
-        $this->_em->persist($produit);
-        $this->_em->flush();
-    }
-    public function findByCategorieWithFilters($categorieId, $price = null, $name = null)
-{
-    $qb = $this->createQueryBuilder('p')
-        ->where('p.categorie = :categorie')
-        ->setParameter('categorie', $categorieId);
+        $query = $this
+            ->createQueryBuilder('p')
+            ->select('c', 'p')
+            ->join('p.categorie', 'c');
 
-    if ($price) {
-        $qb->andWhere('p.price <= :price')
-           ->setParameter('price', $price);
+        if (!empty($search->q)) {
+            $query = $query
+                ->andWhere('p.NomProduit LIKE :q')
+                ->setParameter('q', "%{$search->q}%");
+        }
+
+        if (!empty($search->categories)) {
+            $query = $query
+                ->andWhere('c.id IN (:categories)')
+                ->setParameter('categories', $search->categories);
+        }
+
+        if (!empty($search->min)) {
+            $query = $query
+                ->andWhere('p.prix >= :min')
+                ->setParameter('min', $search->min);
+        }
+
+        if (!empty($search->max)) {
+            $query = $query
+                ->andWhere('p.prix <= :max')
+                ->setParameter('max', $search->max);
+        }
+
+        return $query->getQuery()->getResult();
     }
 
-    if ($name) {
-        $qb->andWhere('p.NomProduit LIKE :name')
-           ->setParameter('name', "%$name%");
-    }
+//     public function save(Produit $produit): void
+//     {
+//         $this->_em->persist($produit);
+//         $this->_em->flush();
+//     }
+//     public function findByCategorieWithFilters($categorieId, $price = null, $name = null)
+// {
+//     $qb = $this->createQueryBuilder('p')
+//         ->where('p.categorie = :categorie')
+//         ->setParameter('categorie', $categorieId);
 
-    return $qb->getQuery()->getResult();
-}
+//     if ($price) {
+//         $qb->andWhere('p.price <= :price')
+//            ->setParameter('price', $price);
+//     }
+
+//     if ($name) {
+//         $qb->andWhere('p.NomProduit LIKE :name')
+//            ->setParameter('name', "%$name%");
+//     }
+
+//     return $qb->getQuery()->getResult();
+// }
 
 
     //    /**

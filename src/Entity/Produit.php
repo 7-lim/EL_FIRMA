@@ -60,7 +60,7 @@ class Produit
     #[Assert\NotNull(message: "SVP sélectionner une catégorie")]
     private ?Categorie $categorie = null;
 
-      public function getId(): ?int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -94,7 +94,7 @@ class Produit
         return $this->Image;
     }
 
-    public function setImage(?string $Image): static
+    public function setImage(string $Image): static
     {
         $this->Image = $Image;
 

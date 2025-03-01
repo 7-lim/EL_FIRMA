@@ -121,4 +121,4 @@ final class ProduitController extends AbstractController
 
         return $this->redirectToRoute('dbfrsproduit', [], Response::HTTP_SEE_OTHER);
     }
-}
+}   

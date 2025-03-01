@@ -6,7 +6,8 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "encore dev",
+    "build": "encore production"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,11 @@
   "description": "",
   "devDependencies": {
     "@popperjs/core": "^2.11.8",
-    "jquery": "^3.7.1"
+    "@symfony/webpack-encore": "^5.1.0",
+    "jquery": "^3.7.1",
+    "webpack-notifier": "^1.15.0"
+  },
+  "dependencies": {
+    "nouislider": "^15.8.1"
   }
 }

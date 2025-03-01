@@ -36,10 +36,11 @@ class ProduitType extends AbstractType
             ],   
             ])
             ->add('categorie', EntityType::class, [
-                'class' => Categorie :: class,
-                'choice_label' => 'nom_categorie', // ✅ Pass categories as an option
-                'placeholder' => 'Choisir une catégorie'
-                
+                'class' => Categorie::class,
+                'choice_label' => 'nom_categorie',
+                'placeholder' => 'Choisir une catégorie',
+                'expanded' => false,
+                'multiple' => false,
             ])
             ->add('image', FileType::class, [
                 'label' => 'Image du produit',
