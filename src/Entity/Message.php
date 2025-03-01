@@ -1,0 +1,147 @@
+<?php
+
+namespace App\Entity;
+use App\Repository\MessageRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: MessageRepository::class)]
+class Message
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "le message ne doit pas etre vide.")]
+    private ?string $contenu = null;
+
+    #[ORM\Column]
+    private \DateTime $dateEnvoi;
+
+    #[ORM\Column(type: "string", nullable: true)]
+    private $image;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: "emetteur_id", referencedColumnName: "id")]
+    private ?User $emetteur;
+
+
+    #[ORM\ManyToOne(targetEntity: Discussion::class, inversedBy: 'relatedEntities')]
+#[ORM\JoinColumn(name: "discussion_id", referencedColumnName: "id", onDelete: "CASCADE")]
+private ?Discussion $discussion = null;
+
+    /**
+     * @var Collection<int, Like>
+     */
+    #[ORM\OneToMany(targetEntity: Like::class, mappedBy: 'message',cascade: ["remove"])]
+    private Collection $likes;
+
+    public function __construct()
+    {
+        $this->dateEnvoi = new \DateTime();
+        $this->likes = new ArrayCollection();
+    }
+
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getContenu(): ?string
+    {
+        return $this->contenu;
+    }
+
+    public function setContenu(?string $contenu): static
+    {
+        $this->contenu = $contenu;
+
+        return $this;
+    }
+
+    public function getDateEnvoi(): ?\DateTimeInterface
+    {
+        return $this->dateEnvoi;
+    }
+
+    public function setDateEnvoi(\DateTimeInterface $dateEnvoi): static
+    {
+        $this->dateEnvoi = $dateEnvoi;
+
+        return $this;
+    }
+
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    public function setImage( ?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getEmetteur(): ?User
+    {
+        return $this->emetteur;
+    }
+
+    public function setEmetteur(?User $emetteur): static
+    {
+        $this->emetteur = $emetteur;
+
+        return $this;
+    }
+
+    public function getDiscussion(): ?Discussion
+    {
+        return $this->discussion;
+    }
+
+    public function setDiscussion(?Discussion $discussion): static
+    {
+        $this->discussion = $discussion;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Like>
+     */
+    public function getLikes(): Collection
+    {
+        return $this->likes;
+    }
+
+    public function addLike(Like $like): static
+    {
+        if (!$this->likes->contains($like)) {
+            $this->likes->add($like);
+            $like->setMessage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLike(Like $like): static
+    {
+        if ($this->likes->removeElement($like)) {
+            // set the owning side to null (unless already changed)
+            if ($like->getMessage() === $this) {
+                $like->setMessage(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+}

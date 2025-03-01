@@ -1,0 +1,59 @@
+<link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+    <!-- Navbar -->
+    <nav class="navbar">
+        <ul>
+            <li><a>Utilisateurs</a></li>
+            <li><a>Événements</a></li>
+            <li><a>Produits</a></li>
+            <li><a>Consultation</a></li>
+            <li><a>Terrain</a></li>
+            <li><a href="#" class="home">Accueil</a></li>
+            <li><a href="#" class="logout">Déconnexion</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Liste des Utilisateurs</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Nom Entreprise</th>
+                    <th>ID Fiscale</th>
+                    <th>Catégorie Produit</th>
+                    <th>Domaine Expertise</th>
+                    <th>Adresse Exploitation</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for utilisateur in utilisateurs %}
+                    <tr>
+                        <td>{{ utilisateur.id }}</td>
+                        <td>{{ utilisateur.email }}</td>
+                        <td>{{ utilisateur.getRoles()|join(', ') }}</td>
+                        <td>{{ utilisateur.nomEntreprise ?? 'N/A' }}</td>
+                        <td>{{ utilisateur.idFiscale ?? 'N/A' }}</td>
+                        <td>{{ utilisateur.categorieProduit ?? 'N/A' }}</td>
+                        <td>{{ utilisateur.domaineExpertise ?? 'N/A' }}</td>
+                        <td>{{ utilisateur.adresseExploitation ?? 'N/A' }}</td>
+                        <td>
+                            <a href="{{ path('edit_utilisateur', {id: utilisateur.id}) }}" class="btn edit">Modifier</a>
+                            <a href="{{ path('delete_utilisateur', {id: utilisateur.id}) }}" class="btn delete"
+                               onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">
+                               Supprimer
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
