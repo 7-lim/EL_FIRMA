@@ -39,7 +39,7 @@ class Ticket
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')] // Add referential integrity
     private ?Evenement $evenement = null;
 
-    #[Gedmo\Slug(fields: ['Prix','createdAt'], dateFormat: 'd/m/Y H-i-s')]  
+    #[Gedmo\Slug(fields: ['Prix'], dateFormat: 'd/m/Y H-i-s')]  
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     private string $slug;
 

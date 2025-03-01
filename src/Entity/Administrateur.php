@@ -24,7 +24,7 @@ class Administrateur extends Utilisateur
     {
         parent::__construct();
         $this->setRoles(['ROLE_ADMIN']);
-        $this->evenements = new ArrayCollection();
+        //$this->evenements = new ArrayCollection();
         $this->reclamations = new ArrayCollection();
         parent::__construct();
         $this->setRoles(['ROLE_ADMIN']);

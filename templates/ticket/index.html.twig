@@ -29,7 +29,6 @@
             <table class="table table-bordered table-hover">
                 <thead class="thead-light">
                     <tr>
-                        <th>ID</th>
                         <th>Prix</th>
                         <th>Événement</th>
                         <th>Actions</th>
@@ -38,7 +37,6 @@
                 <tbody>
                 {% for ticket in tickets %}
                     <tr>
-                        <td>{{ ticket.id }}</td>
                         <td>{{ ticket.Prix }}</td>
                         <td>
                             {% if ticket.evenement %}
@@ -48,7 +46,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a href="{{ path('app_ticket_show', {'id': ticket.id}) }}" 
+                            <a href="{{ path('app_ticket_show', {'slug': ticket.slug}) }}" 
                                class="btn btn-sm btn-primary">
                                 Voir Ticket
                             </a>

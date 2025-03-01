@@ -54,12 +54,12 @@ final class EvenementController extends AbstractController
         ]);
     }
 
-    #[Route('/{slug}', name: 'app_evenement_show', methods: ['GET', 'POST'])]
-    public function show(Request $request, EvenementRepository $evenementRepository, string $slug, EntityManagerInterface $entityManager): Response
+    #[Route('/{id<\d+>}', name: 'app_evenement_show', methods: ['GET', 'POST'])]
+    public function show(Request $request, EvenementRepository $evenementRepository, int $id, EntityManagerInterface $entityManager): Response
     {
-        $evenement = $evenementRepository->findOneBy(['slug' => $slug]);
+        $evenement = $evenementRepository->find($id);
         if (!$evenement) {
-            throw $this->createNotFoundException('The event does not exist');
+            throw $this->createNotFoundException('The event does not exist !!');
         }
 
         if ($request->isMethod('POST')) {
@@ -70,7 +70,7 @@ final class EvenementController extends AbstractController
 
             if ($evenement->getNombreDePlaces() <= 0) {
                 $this->addFlash('error', 'No more places available for this event');
-                return $this->redirectToRoute('app_evenement_show', ['slug' => $slug]);
+                return $this->redirectToRoute('app_evenement_show', ['id' => $id]);
             }
 
             $ticket = new Ticket();
@@ -95,7 +95,7 @@ final class EvenementController extends AbstractController
             $entityManager->persist($ticket);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_ticket_show', ['id' => $ticket->getId()]);
+            return $this->redirectToRoute('app_ticket_show', ['slug' => $ticket->getSlug()]);
         }
 
         return $this->render('evenement/show.html.twig', [

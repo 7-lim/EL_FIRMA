@@ -92,11 +92,11 @@ final class TicketController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_ticket_show', methods: ['GET'])]
-    public function show(Ticket $ticket): Response
+    #[Route('/{slug}', name: 'app_ticket_show', methods: ['GET'])]
+    public function show(Ticket $ticket, string $slug): Response
     {
         return $this->render('ticket/show.html.twig', [
-            'ticket' => $ticket,
+            'ticket' => $ticket,'slug' => $slug
         ]);
     }
 
