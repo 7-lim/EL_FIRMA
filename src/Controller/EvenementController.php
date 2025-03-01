@@ -54,10 +54,10 @@ final class EvenementController extends AbstractController
         ]);
     }
 
-    #[Route('/{id<\d+>}', name: 'app_evenement_show', methods: ['GET', 'POST'])]
-    public function show(Request $request, EvenementRepository $evenementRepository, int $id, EntityManagerInterface $entityManager): Response
+    #[Route('/{slug}', name: 'app_evenement_show', methods: ['GET', 'POST'])]
+    public function show(Request $request, EvenementRepository $evenementRepository, string $slug, EntityManagerInterface $entityManager): Response
     {
-        $evenement = $evenementRepository->find($id);
+        $evenement = $evenementRepository->findOneBy(['slug' => $slug]);
         if (!$evenement) {
             throw $this->createNotFoundException('The event does not exist');
         }
@@ -70,7 +70,7 @@ final class EvenementController extends AbstractController
 
             if ($evenement->getNombreDePlaces() <= 0) {
                 $this->addFlash('error', 'No more places available for this event');
-                return $this->redirectToRoute('app_evenement_show', ['id' => $id]);
+                return $this->redirectToRoute('app_evenement_show', ['slug' => $slug]);
             }
 
             $ticket = new Ticket();
@@ -79,12 +79,10 @@ final class EvenementController extends AbstractController
 
             // Set user based on role and downcast to child class
             if (in_array('ROLE_AGRICULTEUR', $user->getRoles())) {
-                // $agriculteur = $entityManager->getRepository(Agriculteur::class)->find($user->getId());
                 if ($user instanceof Agriculteur) {
                     $ticket->setAgriculteur($user);
                 }
             } elseif (in_array('ROLE_EXPERT', $user->getRoles())) {
-                // $expert = $entityManager->getRepository(Expert::class)->find($user->getId());
                 if ($user instanceof Expert) {
                     $ticket->setExpert($user);
                 }

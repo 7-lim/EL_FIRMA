@@ -68,7 +68,7 @@ class Evenement
     #[ORM\OneToMany(mappedBy: 'evenement', targetEntity: Ticket::class, orphanRemoval: true)]
     private Collection $tickets;
 
-    #[Gedmo\Slug(fields: ['titre', 'createdAt'], dateFormat: 'd/m/Y H-i-s')]
+    #[Gedmo\Slug(fields: ['titre'])]
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     private string $slug;
 
