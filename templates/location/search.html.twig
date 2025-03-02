@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}🔍 Rechercher une Location{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h2 class="mt-4 text-center">🔎 Rechercher des Locations</h2>
+
+    <!-- Search Filters -->
+    <div class="card p-4 shadow-sm mt-3">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="minPrix"><strong>Prix Min (€):</strong></label>
+                <input type="number" id="minPrix" class="form-control" value="0">
+            </div>
+            <div class="col-md-3">
+                <label for="maxPrix"><strong>Prix Max (€):</strong></label>
+                <input type="number" id="maxPrix" class="form-control" value="1000000">
+            </div>
+            <div class="col-md-3">
+                <label for="sortField"><strong>Trier Par:</strong></label>
+                <select id="sortField" class="form-control">
+                    <option value="prixLocation">Prix</option>
+                    <option value="dateDebut">Date Début</option>
+                    <option value="dateFin">Date Fin</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="sortDirection"><strong>Ordre:</strong></label>
+                <select id="sortDirection" class="form-control">
+                    <option value="ASC">Ascendant</option>
+                    <option value="DESC">Descendant</option>
+                </select>
+            </div>
+        </div>
+        <button id="searchBtn" class="btn btn-primary mt-3 w-100">🔎 Rechercher</button>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="text-center mt-3" style="display: none;">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p>Chargement des données...</p>
+    </div>
+
+    <!-- Results Section -->
+    <div id="locations" class="mt-4"></div>
+</div>
+
+<!-- AJAX for Dynamic Search -->
+<script>
+document.getElementById("searchBtn").addEventListener("click", function() {
+    let minPrix = document.getElementById("minPrix").value;
+    let maxPrix = document.getElementById("maxPrix").value;
+    let sort = document.getElementById("sortField").value;
+    let direction = document.getElementById("sortDirection").value;
+
+    // Show loading indicator
+    document.getElementById("loading").style.display = "block";
+    document.getElementById("locations").innerHTML = "";
+
+    fetch(`/locations/search?minPrix=${minPrix}&maxPrix=${maxPrix}&sort=${sort}&direction=${direction}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("API Response:", data);
+            let output = "";
+
+            if (!data.success || data.data.length === 0) {
+                output = "<div class='alert alert-warning text-center'>🚫 Aucune location trouvée.</div>";
+            } else {
+                output += `
+                    <div class="card shadow-sm p-4">
+                        <h3 class="text-center mb-3">📍 Locations Trouvées</h3>
+                        <table class='table table-striped table-hover text-center'>
+                            <thead class='thead-dark'>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date Début</th>
+                                    <th>Date Fin</th>
+                                    <th>Prix (€)</th>
+                                    <th>Localisation</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+                data.data.forEach(location => {
+                    output += `<tr>
+                                <td>${location.id}</td>
+                                <td>${location.dateDebut}</td>
+                                <td>${location.dateFin}</td>
+                                <td>${location.prixLocation} €</td>
+                                <td>${location.terrain.localisation}</td>
+                            </tr>`;
+                });
+
+                output += "</tbody></table></div>";
+            }
+
+            document.getElementById("locations").innerHTML = output;
+        })
+        .catch(error => {
+            console.error("AJAX Error:", error);
+            document.getElementById("locations").innerHTML = "<div class='alert alert-danger text-center'>❌ Erreur lors du chargement des données.</div>";
+        })
+        .finally(() => {
+            document.getElementById("loading").style.display = "none";
+        });
+});
+</script>
+
+{% endblock %}

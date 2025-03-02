@@ -4,6 +4,29 @@
 {% block title %}Créer une Nouvelle Location{% endblock %}
 
 {% block body %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("submitLocation").addEventListener("click", function(event) {
+        event.preventDefault();
+
+        let terrainId = document.getElementById("terrainSelect").value;
+        let dateDebut = document.getElementById("dateDebut").value;
+        let dateFin = document.getElementById("dateFin").value;
+
+        fetch(`/api/check-availability?terrainId=${terrainId}&dateDebut=${dateDebut}&dateFin=${dateFin}`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data.available) {
+                    alert("⚠ Le terrain est déjà réservé pour ces dates !");
+                } else {
+                    document.getElementById("locationForm").submit();
+                }
+            })
+            .catch(error => console.error("AJAX Error:", error));
+    });
+});
+</script>
+
 <div class="container d-flex justify-content-center">
     <div class="card shadow-lg mt-5" style="width: 60%;">
         <div class="card-header bg-primary text-white text-center">

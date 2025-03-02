@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques des Locations{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="mt-4">📊 Statistiques des Locations</h1>
+
+    <!-- Filters -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label>Status:</label>
+            <select id="statusFilter" class="form-control">
+                <option value="">Tous</option>
+                <option value="confirmed">Confirmé</option>
+                <option value="pending">En attente</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label>Méthode de Paiement:</label>
+            <select id="paymentFilter" class="form-control">
+                <option value="">Tous</option>
+                <option value="cash">Cash</option>
+                <option value="bank_transfer">Virement Bancaire</option>
+                <option value="credit_card">Carte de Crédit</option>
+            </select>
+        </div>
+    </div>
+
+    <button id="fetchData" class="btn btn-primary mt-3 w-100">🔄 Charger les Données</button>
+
+    <!-- Google Chart -->
+    <div id="chart_div" style="width: 100%; height: 500px;"></div>
+
+    <!-- Table Output -->
+    <div class="table-responsive mt-4">
+        <h3>📜 Détails des Locations</h3>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Localisation</th>
+                    <th>Date Début</th>
+                    <th>Date Fin</th>
+                    <th>Prix (€)</th>
+                    <th>Mode Paiement</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="data-table">
+                <!-- Data will be inserted dynamically -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Load Google Charts -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script>
+document.getElementById("fetchData").addEventListener("click", function() {
+    let status = document.getElementById("statusFilter").value;
+    let paymentMethod = document.getElementById("paymentFilter").value;
+
+    fetch(`/locations/charts?status=${status}&paymentMethod=${paymentMethod}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("API Response:", data);
+
+            if (!data.success || data.chartData.length <= 1) {
+                alert("Aucune location trouvée !");
+                document.getElementById("data-table").innerHTML = "";
+                document.getElementById("chart_div").innerHTML = "<p class='text-center'>Aucune donnée à afficher.</p>";
+                return;
+            }
+
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(() => drawChart(data.chartData));
+
+            function drawChart(dataArray) {
+                let data = google.visualization.arrayToDataTable(dataArray);
+                let options = {
+                    title: 'Prix de Location par Localisation',
+                    hAxis: { title: 'Localisation' },
+                    vAxis: { title: 'Prix de Location (€)', minValue: 0 },
+                    legend: { position: 'none' }
+                };
+                let chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+                chart.draw(data, options);
+            }
+
+            // Populate table
+            let tableHTML = "";
+            data.tableData.forEach(location => {
+                tableHTML += `<tr>
+                                <td>${location.id}</td>
+                                <td>${location.localisation}</td>
+                                <td>${location.dateDebut}</td>
+                                <td>${location.dateFin}</td>
+                                <td>${location.prixLocation} €</td>
+                                <td>${location.modePaiement}</td>
+                                <td>${location.statut}</td>
+                              </tr>`;
+            });
+            document.getElementById("data-table").innerHTML = tableHTML;
+        })
+        .catch(error => console.error("AJAX Error:", error));
+});
+</script>
+{% endblock %}

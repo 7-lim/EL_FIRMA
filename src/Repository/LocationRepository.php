@@ -28,8 +28,20 @@ class LocationRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * Remove a Location entity.
+     */
+    public function remove(Location $entity, bool $flush = false): void
+    {
+        $this->_em->remove($entity);
+        if ($flush) {
+            $this->_em->flush();
+        }
+    }
 
-
+    /**
+     * 🛠 Check if a terrain is available for new booking (No overlapping dates)
+     */
     public function isTerrainAvailable(Terrain $terrain, \DateTime $dateDebut, \DateTime $dateFin): bool
     {
         $qb = $this->createQueryBuilder('l')
@@ -43,82 +55,86 @@ class LocationRepository extends ServiceEntityRepository
         return empty($qb->getResult());
     }
 
-
-
-
     /**
-     * Remove a Location entity.
+     * 🔎 Search locations by price range and sorting
      */
-    public function remove(Location $entity, bool $flush = false): void
+    public function searchLocations(float $minPrix, float $maxPrix, string $sort, string $direction): array
     {
-        $this->_em->remove($entity);
-        if ($flush) {
-            $this->_em->flush();
-        }
+        return $this->createQueryBuilder('l')
+            ->where('l.prixLocation BETWEEN :minPrix AND :maxPrix')
+            ->setParameter('minPrix', $minPrix)
+            ->setParameter('maxPrix', $maxPrix)
+            ->orderBy("l.$sort", $direction)
+            ->getQuery()
+            ->getResult();
     }
-
+    
     /**
-     * Find Locations by status.
+     * 🔎 Find Locations by status
      */
     public function findByStatus(string $status): array
     {
         return $this->createQueryBuilder('l')
-            ->andWhere('l.Statut = :status')
+            ->where('l.statut = :status')
             ->setParameter('status', $status)
-            ->orderBy('l.DateDebut', 'DESC')
+            ->orderBy('l.dateDebut', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+    
+    /**
+     * 🔎 Find all Locations within a date range
+     */
+    public function findByDateRange(\DateTimeInterface $startDate, \DateTimeInterface $endDate): array
+    {
+        return $this->createQueryBuilder('l')
+            ->andWhere('l.dateDebut >= :startDate')
+            ->andWhere('l.dateFin <= :endDate')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->orderBy('l.dateDebut', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
+    public function findByPaymentMethod(string $method): array
+    {
+        return $this->createQueryBuilder('l')
+            ->where('l.modePaiement = :method')
+            ->setParameter('method', $method)
+            ->orderBy('l.dateDebut', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+    
+
+
+
+
+
+
+    /**
+     * 🆕 Find the latest locations
+     */
+    public function findLatest(int $limit): array
+    {
+        return $this->createQueryBuilder('l')
+            ->orderBy('l.id', 'DESC')
+            ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
     }
 
     /**
-     * Find all Locations within a date range.
+     * 🆕 Count total number of locations
      */
-    public function findByDateRange(\DateTimeInterface $startDate, \DateTimeInterface $endDate): array
+    public function countTotal(): int
     {
         return $this->createQueryBuilder('l')
-            ->andWhere('l.DateDebut >= :startDate')
-            ->andWhere('l.DateFin <= :endDate')
-            ->setParameter('startDate', $startDate)
-            ->setParameter('endDate', $endDate)
-            ->orderBy('l.DateDebut', 'ASC')
+            ->select('COUNT(l.id)')
             ->getQuery()
-            ->getResult();
+            ->getSingleScalarResult();
     }
-
-
-    public function findLatest(int $limit): array
-{
-    return $this->createQueryBuilder('l')
-        ->orderBy('l.id', 'DESC')
-        ->setMaxResults($limit)
-        ->getQuery()
-        ->getResult();
-}
-
-public function countTotal(): int
-{
-    return $this->createQueryBuilder('l')
-        ->select('COUNT(l.id)')
-        ->getQuery()
-        ->getSingleScalarResult();
-}
-
-
-
-public function searchLocations($query, $sort, $direction)
-{
-    $qb = $this->createQueryBuilder('l')
-        ->leftJoin('l.utilisateur', 'u')
-        ->addSelect('u');
-
-    if ($query) {
-        $qb->where('u.nom LIKE :query OR u.prenom LIKE :query')
-           ->setParameter('query', '%' . $query . '%');
-    }
-
-    $qb->orderBy('l.' . $sort, $direction);
-
-    return $qb->getQuery()->getResult();
-}
-
 }

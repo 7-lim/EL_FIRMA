@@ -1,56 +1,89 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détails de la Location{% endblock %}
+{% block title %}📍 Détails de la Location{% endblock %}
 
 {% block body %}
 <div class="container">
-    <h1 class="mt-4">Détails de la Location</h1>
-    <table class="table table-bordered">
-        <tr>
-            <th>ID</th>
-            <td>{{ location.id }}</td>
-        </tr>
-        <tr>
-            <th>Terrain associé</th>
-            <td>{{ location.terrain.localisation }}</td>
-        </tr>
-        <tr>
-            <th>Date de début</th>
-            <td>{{ location.DateDebut|date('d/m/Y') }}</td>
-        </tr>
-        <tr>
-            <th>Date de fin</th>
-            <td>{{ location.DateFin|date('d/m/Y') }}</td>
-        </tr>
-        <tr>
-            <th>Prix de location</th>
-            <td>{{ location.PrixLocation }}</td>
-        </tr>
-        <tr>
-            <th>Paiement effectué</th>
-            <td>{{ location.PaiementEffectue ? 'Oui' : 'Non' }}</td>
-        </tr>
-        <tr>
-            <th>Mode de paiement</th>
-            <td>{{ location.ModePaiement }}</td>
-        </tr>
-        <tr>
-            <th>Statut</th>
-            <td>{{ location.Statut }}</td>
-        </tr>
-    </table>
-    <div class="mt-3">
-        <a href="{{ path('location_index') }}" class="btn btn-secondary">Retour à la liste</a>
-        <a href="{{ path('location_edit', {'id': location.id}) }}" class="btn btn-warning">Modifier</a>
+    <h1 class="mt-4 text-center">📍 Détails de la Location</h1>
+
+    <div class="card shadow-sm p-4 mt-4">
+        <table class="table table-striped">
+            <tbody>
+                <tr>
+                    <th>ID</th>
+                    <td>#{{ location.id }}</td>
+                </tr>
+                <tr>
+                    <th>📍 Terrain associé</th>
+                    <td>{{ location.terrain.localisation }}</td>
+                </tr>
+                <tr>
+                    <th>📅 Date de début</th>
+                    <td>{{ location.DateDebut|date('d/m/Y') }}</td>
+                </tr>
+                <tr>
+                    <th>📅 Date de fin</th>
+                    <td>{{ location.DateFin|date('d/m/Y') }}</td>
+                </tr>
+                <tr>
+                    <th>💰 Prix de location</th>
+                    <td><strong>{{ location.PrixLocation|number_format(2, ',', ' ') }} €</strong></td>
+                </tr>
+                <tr>
+                    <th>💳 Paiement effectué</th>
+                    <td>
+                        {% if location.PaiementEffectue %}
+                            <span class="badge bg-success">✔ Oui</span>
+                        {% else %}
+                            <span class="badge bg-danger">✘ Non</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>💵 Mode de paiement</th>
+                    <td>
+                        {% if location.ModePaiement == 'cash' %}
+                            💵 Espèces
+                        {% elseif location.ModePaiement == 'bank_transfer' %}
+                            🏦 Virement Bancaire
+                        {% elseif location.ModePaiement == 'credit_card' %}
+                            💳 Carte de Crédit
+                        {% else %}
+                            ❌ Non spécifié
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>📌 Statut</th>
+                    <td>
+                        {% if location.Statut == 'confirmed' %}
+                            <span class="badge bg-success">✅ Confirmée</span>
+                        {% elseif location.Statut == 'pending' %}
+                            <span class="badge bg-warning">⏳ En attente</span>
+                        {% elseif location.Statut == 'canceled' %}
+                            <span class="badge bg-danger">❌ Annulée</span>
+                        {% else %}
+                            <span class="badge bg-secondary">❓ Inconnu</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Buttons Section -->
+    <div class="mt-4 d-flex justify-content-between">
+        <a href="{{ path('location_index') }}" class="btn btn-secondary">
+            ⬅ Retour à la liste
+        </a>
+        <div>
+            <a href="{{ path('location_edit', {'id': location.id}) }}" class="btn btn-warning">
+                ✏ Modifier
+            </a>
+            <a href="{{ path('location_pdf', {'id': location.id}) }}" class="btn btn-danger">
+                📄 Télécharger PDF
+            </a>
+        </div>
     </div>
 </div>
-
-
- <div class="mt-3">
-       <a href="{{ path('location_pdf', {id: location.id}) }}" class="btn btn-danger">
-    Télécharger le PDF 📄
-</a>
-    </div>
-
-
 {% endblock %}
