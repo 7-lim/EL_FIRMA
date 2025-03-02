@@ -16,9 +16,9 @@ class Categorie
     private ?int $id = null;
 
     #[ORM\Column(length: 55)]
-    private ?string $nomCategorie = null;
+    private ?string $nom_categorie = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $description = null;
 
     /**
@@ -39,12 +39,12 @@ class Categorie
 
     public function getNomCategorie(): ?string
     {
-        return $this->nomCategorie;
+        return $this->nom_categorie;
     }
 
     public function setNomCategorie(string $nomCategorie): static
     {
-        $this->nomCategorie = $nomCategorie;
+        $this->nom_categorie = $nomCategorie;
         return $this;
     }
 
@@ -66,26 +66,8 @@ class Categorie
     {
         return $this->produits;
     }
-
-    public function addProduit(Produit $produit): static
+    public function __toString(): string
     {
-        if (!$this->produits->contains($produit)) {
-            $this->produits->add($produit);
-            $produit->setCategorie($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduit(Produit $produit): static
-    {
-        if ($this->produits->removeElement($produit)) {
-            // set the owning side to null (unless already changed)
-            if ($produit->getCategorie() === $this) {
-                $produit->setCategorie(null);
-            }
-        }
-
-        return $this;
+        return (string) $this->getNomCategorie();
     }
 }

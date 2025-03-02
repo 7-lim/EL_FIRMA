@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Entity;
+use App\Repository\DiscussionRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
-use App\Repository\DiscussionRepository; // Ensure this class exists in the specified namespace
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -15,28 +14,36 @@ class Discussion
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+    
+    #[Assert\NotBlank(message: "le titre ne doit pas etre vide.")]
+    #[Assert\Length(max: 10,maxMessage: "le titre ne peut pas depasser 10 caractere")]
+    #[Assert\Regex(pattern: "/\A[a-zA-Z0-9]*\z/",message: "le titre doit etre alphanumerique .")]
+    
+    #[ORM\Column(length: 255)]
+    private ?string $titre = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $dateDiscussion = null;
+    #[ORM\Column]
+    private \DateTime $dateCreation;
 
-    #[ORM\Column(length: 55)]
-    private ?string $statutDiscussion = null;
+    #[
+        Assert\NotBlank(message: "la description ne doit pas etre vide .")
+    ]
+    
+    #[ORM\Column(length: 255)]
+    private ?string $description = null;
 
-    #[ORM\ManyToOne(inversedBy: 'discussions')]
-    private ?Agriculteur $agriculteur = null;
+    #[ORM\Column(name: "color_code", type: "string", length: 7, nullable: true, options: ["default" => "#FFFFFF"])]
+    private ?string $colorCode = '#FFFFFF';
 
-    #[ORM\ManyToOne(inversedBy: 'discussions')]
-    private ?Expert $expert = null;
+    protected $captchaCode ;
 
-    /**
-     * @var Collection<int, Message>
-     */
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'discussion')]
-    private Collection $messages;
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(name: "createur_id", referencedColumnName: "id")]
+    private ?Utilisateur $createur;
 
     public function __construct()
     {
-        $this->messages = new ArrayCollection();
+        $this->dateCreation = new \DateTime();
     }
 
     public function getId(): ?int
@@ -44,79 +51,73 @@ class Discussion
         return $this->id;
     }
 
-    public function getDateDiscussion(): ?\DateTimeInterface
+    public function getTitre(): ?string
     {
-        return $this->dateDiscussion;
+        return $this->titre;
     }
 
-    public function setDateDiscussion(\DateTimeInterface $dateDiscussion): static
+    public function setTitre(?string $titre): static
     {
-        $this->dateDiscussion = $dateDiscussion;
-        return $this;
-    }
-
-    public function getStatutDiscussion(): ?string
-    {
-        return $this->statutDiscussion;
-    }
-
-    public function setStatutDiscussion(string $statutDiscussion): static
-    {
-        $this->statutDiscussion = $statutDiscussion;
-        return $this;
-    }
-
-    public function getAgriculteur(): ?Agriculteur
-    {
-        return $this->agriculteur;
-    }
-
-    public function setAgriculteur(?Agriculteur $agriculteur): static
-    {
-        $this->agriculteur = $agriculteur;
+        $this->titre = $titre;
 
         return $this;
     }
 
-    public function getExpert(): ?Expert
+    public function getDateCreation(): ?\DateTimeInterface
     {
-        return $this->expert;
+        return $this->dateCreation;
     }
 
-    public function setExpert(?Expert $expert): static
+    public function setDateCreation(\DateTimeInterface $dateCreation): static
     {
-        $this->expert = $expert;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Message>
-     */
-    public function getMessages(): Collection
+    public function getDescription(): ?string
     {
-        return $this->messages;
+        return $this->description;
     }
 
-    public function addMessage(Message $message): static
+    public function setDescription(?string $description): static
     {
-        if (!$this->messages->contains($message)) {
-            $this->messages->add($message);
-            $message->setDiscussion($this);
-        }
+        $this->description = $description;
 
         return $this;
     }
 
-    public function removeMessage(Message $message): static
+    public function getColorCode(): ?string
     {
-        if ($this->messages->removeElement($message)) {
-            // set the owning side to null (unless already changed)
-            if ($message->getDiscussion() === $this) {
-                $message->setDiscussion(null);
-            }
-        }
+        return $this->colorCode;
+    }
+
+    public function setColorCode(?string $colorCode): static
+    {
+        $this->colorCode = $colorCode;
 
         return $this;
     }
+    public function getCaptchaCode(){
+        return $this->captchaCode;
+    }
+    public function setCaptchaCode($captchaCode){
+        $this->captchaCode = $captchaCode;
+    }
+
+    public function getCreateur(): ?Utilisateur 
+    {
+        return $this->createur;
+    }
+
+
+    
+    public function setCreateur(?Utilisateur $createur): static
+    {
+        $this->createur = $createur;
+
+        return $this;
+    }
+
+
 }

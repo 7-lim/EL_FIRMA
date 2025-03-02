@@ -54,36 +54,59 @@
                 </a>
                 <div id="collapseTerrains" class="collapse {% if app.request.attributes.get('_route') in ['terrain_list', 'terrain_new'] %}show{% endif %}">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{ path('terrain_list') }}">Total Terrains : 0</a>
-                        <a class="collapse-item" href="{{ path('terrain_list') }}">Terrains Available : 10</a>
-                        <a class="collapse-item" href="{{ path('terrain_list') }}">Terrains Pending : 5</a>
+                        <a class="collapse-item" href="{{ path('terrain_list') }}">Total Terrains</a>
+                        <a class="collapse-item" href="{{ path('terrain_list') }}">Terrains Available</a>
+                        <a class="collapse-item" href="{{ path('terrain_list') }}">Terrains Pending</a>
                         <a class="collapse-item" href="{{ path('terrain_list') }}">Recent Terrains</a>
                     </div>
                 </div>
             </li>
 
-         
+            <!-- Gestion des Produits -->
+            <hr class="sidebar-divider">
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProduits"
+                   aria-expanded="false" aria-controls="collapseProduits">
+                    <i class="fas fa-box"></i>
+                    <span>Gestion des Produits</span>
+                </a>
+                <div id="collapseProduits" class="collapse {% if app.request.attributes.get('_route') in ['produit_list', 'produit_new'] %}show{% endif %}">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ path('app_produit_index') }}"><i class="fas fa-list"></i> Liste des Produits</a>
+                        <a class="collapse-item" href="{{ path('app_produit_new') }}"><i class="fas fa-plus"></i> Ajouter un Produit</a>
+                    </div>
+                </div>
+            </li>
 
-<!-- Gestion des Utilisateurs -->
-<hr class="sidebar-divider">
-<li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
-       aria-expanded="false" aria-controls="collapseUsers">
-        <i class="fas fa-fw fa-users"></i>
-        <span>Gestion des Utilisateurs</span>
-    </a>
-    <div id="collapseUsers" class="collapse {% if app.request.attributes.get('_route') in ['user_list', 'user_new'] %}show{% endif %}">
-        <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="{{ path('app_utilisateur_index') }}"><i class="fas fa-list"></i> Liste des Utilisateurs</a>
+            <!-- Gestion des Événements -->
+            <hr class="sidebar-divider">
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEvenements"
+                   aria-expanded="false" aria-controls="collapseEvenements">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Gestion des Événements</span>
+                </a>
+                <div id="collapseEvenements" class="collapse {% if app.request.attributes.get('_route') in ['', 'evenement_new'] %}show{% endif %}">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                    </div>
+                </div>
+            </li>
 
-            <a class="collapse-item" href="{{ path('app_register') }}"><i class="fas fa-user-plus"></i> Ajouter un Utilisateur</a>
-
-    </div>
-</li>
-
-
-
-
+            <!-- Gestion des Utilisateurs -->
+            <hr class="sidebar-divider">
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
+                   aria-expanded="false" aria-controls="collapseUsers">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Gestion des Utilisateurs</span>
+                </a>
+                <div id="collapseUsers" class="collapse {% if app.request.attributes.get('_route') in ['user_list', 'user_new'] %}show{% endif %}">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ path('app_utilisateur_index') }}"><i class="fas fa-list"></i> Liste des Utilisateurs</a>
+                        <a class="collapse-item" href="{{ path('app_register') }}"><i class="fas fa-user-plus"></i> Ajouter un Utilisateur</a>
+                    </div>
+                </div>
+            </li>
 
             <!-- Gestion des Locations -->
             <hr class="sidebar-divider">
@@ -95,15 +118,13 @@
                 </a>
                 <div id="collapseLocations" class="collapse {% if app.request.attributes.get('_route') in ['location_index', 'location_new'] %}show{% endif %}">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{ path('location_index') }}">Total Locations : 15</a>
-                        <a class="collapse-item" href="{{ path('location_index') }}">Locations Actives : 12</a>
-                        <a class="collapse-item" href="{{ path('location_index') }}">Locations en Attente : 3</a>
+                        <a class="collapse-item" href="{{ path('location_index') }}">Total Locations</a>
+                        <a class="collapse-item" href="{{ path('location_index') }}">Locations Actives</a>
+                        <a class="collapse-item" href="{{ path('location_index') }}">Locations en Attente</a>
                         <a class="collapse-item" href="{{ path('location_index') }}">Recent Locations</a>
                     </div>
                 </div>
             </li>
-
-            
 
             <!-- Sidebar Toggler -->
             <hr class="sidebar-divider d-none d-md-block">

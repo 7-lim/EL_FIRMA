@@ -12,26 +12,26 @@ use Symfony\Component\Routing\Annotation\Route;
 class DashboardController extends AbstractController
 {
     #[Route('/dashboard', name: 'dashboard')]
-    public function index(
-        TerrainRepository $terrainRepository,
-        LocationRepository $locationRepository,
-        UtilisateurRepository $utilisateurRepository
-    ): Response {
-        // Récupération des statistiques et des dernières entrées en base
-        $terrains = $terrainRepository->findLatest(5);
-        $totalTerrains = $terrainRepository->countTotal();
+    public function index(TerrainRepository $terrainRepository, LocationRepository $locationRepository): Response
+    {
+        // Get total terrains
+        $totalTerrains = $terrainRepository->count([]);
+        
+        // Get terrains by status
+        $terrainsDisponibles = $terrainRepository->countTerrainsByStatus('disponible');
+        $terrainsEnAttente = $terrainRepository->countTerrainsByStatus('en attente');
 
-        $locations = $locationRepository->findLatest(5);
-        $totalLocations = $locationRepository->countTotal();
-
-        $totalUsers = $utilisateurRepository->countTotal();
+        // Fetch recent terrains & locations
+        $terrains = $terrainRepository->findBy([], ['id' => 'DESC'], 5);
+        $locations = $locationRepository->findBy([], ['id' => 'DESC'], 5);
 
         return $this->render('dashboard/index.html.twig', [
-            'terrains'       => $terrains,
-            'totalTerrains'  => $totalTerrains,
-            'locations'      => $locations,
-            'totalLocations' => $totalLocations,
-            'totalUsers'     => $totalUsers,
+            'totalTerrains' => $totalTerrains,
+            'terrainsDisponibles' => $terrainsDisponibles,
+            'terrainsEnAttente' => $terrainsEnAttente,
+            'terrains' => $terrains,
+            'locations' => $locations,
         ]);
     }
 }
+

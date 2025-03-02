@@ -15,24 +15,24 @@
                 </tr>
                 <tr>
                     <th>📍 Terrain associé</th>
-                    <td>{{ location.terrain.localisation }}</td>
+                    <td>{{ location.terrain ? location.terrain.localisation : '❌ Non spécifié' }}</td>
                 </tr>
                 <tr>
                     <th>📅 Date de début</th>
-                    <td>{{ location.DateDebut|date('d/m/Y') }}</td>
+                    <td>{{ location.dateDebut ? location.dateDebut|date('d/m/Y') : '❌ Non spécifié' }}</td>
                 </tr>
                 <tr>
                     <th>📅 Date de fin</th>
-                    <td>{{ location.DateFin|date('d/m/Y') }}</td>
+                    <td>{{ location.dateFin ? location.dateFin|date('d/m/Y') : '❌ Non spécifié' }}</td>
                 </tr>
                 <tr>
                     <th>💰 Prix de location</th>
-                    <td><strong>{{ location.PrixLocation|number_format(2, ',', ' ') }} €</strong></td>
+                    <td><strong>{{ location.prixLocation is not null ? location.prixLocation|number_format(2, ',', ' ') ~ ' €' : '❌ Non spécifié' }}</strong></td>
                 </tr>
                 <tr>
                     <th>💳 Paiement effectué</th>
                     <td>
-                        {% if location.PaiementEffectue %}
+                        {% if location.paiementEffectue %}
                             <span class="badge bg-success">✔ Oui</span>
                         {% else %}
                             <span class="badge bg-danger">✘ Non</span>
@@ -42,11 +42,11 @@
                 <tr>
                     <th>💵 Mode de paiement</th>
                     <td>
-                        {% if location.ModePaiement == 'cash' %}
+                        {% if location.modePaiement == 'cash' %}
                             💵 Espèces
-                        {% elseif location.ModePaiement == 'bank_transfer' %}
+                        {% elseif location.modePaiement == 'bank_transfer' %}
                             🏦 Virement Bancaire
-                        {% elseif location.ModePaiement == 'credit_card' %}
+                        {% elseif location.modePaiement == 'credit_card' %}
                             💳 Carte de Crédit
                         {% else %}
                             ❌ Non spécifié
@@ -56,11 +56,11 @@
                 <tr>
                     <th>📌 Statut</th>
                     <td>
-                        {% if location.Statut == 'confirmed' %}
+                        {% if location.statut == 'confirmed' %}
                             <span class="badge bg-success">✅ Confirmée</span>
-                        {% elseif location.Statut == 'pending' %}
+                        {% elseif location.statut == 'pending' %}
                             <span class="badge bg-warning">⏳ En attente</span>
-                        {% elseif location.Statut == 'canceled' %}
+                        {% elseif location.statut == 'canceled' %}
                             <span class="badge bg-danger">❌ Annulée</span>
                         {% else %}
                             <span class="badge bg-secondary">❓ Inconnu</span>

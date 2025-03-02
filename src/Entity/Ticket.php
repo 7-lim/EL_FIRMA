@@ -21,9 +21,9 @@ class Ticket
     /**
      * @var Collection<int, Agriculteur>
      */
-    #[ORM\ManyToMany(targetEntity: Agriculteur::class, mappedBy: 'tickets')]
+    #[ORM\ManyToMany(targetEntity: Agriculteur::class, inversedBy: "tickets")]
     private Collection $agriculteurs;
-
+    
     #[ORM\ManyToOne(inversedBy: 'tickets')]
     private ?Expert $expert = null;
 

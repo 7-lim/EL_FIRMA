@@ -1,113 +1,101 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Locations{% endblock %}
+{% block title %}📍 Liste des Locations{% endblock %}
 
 {% block body %}
 <div class="container">
     <h1 class="mt-4">📍 Liste des Locations</h1>
     <a href="{{ path('location_new') }}" class="btn btn-primary mb-3">➕ Ajouter une Location</a>
 
-    <!-- Search & Sorting -->
+    <!-- Search & Filters -->
     <div class="row mb-3">
         <div class="col-md-4">
             <input type="text" id="search" class="form-control" placeholder="🔎 Rechercher par terrain...">
         </div>
+        <div class="col-md-2">
+            <input type="number" id="minPrix" class="form-control" placeholder="Prix min (€)">
+        </div>
+        <div class="col-md-2">
+            <input type="number" id="maxPrix" class="form-control" placeholder="Prix max (€)">
+        </div>
     </div>
 
-    {% if locations|length > 0 %}
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="thead-dark">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th onclick="sortTable('prixLocation')">Prix (€) ⬆⬇</th>
+                    <th onclick="sortTable('dateDebut')">Date Début ⬆⬇</th>
+                    <th onclick="sortTable('dateFin')">Date Fin ⬆⬇</th>
+                    <th>Terrain</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="location-list">
+                {% for location in locations %}
                     <tr>
-                        <th>ID</th>
-                        <th onclick="sortTable('terrain')">Terrain ⬆⬇</th>
-                        <th onclick="sortTable('dateDebut')">Date Début ⬆⬇</th>
-                        <th onclick="sortTable('dateFin')">Date Fin ⬆⬇</th>
-                        <th onclick="sortTable('prixLocation')">Prix (€) ⬆⬇</th>
-                        <th>Paiement Effectué</th>
-                        <th>Mode Paiement</th>
-                        <th onclick="sortTable('statut')">Statut ⬆⬇</th>
-                        <th>Actions</th>
+                        <td>{{ location.id }}</td>
+                        <td>{{ location.prixLocation }} €</td>
+                        <td>{{ location.dateDebut ? location.dateDebut|date('d/m/Y') : '❌ Non spécifié' }}</td>
+                        <td>{{ location.dateFin ? location.dateFin|date('d/m/Y') : '❌ Non spécifié' }}</td>
+                        <td>{{ location.terrain ? location.terrain.localisation : '❌ Non spécifié' }}</td>
+                        <td>
+                            <a href="{{ path('location_show', {'id': location.id}) }}" class="btn btn-info btn-sm">👀 Voir</a>
+                            <a href="{{ path('location_edit', {'id': location.id}) }}" class="btn btn-warning btn-sm">✏ Modifier</a>
+                        </td>
                     </tr>
-                </thead>
-                <tbody id="location-list">
-                    {% for location in locations %}
-                        <tr>
-                            <td>{{ location.id }}</td>
-                            <td>{{ location.terrain ? location.terrain.localisation : 'N/A' }}</td>
-                            <td>{{ location.dateDebut|date('d/m/Y') }}</td>
-                            <td>{{ location.dateFin|date('d/m/Y') }}</td>
-                            <td>{{ location.prixLocation }} €</td>
-                            <td>{{ location.paiementEffectue ? 'Oui' : 'Non' }}</td>
-                            <td>{{ location.modePaiement ?: 'N/A' }}</td>
-                            <td>{{ location.statut ?: 'En attente' }}</td>
-                            <td>
-                                <a href="{{ path('location_show', {'id': location.id}) }}" class="btn btn-info btn-sm">👀 Voir</a>
-                                <a href="{{ path('location_edit', {'id': location.id}) }}" class="btn btn-warning btn-sm">✏ Modifier</a>
-                                <form method="post" action="{{ path('location_delete', {'id': location.id}) }}" style="display:inline-block;" onsubmit="return confirm('Êtes-vous sûr ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ location.id) }}">
-                                    <button class="btn btn-danger btn-sm">🗑 Supprimer</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <p class="text-center">🚫 Aucune location disponible.</p>
-    {% endif %}
+                {% else %}
+                    <tr><td colspan="6" class="text-center text-danger">🚫 Aucune location trouvée.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
 let sortField = 'prixLocation';
 let sortDirection = 'ASC';
 
-function fetchLocations(query = '') {
+function fetchLocations() {
+    let terrain = $('#search').val().trim();  // Trim to remove leading/trailing spaces
+    let minPrix = $('#minPrix').val() || 0;
+    let maxPrix = $('#maxPrix').val() || 1000000;
+
     $.ajax({
-        url: '/location/search',  // ✅ Make sure this matches your route!
+        url: '{{ path("search_locations") }}',
         type: 'GET',
-        data: { q: query, sort: sortField, direction: sortDirection },
+        data: { q: terrain, minPrix, maxPrix, sort: sortField, direction: sortDirection },
         success: function(response) {
             let html = "";
             if (response.success && response.data.length > 0) {
                 response.data.forEach(location => {
                     html += `<tr>
                                 <td>${location.id}</td>
-                                <td>${location.terrain ? location.terrain.localisation : 'N/A'}</td>
+                                <td>${location.prixLocation} €</td>
                                 <td>${new Date(location.dateDebut).toLocaleDateString('fr-FR')}</td>
                                 <td>${new Date(location.dateFin).toLocaleDateString('fr-FR')}</td>
-                                <td>${location.prixLocation} €</td>
-                                <td>${location.paiementEffectue ? 'Oui' : 'Non'}</td>
-                                <td>${location.modePaiement || 'N/A'}</td>
-                                <td>${location.statut || 'En attente'}</td>
+                                <td>${location.terrain ? location.terrain.localisation : 'N/A'}</td>
                                 <td>
                                     <a href="/locations/${location.id}" class="btn btn-info btn-sm">👀 Voir</a>
                                     <a href="/locations/${location.id}/edit" class="btn btn-warning btn-sm">✏ Modifier</a>
-                                    <form method="post" action="/locations/${location.id}/delete" style="display:inline-block;" onsubmit="return confirm('Êtes-vous sûr ?');">
-                                        <button class="btn btn-danger btn-sm">🗑 Supprimer</button>
-                                    </form>
                                 </td>
                             </tr>`;
                 });
             } else {
-                html = '<tr><td colspan="9" class="text-center text-danger">🚫 Aucune location trouvée.</td></tr>';
+                html = '<tr><td colspan="6" class="text-center text-danger">🚫 Aucune location trouvée.</td></tr>';
             }
             $('#location-list').html(html);
         },
-        error: function(xhr, status, error) {
+        error: function(xhr) {
             console.error("Erreur AJAX:", xhr.responseText);
             alert("❌ Erreur lors du chargement des locations.");
         }
     });
 }
 
-$('#search').on('keyup', function() {
-    fetchLocations(this.value);
-});
+$('#search, #minPrix, #maxPrix').on('input', fetchLocations);
 
 function sortTable(field) {
     if (sortField === field) {
@@ -116,9 +104,8 @@ function sortTable(field) {
         sortField = field;
         sortDirection = 'ASC';
     }
-    fetchLocations($('#search').val());
+    fetchLocations();
 }
-
 </script>
 
 {% endblock %}

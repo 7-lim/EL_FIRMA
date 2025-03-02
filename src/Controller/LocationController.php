@@ -97,36 +97,19 @@ class LocationController extends AbstractController
 
     #[Route('/locations/search', name: 'search_locations', methods: ['GET'])]
     public function search(Request $request, LocationRepository $locationRepository): JsonResponse
-        {
-        // Validate and sanitize query parameters
+    {
         $minPrix = filter_var($request->query->get('minPrix', 0), FILTER_VALIDATE_FLOAT) ?: 0;
         $maxPrix = filter_var($request->query->get('maxPrix', 1000000), FILTER_VALIDATE_FLOAT) ?: 1000000;
         $sort = $request->query->get('sort', 'prixLocation');
         $direction = strtoupper($request->query->get('direction', 'ASC'));
-    
-        // Define allowed sorting fields to prevent SQL injection
+
         $allowedSortFields = ['prixLocation', 'dateDebut', 'dateFin'];
-        if (!in_array($sort, $allowedSortFields)) {
-            return $this->json(['success' => false, 'message' => 'Invalid sorting field'], 400);
+        if (!in_array($sort, $allowedSortFields) || !in_array($direction, ['ASC', 'DESC'])) {
+            return $this->json(['success' => false, 'message' => 'Invalid sorting parameters'], 400);
         }
-    
-        if (!in_array($direction, ['ASC', 'DESC'])) {
-            return $this->json(['success' => false, 'message' => 'Invalid sorting direction'], 400);
-        }
-    
-        // Fetch locations from repository
+
         try {
             $locations = $locationRepository->searchLocations($minPrix, $maxPrix, $sort, $direction);
-    
-            if (empty($locations)) {
-                return $this->json([
-                    'success' => false,
-                    'message' => 'No locations found within the specified price range.',
-                    'data' => []
-                ], 200);
-            }
-    
-            // Format data for frontend
             $data = array_map(fn($location) => [
                 'id' => $location->getId(),
                 'dateDebut' => $location->getDateDebut()?->format('Y-m-d'),
@@ -137,13 +120,13 @@ class LocationController extends AbstractController
                     'localisation' => $location->getTerrain()?->getLocalisation(),
                 ],
             ], $locations);
-    
+
             return $this->json([
                 'success' => true,
                 'message' => count($data) . ' locations found',
                 'data' => $data
             ], 200, [], ['json_encode_options' => JSON_PRETTY_PRINT]);
-    
+
         } catch (\Exception $e) {
             return $this->json([
                 'success' => false,
@@ -152,6 +135,10 @@ class LocationController extends AbstractController
             ], 500);
         }
     }
+
+    
+
+
     
     #[Route('/{id}/pdf', name: 'location_pdf', methods: ['GET'])]
     public function generateLocationPdf(Location $location): Response

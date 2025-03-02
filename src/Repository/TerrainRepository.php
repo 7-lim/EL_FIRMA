@@ -31,5 +31,19 @@ public function countTotal(): int
 }
 
 
-    // Add custom methods if needed
+
+
+public function countTerrainsByStatus(string $status): int
+{
+   return $this->createQueryBuilder('t')
+       ->select('COUNT(t.id)')
+       ->where('t.statut = :status')
+       ->setParameter('status', $status)
+       ->getQuery()
+       ->getSingleScalarResult();
+}
+
+
+
+
 }

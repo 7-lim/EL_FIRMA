@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Entity;
-
 use App\Repository\MessageRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
@@ -15,19 +17,36 @@ class Message
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Contenu = null;
-
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $DateEnvoie = null;
-
-    #[ORM\Column(type: Types::OBJECT)]
-    private ?object $FichierJoint = null;
+    #[Assert\NotBlank(message: "le message ne doit pas etre vide.")]
+    private ?string $contenu = null;
 
     #[ORM\Column]
-    private ?bool $Lu = null;
+    private \DateTime $dateEnvoi;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
-    private ?Discussion $discussion = null;
+    #[ORM\Column(type: "string", nullable: true)]
+    private $image;
+
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(name: "emetteur_id", referencedColumnName: "id")]
+    private ?Utilisateur $emetteur;
+
+
+    #[ORM\ManyToOne(targetEntity: Discussion::class, inversedBy: 'relatedEntities')]
+#[ORM\JoinColumn(name: "discussion_id", referencedColumnName: "id", onDelete: "CASCADE")]
+private ?Discussion $discussion = null;
+
+    /**
+     * @var Collection<int, Like>
+     */
+    #[ORM\OneToMany(targetEntity: Like::class, mappedBy: 'message',cascade: ["remove"])]
+    private Collection $likes;
+
+    public function __construct()
+    {
+        $this->dateEnvoi = new \DateTime();
+        $this->likes = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -36,48 +55,48 @@ class Message
 
     public function getContenu(): ?string
     {
-        return $this->Contenu;
+        return $this->contenu;
     }
 
-    public function setContenu(string $Contenu): static
+    public function setContenu(?string $contenu): static
     {
-        $this->Contenu = $Contenu;
+        $this->contenu = $contenu;
 
         return $this;
     }
 
-    public function getDateEnvoie(): ?\DateTimeInterface
+    public function getDateEnvoi(): ?\DateTimeInterface
     {
-        return $this->DateEnvoie;
+        return $this->dateEnvoi;
     }
 
-    public function setDateEnvoie(\DateTimeInterface $DateEnvoie): static
+    public function setDateEnvoi(\DateTimeInterface $dateEnvoi): static
     {
-        $this->DateEnvoie = $DateEnvoie;
+        $this->dateEnvoi = $dateEnvoi;
 
         return $this;
     }
 
-    public function getFichierJoint(): ?object
+    public function getImage()
     {
-        return $this->FichierJoint;
+        return $this->image;
     }
 
-    public function setFichierJoint(object $FichierJoint): static
+    public function setImage( ?string $image): self
     {
-        $this->FichierJoint = $FichierJoint;
+        $this->image = $image;
 
         return $this;
     }
 
-    public function isLu(): ?bool
+    public function getEmetteur(): ?Utilisateur
     {
-        return $this->Lu;
+        return $this->emetteur;
     }
 
-    public function setLu(bool $Lu): static
+    public function setEmetteur(?Utilisateur $emetteur): static
     {
-        $this->Lu = $Lu;
+        $this->emetteur = $emetteur;
 
         return $this;
     }
@@ -93,4 +112,36 @@ class Message
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Like>
+     */
+    public function getLikes(): Collection
+    {
+        return $this->likes;
+    }
+
+    public function addLike(Like $like): static
+    {
+        if (!$this->likes->contains($like)) {
+            $this->likes->add($like);
+            $like->setMessage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLike(Like $like): static
+    {
+        if ($this->likes->removeElement($like)) {
+            // set the owning side to null (unless already changed)
+            if ($like->getMessage() === $this) {
+                $like->setMessage(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 }
