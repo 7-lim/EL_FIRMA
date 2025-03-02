@@ -17,7 +17,7 @@ class SearchForm extends AbstractType
     {
         $builder
             ->add('query', TextType::class, [
-                'label' => 'Search',
+                'label' => 'Rechercher',
                 'required' => false,
                 'attr' => [
                     'placeholder' => 'Search...',

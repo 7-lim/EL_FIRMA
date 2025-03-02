@@ -49,8 +49,8 @@
                     <h3 class="h4 mb-4" style="color: #709A41;">À propos du produit</h3>
                     {% if produit.image %}
                         <div class="mb-3">
-                            <img src="{{ asset('uploads/images/' ~  produit.image) }}" alt="{{ produit.NomProduit }}" class="img-fluid">
-                            {#<img src="{{ produit.Image ? asset(produit.Image) }}" alt="{{ produit.NomProduit }}" class="img-fluid">#}{#this is for fake images#}
+                            {#<img src="{{ asset('uploads/images/' ~  produit.image) }}" alt="{{ produit.NomProduit }}" class="img-fluid">#}
+                            <img src="{{ produit.Image ? asset(produit.Image) : 'path/to/default/image.jpg' }}" alt="{{ produit.NomProduit }}" class="img-fluid">{#this is for fake images#}
                         </div>
                     {% endif %}
                     <p class="lead">{{ produit.Description }}</p>
@@ -97,4 +97,5 @@
         border-color: #5d8340 !important;
     }
 </style>
+
 {% endblock %}

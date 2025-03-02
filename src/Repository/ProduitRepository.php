@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Data\SearchData;
 use App\Entity\Produit;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,7 +16,7 @@ class ProduitRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Produit::class);
     }
-    public function findBySearch($search): array
+    public function findBySearch(SearchData $search): array
     {
         $query = $this
             ->createQueryBuilder('p')
@@ -36,13 +37,13 @@ class ProduitRepository extends ServiceEntityRepository
 
         if (!empty($search->min)) {
             $query = $query
-                ->andWhere('p.prix >= :min')
+                ->andWhere('p.Prix >= :min')
                 ->setParameter('min', $search->min);
         }
 
         if (!empty($search->max)) {
             $query = $query
-                ->andWhere('p.prix <= :max')
+                ->andWhere('p.Prix <= :max')
                 ->setParameter('max', $search->max);
         }
 
