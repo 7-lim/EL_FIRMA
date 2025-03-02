@@ -6,17 +6,23 @@ use App\Data\SearchData;
 use App\Entity\Produit;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @extends ServiceEntityRepository<Produit>
  */
 class ProduitRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $paginator;
+    public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Produit::class);
+        $this->paginator = $paginator;
+
     }
-    public function findBySearch(SearchData $search): array
+
+    public function findBySearch(SearchData $search): PaginationInterface
     {
         $query = $this
             ->createQueryBuilder('p')
@@ -47,7 +53,13 @@ class ProduitRepository extends ServiceEntityRepository
                 ->setParameter('max', $search->max);
         }
 
-        return $query->getQuery()->getResult();
+         $query= $query->getQuery();
+
+         return $this-> paginator->paginate(
+            $query,
+            $search->page,
+            3
+         );
     }
 
 //     public function save(Produit $produit): void

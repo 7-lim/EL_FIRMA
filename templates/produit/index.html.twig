@@ -59,7 +59,7 @@
                     <div class="col-xl-3">
                         {{ form_start(searchform, { 'attr': {'class': 'search-form bg-light p-4 rounded shadow-sm'} }) }}
                             <div class="mb-3">
-                                {{ form_row(searchform.query, { 'attr': {'class': 'form-control', 'placeholder': 'Recherche...'} }) }}
+                                {{ form_row(searchform.q, { 'attr': {'class': 'form-control', 'placeholder': 'Recherche...'} }) }}
                             </div>
                             <div class="mb-3">
                                 <h4>Catégories</h4>
@@ -114,6 +114,9 @@
                                     <div class="alert alert-warning">No products found</div>
                                 </div>
                             {% endfor %}
+                        </div>
+                        <div class="mt-4 d-flex justify-content-center">
+                            {{ knp_pagination_render(produits) }}
                         </div>
                     </div>
                 </div>

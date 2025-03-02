@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace App\Data;
 
@@ -12,7 +12,12 @@ class SearchData
      */
     public $query = '';
 
-    public string $q = '';
+    public $q = '';
+
+    /**
+     * @var int
+     */
+    public $page = 1;
 
     /**
      * @var Category[]
