@@ -66,4 +66,8 @@ class Categorie
     {
         return $this->produits;
     }
+    public function __toString(): string
+    {
+        return (string) $this->getNomCategorie();
+    }
 }

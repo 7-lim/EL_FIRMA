@@ -22,7 +22,7 @@
   .numbered-pagination a:not(:last-child) {
       margin-right: 5px; /* Adjust spacing as needed */
   }
-  .numbered-pagination a:not(:last-child)::after {
+  .numbered-pagination a:not(:last-child::after) {
       content: "-";
       margin-left: 5px; /* Adjust spacing as needed */
   }
@@ -48,15 +48,24 @@
 <!-- Fruits Shop Start -->
 <div class="container-fluid fruite py-5">
     <div class="container py-5">
+        
         <h1 class="mb-4"></h1>
         <div class="row g-4">
+        
             <div class="col-lg-12">
+            
                 <div class="row g-4">
+                
                     <div class="col-xl-3">
-                        <div class="input-group w-100 mx-auto d-flex">
+                    {{ form_start(searchform, { 'attr': {'class': 'search-form'} }) }}
+                            {{ form_row(searchform.query) }}
+                            {{ form_row(searchform.categories) }}
+                            <button type="submit">Search</button>
+                    {{ form_end(searchform) }}
+                        {# <div class="input-group w-100 mx-auto d-flex">
                             <input type="search" class="form-control p-3" placeholder="keywordsssssS" aria-describedby="search-icon-1">
                             <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-                        </div>
+                        </div> #}
                     </div>
                     <div class="col-6"></div>
                     {#<div class="col-xl-3">
@@ -125,14 +134,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-9">
+                    <div class="col-lg-9">                        
                         <div class="row g-4 justify-content-center">
                             {% for produit in produits %}
                                 <div class="col-md-6 col-lg-6 col-xl-4">
                                     <div class="rounded position-relative fruite-item shadow">
                                     <div class="fruite-img">
-                                        <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="{{ produit.NomProduit }}" class="img-fluid">
-                                        {#<img src="{{ produit.image starts with 'http' ? produit.image : asset(produit.image) }}" class="img-fluid w-100 rounded-top" alt="Product Image">#}
+                                        {# {% if produit.image %}
+                                        <img src="{{ produit.image }}" alt="Image"style="max-width: 200px;" />
+                                        {% endif %} #}
+                                        {# <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="{{ produit.NomProduit }}" class="img-fluid"> #}
+                                        <img src="{{ produit.image starts with 'http' ? produit.image : asset(produit.image) }}" class="img-fluid w-100 rounded-top" alt="Product Image">
                                     </div>
                                     <div class="p-4 border border-success border-top-0 rounded-bottom bg-light-green">
                                         <h4 class="text-success">{{ produit.NomProduit }}</h4>
@@ -175,7 +187,7 @@
 <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-circle back-to-top"><i class="bi bi-arrow-up"></i></a>
 
 <!-- Modal Search Start -->
-<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+{# <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content rounded-0">
             <div class="modal-header">
@@ -190,7 +202,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> #}
 <!-- Modal Search End -->
 {% endblock %}
 
@@ -204,3 +216,4 @@
 <!-- Template Javascript -->
 <script src="{{ asset('js/main.js') }}"></script>
 {% endblock %}
+

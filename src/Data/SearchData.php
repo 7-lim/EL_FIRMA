@@ -7,6 +7,11 @@ use App\Entity\Category;
 
 class SearchData
 {
+    /**
+     * @var string|null
+     */
+    public $query = '';
+
     public string $q = '';
 
     /**
