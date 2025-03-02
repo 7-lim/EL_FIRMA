@@ -5,6 +5,9 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Request; // Import the Request class
+use App\Repository\UtilisateurRepository;
+
 
 final class PageController extends AbstractController
 {
@@ -79,4 +82,23 @@ final class PageController extends AbstractController
     {
         return $this->render('404.html.twig');
     }
+    
+ 
+    #[Route('/dashboard', name: 'app_dashboard')]
+    public function dashboard(Request $request, UtilisateurRepository $utilisateurRepository): Response
+    {
+    $searchTerm = $request->query->get('search');
+    $utilisateurs = $searchTerm
+        ? $utilisateurRepository->findByNom($searchTerm) // Custom repository method
+        : $utilisateurRepository->findAll();
+
+    return $this->render('dashboardadmin.html.twig', [
+        'utilisateurs' => $utilisateurs,
+    ]);
+    }
+   #[Route('/back', name: 'back')]
+    public function back(): Response
+    {
+        return $this->render('back.html.twig');
+    } 
 }

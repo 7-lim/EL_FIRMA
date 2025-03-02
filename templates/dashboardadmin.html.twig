@@ -1,0 +1,159 @@
+{% extends 'back.html.twig' %}
+
+{% block title %}Dashboard - Utilisateurs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <!-- Search Bar -->
+       
+
+        <!-- En-tête de page -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Gestion des Utilisateurs</h1>
+            <a href="{{ path('export_utilisateurs_pdf') }}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm" title="Exporter en PDF">
+                <i class="fas fa-file-pdf fa-sm text-white-50"></i> Exporter en PDF
+            </a>
+        </div>
+
+        <!-- Tableau des utilisateurs -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Liste des utilisateurs enregistrés</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    {# templates/admin/statistics.html.twig #}
+
+<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Rôle</th>
+            <th>Nom</th>
+            <th>Statut</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for utilisateur in utilisateurs %}
+            <tr>
+                <td>{{ utilisateur.id }}</td>
+                <td>{{ utilisateur.email }}</td>
+                <td>{{ utilisateur.getRoles()|join(', ') }}</td>
+                <td>{{ utilisateur.nom }}</td>
+                <td>
+                    {% if utilisateur.isBlocked %}
+                        <span class="badge badge-danger">Bloqué</span>
+                    {% else %}
+                        <span class="badge badge-success">Actif</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if utilisateur.isBlocked %}
+                        <form action="{{ path('unblock_utilisateur', {id: utilisateur.id}) }}" method="post" class="d-inline">
+                            <input type="hidden" name="_method" value="POST">
+                            <input type="hidden" name="_token" value="{{ csrf_token('unblock' ~ utilisateur.id) }}">
+                            <button type="submit" class="btn btn-success btn-sm" title="Débloquer l'utilisateur">
+                                <i class="fas fa-check"></i> Débloquer
+                            </button>
+                        </form>
+                    {% else %}
+                        <form action="{{ path('block_utilisateur', {id: utilisateur.id}) }}" method="post" class="d-inline">
+                            <input type="hidden" name="_method" value="POST">
+                            <input type="hidden" name="_token" value="{{ csrf_token('block' ~ utilisateur.id) }}">
+                            <button type="submit" class="btn btn-warning btn-sm" title="Bloquer l'utilisateur">
+                                <i class="fas fa-ban"></i> Bloquer
+                            </button>
+                        </form>
+                    {% endif %}
+                    <a href="{{ path('edit_utilisateur', {id: utilisateur.id}) }}" class="btn btn-primary btn-sm" title="Modifier l'utilisateur">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <form action="{{ path('delete_utilisateur', {id: utilisateur.id}) }}" method="post" class="d-inline">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.id) }}">
+                        <button type="submit" class="btn btn-danger btn-sm" title="Supprimer l'utilisateur">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">User Statistics by Role</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="roleChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('roleChart');
+            
+            // Données depuis le contrôleur
+            const statisticsData = {{ statistics|json_encode|raw }};
+            
+            // Extraction des clés et valeurs
+            const labels = Object.keys(statisticsData);
+            const data = Object.values(statisticsData);
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nombre d\'utilisateurs',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: { 
+                            display: true,
+                            text: 'Répartition des utilisateurs par rôle'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
