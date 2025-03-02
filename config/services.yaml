@@ -7,6 +7,10 @@ services:
         autowire: true
         autoconfigure: true
 
+    App\EventSubscriber\CalendarSubscriber:
+        # CalendarBundle\Controller\CalendarController: '@App\EventSubscriber\CalendarSubscriber'
+    
+
     App\:
         resource: '../src/'
         exclude:

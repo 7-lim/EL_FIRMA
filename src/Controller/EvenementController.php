@@ -136,4 +136,11 @@ final class EvenementController extends AbstractController
 
         return $this->redirectToRoute('dbfrsevents', [], Response::HTTP_SEE_OTHER);
     }
+
+
+    #[Route(path: '/calendar', name: 'app_evenement_calendar')]
+    public function calendar(): Response
+    {
+        return $this->render('evenement/calendar.html.twig');
+    }
 }
