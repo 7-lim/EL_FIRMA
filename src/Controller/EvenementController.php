@@ -14,6 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Agriculteur;
 use App\Entity\Expert;
 use App\Entity\Utilisateur;
+use Stichoza\GoogleTranslate\GoogleTranslate;
+use Symfony\Contracts\Cache\CacheInterface;
 
 final class EvenementController extends AbstractController
 {
@@ -143,4 +145,53 @@ final class EvenementController extends AbstractController
     {
         return $this->render('evenement/calendar.html.twig');
     }
+
+
+    private function translateDate(\DateTimeInterface $date): string
+{
+    $translator = new GoogleTranslate();
+    $frenchDate = $date->format('j F Y');
+    return $translator->setSource('fr')->setTarget('ar')->translate($frenchDate);
+}
+
+    #[Route('/{id}/translate', name: 'app_evenement_translate', methods: ['POST'])]
+public function translate(
+    Request $request,
+    Evenement $evenement,
+    CacheInterface $cache
+): Response {
+    // CSRF protection
+    $this->validateCsrfToken($request, 'translate-event');
+
+    // Get or create translation
+    $translated = $cache->get('event_translation_'.$evenement->getId(), function() use ($evenement) {
+        $translator = new GoogleTranslate();
+        $translator->setSource('fr')->setTarget('ar');
+        
+        return [
+            'titre' => $translator->translate($evenement->getTitre()),
+            'description' => $translator->translate($evenement->getDescription()),
+            'lieu' => $translator->translate($evenement->getLieu()),
+            'dates' => [
+                'start' => $this->translateDate($evenement->getDateDebut()),
+                'end' => $this->translateDate($evenement->getDateFin())
+            ]
+        ];
+    });
+
+    return $this->render('evenement/show.html.twig', [
+        'evenement' => $evenement,
+        'translated' => $translated,
+        'currentLang' => 'ar'
+    ]);
+}
+
+private function validateCsrfToken(Request $request, string $tokenId): void
+{
+    $submittedToken = $request->request->get('_token');
+    if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {
+        throw $this->createAccessDeniedException('Invalid CSRF token');
+    }
+}
+
 }

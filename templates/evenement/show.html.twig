@@ -1,64 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ evenement.titre }}{% endblock %}
+{% block title %}{{ translated.titre|default(evenement.titre) }}{% endblock %}
 
 {% block body %}
-<!-- En-tête de page -->
+<!-- Page header -->
 <div class="container-fluid page-header py-5" style="background-color: #709A41;">
     <div class="container text-center py-5">
-        <h1 class="display-4 text-white mb-3 fw-bold">{{ evenement.titre }}</h1>
-        <nav aria-label="fil d'Ariane">
-            <ol class="breadcrumb justify-content-center mb-0">
-                <li class="breadcrumb-item"><a href="#" class="text-white">Accueil</a></li>
-                <li class="breadcrumb-item"><a href="#" class="text-white">Événements</a></li>
-                <li class="breadcrumb-item active text-white-50" aria-current="page">Détails</li>
+        <h1 class="display-4 text-white mb-3 fw-bold {{ currentLang|default('fr') == 'ar' ? 'rtl-text' }}">
+            {{ translated.titre|default(evenement.titre) }}
+        </h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0 {{ currentLang|default('fr') == 'ar' ? 'rtl-text' }}">
+                <li class="breadcrumb-item"><a href="#" class="text-white">{{ 'Accueil'|trans }}</a></li>
+                <li class="breadcrumb-item"><a href="#" class="text-white">{{ 'Événements'|trans }}</a></li>
+                <li class="breadcrumb-item active text-white-50" aria-current="page">{{ 'Détails'|trans }}</li>
             </ol>
         </nav>
     </div>
 </div>
 
 <div class="container mt-5">
-    <!-- Modified Card Structure -->
+    <!-- Card structure -->
     <div class="card border-0 shadow-lg">
         <div class="row g-0 min-vh-50">
             <!-- Image/Details Column -->
             <div class="col-md-4 d-flex flex-column" style="background: linear-gradient(rgba(112, 154, 65, 0.9), rgba(112, 154, 65, 0.8)), url('https://via.placeholder.com/400') center/cover;">
-                <div class="d-flex flex-column h-100 p-4 text-white">
+                <div class="d-flex flex-column h-100 p-4 text-white {{ currentLang|default('fr') == 'ar' ? 'rtl-text' }}">
                     <div class="mb-auto">
-                        <h3 class="h5">Détails de l'événement</h3>
+                        <h3 class="h5">{{ 'Détails de l\'événement'|trans }}</h3>
                         <hr class="text-white">
                         <div class="d-flex align-items-center mb-3">
                             <i class="fas fa-calendar-alt me-2"></i>
                             <div>
-                                <small class="d-block">Date de début</small>
-                                <strong>{{ evenement.dateDebut ? evenement.dateDebut|date('j F Y') : '' }}</strong>
+                                <small class="d-block">{{ 'Date de début'|trans }}</small>
+                                <strong class="{{ currentLang|default('fr') == 'ar' ? 'arabic-date' }}">
+                                    {{ translated.dates.start|default(evenement.dateDebut|date('j F Y')) }}
+                                </strong>
                             </div>
                         </div>
                         <div class="d-flex align-items-center mb-3">
                             <i class="fas fa-calendar-times me-2"></i>
                             <div>
-                                <small class="d-block">Date de fin</small>
-                                <strong>{{ evenement.dateFin ? evenement.dateFin|date('j F Y') : '' }}</strong>
+                                <small class="d-block">{{ 'Date de fin'|trans }}</small>
+                                <strong class="{{ currentLang|default('fr') == 'ar' ? 'arabic-date' }}">
+                                    {{ translated.dates.end|default(evenement.dateFin|date('j F Y')) }}
+                                </strong>
                             </div>
                         </div>
                         <div class="d-flex align-items-center mb-3">
                             <i class="fas fa-map-marker-alt me-2"></i>
                             <div>
-                                <small class="d-block">Lieu</small>
-                                <strong>{{ evenement.lieu }}</strong>
+                                <small class="d-block">{{ 'Lieu'|trans }}</small>
+                                <strong>{{ translated.lieu|default(evenement.lieu) }}</strong>
                             </div>
                         </div>
                         <div class="d-flex align-items-center mb-3">
                             <i class="fas fa-dollar-sign me-2"></i>
                             <div>
-                                <small class="d-block">Prix</small>
+                                <small class="d-block">{{ 'Prix'|trans }}</small>
                                 <strong>{{ evenement.prix }} $</strong>
                             </div>
                         </div>
                         <div class="d-flex align-items-center">
                             <i class="fas fa-users me-2"></i>
                             <div>
-                                <small class="d-block">Nombre de places</small>
+                                <small class="d-block">{{ 'Nombre de places'|trans }}</small>
                                 <strong>{{ evenement.nombreDePlaces }}</strong>
                             </div>
                         </div>
@@ -69,10 +75,10 @@
             <!-- Description Column -->
             <div class="col-md-8 d-flex flex-column">
                 <div class="card-body p-4 d-flex flex-column">
-                    <h3 class="h4 mb-4" style="color: #709A41;">À propos de l'événement</h3>
-                    <div class="flex-grow-1">
+                    <h3 class="h4 mb-4" style="color: #709A41;">{{ 'À propos de l\'événement'|trans }}</h3>
+                    <div class="flex-grow-1 {{ currentLang|default('fr') == 'ar' ? 'rtl-text' }}">
                         <p class="lead text-break" style="white-space: pre-wrap; overflow-wrap: break-word;">
-                            {{ evenement.description|nl2br }}
+                            {{ (translated.description|default(evenement.description))|nl2br }}
                         </p>
                     </div>
                 </div>
@@ -80,14 +86,20 @@
         </div>
     </div>
 
-    <!-- Boutons d'action -->
+    <!-- Action buttons -->
     <div class="d-flex gap-3 mt-4 justify-content-end">
+        <form method="post" action="{{ path('app_evenement_translate', {'id': evenement.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('translate-event') }}">
+            <button type="submit" class="btn btn-warning">
+                <i class="fas fa-language me-2"></i>{{ 'Traduire en Arabe'|trans }}
+            </button>
+        </form>
         <a href="{{ path('app_evenement_index') }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+            <i class="fas fa-arrow-left me-2"></i>{{ 'Retour à la liste'|trans }}
         </a>
         <form method="post" action="{{ path('app_evenement_show', {'id': evenement.id}) }}">
             <button type="submit" class="btn btn-outline-primary">
-                <i class="fas fa-ticket-alt me-2"></i>Participer à l'événement
+                <i class="fas fa-ticket-alt me-2"></i>{{ 'Participer à l\'événement'|trans }}
             </button>
         </form>
     </div>
@@ -106,6 +118,17 @@
         transform: translateY(-5px);
     }
     
+    .rtl-text {
+        direction: rtl;
+        text-align: right;
+        font-family: 'Arial', sans-serif;
+        line-height: 1.8;
+    }
+    
+    .arabic-date {
+        font-family: 'Tahoma', sans-serif;
+    }
+    
     .breadcrumb-item.active {
         color: #e9ecef !important;
     }
@@ -119,7 +142,6 @@
         border-color: #5d8340 !important;
     }
 
-    /* New CSS Additions */
     .min-vh-50 {
         min-height: 50vh;
     }
