@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Weather Forecast{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h2>5-Day Weather Forecast for {{ terrain.name }}</h2>
+        <p>Location: {{ terrain.latitude }}, {{ terrain.longitude }}</p>
+
+        <div class="row">
+            {% for date, forecast in forecasts %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>{{ date|date("l, d M") }}</h5>
+                            <p><strong>Temperature:</strong> {{ forecast.main.temp }}°C</p>
+                            <p><strong>Weather:</strong> {{ forecast.weather[0].description|capitalize }}</p>
+                            <p><strong>Humidity:</strong> {{ forecast.main.humidity }}%</p>
+                            <p><strong>Wind Speed:</strong> {{ forecast.wind.speed }} m/s</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
