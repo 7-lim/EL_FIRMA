@@ -11,4 +11,9 @@ admin_statistics:
     path: /admin/statistics
     controller: App\Controller\RegistrationController::statistics
 
+fc_load_events:
+    path: /fc-load-events
+    controller: App\Controller\CalendarController::load
+    methods: [GET] # FullCalendar uses GET by default
+
 

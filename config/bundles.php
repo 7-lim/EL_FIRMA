@@ -16,4 +16,5 @@ return [
     Endroid\QrCodeBundle\EndroidQrCodeBundle::class => ['all' => true],
     Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle::class => ['all' => true],
     CalendarBundle\CalendarBundle::class => ['all' => true],
+
 ];

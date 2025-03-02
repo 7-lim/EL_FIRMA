@@ -3,10 +3,12 @@
 namespace App\EventSubscriber;
 
 use App\Repository\EvenementRepository;
+use CalendarBundle\CalendarEvents as CalendarBundleCalendarEvents;
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\CalendarEvent;
-use CalendarBundle\Event\SetDataEvent;
+use CalendarBundle\CalendarEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CalendarSubscriber implements EventSubscriberInterface
@@ -23,26 +25,32 @@ class CalendarSubscriber implements EventSubscriberInterface
     //     ];
     // }
 
-    public static function getSubscribedEvents()
-    {
-        return [
-            'calendar.set_data' => 'onCalendarSetData',
-        ];
-    }
+    // src/EventSubscriber/CalendarSubscriber.php
+public static function getSubscribedEvents(): array
+{
+    return [
+        CalendarEvents::SET_DATA => 'onCalendarSetData',
+    ];
+}
 
-    public function onCalendarSetData(CalendarEvent $calendarEvent)
-    {
-        $start = $calendarEvent->getStart();
-        $end = $calendarEvent->getEnd();
-    
-        // Modified query to include all events that overlap with the calendar view
-        $evenements = $this->evenementRepository
-            ->createQueryBuilder('e')
-            ->where('e.dateFin >= :start AND e.dateDebut <= :end')
-            ->setParameter('start', $start->format('Y-m-d'))
-            ->setParameter('end', $end->format('Y-m-d'))
-            ->getQuery()
-            ->getResult();
+public function onCalendarSetData(CalendarEvent $calendarEvent): void
+{
+    $start = $calendarEvent->getStart();
+    $end = $calendarEvent->getEnd();
+    $filters = $calendarEvent->getFilters();
+
+    dump('Subscriber triggered!');
+    dump($calendarEvent->getStart());
+    dump($calendarEvent->getEnd());
+
+    // Keep your existing query logic
+    $evenements = $this->evenementRepository
+        ->createQueryBuilder('e')
+        ->where('e.dateFin >= :start AND e.dateDebut <= :end')
+        ->setParameter('start', $start->format('Y-m-d H:i:s'))
+        ->setParameter('end', $end->format('Y-m-d H:i:s'))
+        ->getQuery()
+        ->getResult();
     
         foreach ($evenements as $evenement) {
             // Create event with proper time handling
@@ -68,6 +76,7 @@ class CalendarSubscriber implements EventSubscriberInterface
             ]);
     
             $calendarEvent->addEvent($event);
+            dump(count($evenements));
         }
     }
 }
