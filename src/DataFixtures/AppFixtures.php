@@ -26,13 +26,13 @@ class AppFixtures extends Fixture
             $categories[] = $categorie;
         }
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $product = new Produit();
             $product->setNomProduit($faker->words(3, true));         // e.g., "Awesome Product Name"
             $product->setDescription($faker->paragraph());       // a paragraph description
             $product->setPrix($faker->randomFloat(2, 10, 100));   // a price between 10 and 100
             $product->setQuantite($faker->numberBetween(1, 100));    // a random quantity between 1 and 100
-            //$product->setImage('https://picsum.photos/300/300?random=' . $faker->unique()->numberBetween(1, 10000));  // a random image URL          
+            $product->setImage('https://picsum.photos/300/300?random=' . $faker->unique()->numberBetween(1, 10000));  // a random image URL          
             $product->setCategorie($faker->randomElement($categories)); // set a random category
             // If you have other fields (like createdAt, stock, etc.), you can set them similarly:
             // $product->setCreatedAt($faker->dateTimeThisYear());
