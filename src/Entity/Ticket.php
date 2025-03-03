@@ -51,6 +51,9 @@ class Ticket
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private \DateTimeImmutable $updatedAt;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isPaid = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -126,7 +129,19 @@ class Ticket
         $this->slug = $slug;
         return $this;
     }
-        public function getUpdatedAt(): \DateTimeImmutable
+
+    public function getIsPaid(): bool
+    {
+        return $this->isPaid;
+    }
+
+    public function setIsPaid(bool $isPaid): self
+    {
+        $this->isPaid = $isPaid;
+        return $this;
+    }
+
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }

@@ -92,11 +92,12 @@ final class TicketController extends AbstractController
         ]);
     }
 
-    #[Route('/{slug}', name: 'app_ticket_show', methods: ['GET'])]
-    public function show(Ticket $ticket, string $slug): Response
+    #[Route('/{id<\d+>}', name: 'app_ticket_show', methods: ['GET'])]
+    public function show(Ticket $ticket, int $id): Response
     {
         return $this->render('ticket/show.html.twig', [
-            'ticket' => $ticket,'slug' => $slug
+            'id' => $ticket->getId(),
+            'ticket' => $ticket,
         ]);
     }
 
@@ -128,4 +129,13 @@ final class TicketController extends AbstractController
 
         return $this->redirectToRoute('app_ticket_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    // #[Route('/{id<\d+>}/pay', name: 'app_ticket_pay', methods: ['POST'])]
+    // public function pay(Ticket $ticket, EntityManagerInterface $entityManager): Response
+    // {
+    //     $ticket->setIsPaid(true);
+    //     $entityManager->flush();
+
+    //     return $this->redirectToRoute('app_ticket_show', ['id' => $ticket->getId()]);
+    // }
 }

@@ -41,6 +41,16 @@
                         </td>
                     </tr>
                     <tr>
+                        <th>Status</th>
+                        <td>
+                            {% if ticket.isPaid %}
+                                <span class="badge bg-success">Payé</span>
+                            {% else %}
+                                <span class="badge bg-warning">Non payé</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
                         <th>QR Code</th>
                         <td>
                             <img src="{{ qr_code_data_uri(ticket.qrCodeContent, 'default') }}" alt="QR Code">
@@ -51,6 +61,9 @@
             <div class="d-flex justify-content-between mt-4">
                 <a href="{{ path('app_ticket_index') }}" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Voir mes tickets
+                </a>
+                <a href="{{ path('app_stripe', {'ticketId': ticket.id}) }}" class="btn btn-outline-primary">
+                    <i class="fas fa-credit-card me-2"></i>Payer
                 </a>
                 {{ include('ticket/_delete_form.html.twig') }}
             </div>
