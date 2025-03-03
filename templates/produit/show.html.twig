@@ -64,6 +64,16 @@
         <a href="{{ path('app_produit_index') }}" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left me-2"></i>Retour à la liste
         </a>
+        {% if app.session.get('payment_successful') %}
+            <button class="btn btn-success" disabled>
+                <i class="fas fa-check me-2"></i>Paid
+            </button>
+            {% do app.session.remove('payment_successful') %}
+        {% else %}
+            <a href="{{ path('app_stripe', {'prix': produit.Prix}) }}" class="btn btn-success">
+                <i class="fas fa-credit-card me-2"></i>PAYER
+            </a>
+        {% endif %}
         {#<a href="{{ path('app_produit_edit', {'id': produit.id}) }}" class="btn btn-outline-primary">
             <i class="fas fa-edit me-2"></i>Modifier
         </a>
