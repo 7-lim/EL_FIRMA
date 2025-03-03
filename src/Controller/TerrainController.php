@@ -21,15 +21,53 @@ class TerrainController extends AbstractController
     private EntityManagerInterface $entityManager;
     private OpenWeatherService $weatherService;
     private SluggerInterface $slugger;
+    private PaginatorInterface $paginator;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         OpenWeatherService $weatherService,
-        SluggerInterface $slugger
+        SluggerInterface $slugger,
+        PaginatorInterface $paginator
     ) {
         $this->entityManager = $entityManager;
         $this->weatherService = $weatherService;
         $this->slugger = $slugger;
+        $this->paginator = $paginator;
+    }
+
+    /**
+     * ✅ List all terrains with pagination.
+     */
+    #[Route('/', name: 'terrain_list', methods: ['GET'])]
+    public function index(TerrainRepository $terrainRepository, Request $request): Response
+    {
+        $query = $terrainRepository->createQueryBuilder('t')->getQuery();
+        $pagination = $this->paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            10
+        );
+
+        return $this->render('terrain/index.html.twig', [
+            'terrains' => $pagination,
+        ]);
+    }
+
+    /**
+     * ✅ Show terrain details & weather.
+     */
+    #[Route('/{id}', name: 'terrain_show', methods: ['GET'])]
+    public function show(Terrain $terrain): Response
+    {
+        $weatherData = null;
+        if ($terrain->getLatitude() !== null && $terrain->getLongitude() !== null) {
+            $weatherData = $this->weatherService->getWeather($terrain->getLatitude(), $terrain->getLongitude());
+        }
+
+        return $this->render('terrain/show.html.twig', [
+            'terrain' => $terrain,
+            'weatherData' => $weatherData,
+        ]);
     }
 
     /**
@@ -107,41 +145,6 @@ class TerrainController extends AbstractController
 
         return $this->render('terrain/new.html.twig', [
             'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * ✅ List all terrains with pagination.
-     */
-    #[Route('/', name: 'terrain_list', methods: ['GET'])]
-    public function index(TerrainRepository $terrainRepository, PaginatorInterface $paginator, Request $request): Response
-    {
-        $query = $terrainRepository->createQueryBuilder('t')->getQuery();
-        $pagination = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            10
-        );
-
-        return $this->render('terrain/index.html.twig', [
-            'terrains' => $pagination,
-        ]);
-    }
-
-    /**
-     * ✅ Show terrain details & weather.
-     */
-    #[Route('/{id}', name: 'terrain_show', methods: ['GET'])]
-    public function show(Terrain $terrain): Response
-    {
-        $weatherData = null;
-        if ($terrain->getLatitude() !== null && $terrain->getLongitude() !== null) {
-            $weatherData = $this->weatherService->getWeather($terrain->getLatitude(), $terrain->getLongitude());
-        }
-
-        return $this->render('terrain/show.html.twig', [
-            'terrain' => $terrain,
-            'weatherData' => $weatherData,
         ]);
     }
 

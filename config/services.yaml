@@ -6,7 +6,10 @@ parameters:
     image: 'http://picsum.photos/id/<numberBetween(400,800)>/200/180'
 
 services:
-    Knp\Component\Pager\PaginatorInterface: '@knp_paginator'
+    App\Service\PaginatorProxy:
+        arguments:
+            $paginator: '@knp_paginator'
+
 
     # Default configuration for services
     _defaults:
