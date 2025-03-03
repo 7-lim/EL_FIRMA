@@ -1,57 +1,68 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Terrains{% endblock %}
-
 {% block body %}
-
-    <div class="container mt-4">
-        <h1 class="text-center mb-4">Liste des Terrains</h1>
-
-        <!-- Add Terrain Button -->
-        <div class="d-flex justify-content-end mb-3">
-            <a href="{{ path('terrain_new') }}" class="btn btn-success">
-                <i class="fas fa-plus-circle"></i> Ajouter un Terrain
+<div class="container-fluid fruite py-5">
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-success">Liste des Terrains</h2>
+            <a href="{{ path('terrain_new') }}" class="btn btn-primary">
+                ➕ Ajouter un Terrain
             </a>
         </div>
 
-        <table class="table table-bordered table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Localisation</th>
-                    <th>Photo</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for terrain in terrains %}
-                    <tr>
-                        <td>{{ terrain.localisation }}</td>
-                        <td class="text-center">
-                            {% if terrain.photo %}
-                                <img src="{{ asset('uploads/terrains/' ~ terrain.photo) }}" class="img-thumbnail" style="max-width: 100px;">
+        <div class="row g-4">
+            <div class="col-lg-12">
+                <div class="row g-4">
+                    <div class="col-xl-9">
+                        <div class="row g-4 justify-content-center">
+                            {% for terrain in terrains %}
+                                <div class="col-md-6 col-lg-6 col-xl-4">
+                                    <div class="rounded position-relative fruite-item shadow">
+                                        <div class="fruite-img">
+                                            <!-- ✅ Display Terrain Photo if Available -->
+                                            {% if terrain.photo %}
+                                                <img src="{{ asset('uploads/terrain_photos/' ~ terrain.photo) }}" 
+                                                     alt="{{ terrain.localisation }}" 
+                                                     class="img-fluid w-100 rounded-top">
+                                            {% else %}
+                                                <img src="{{ asset('img/default-terrain.jpg') }}" 
+                                                     alt="No Image Available" 
+                                                     class="img-fluid w-100 rounded-top">
+                                            {% endif %}
+                                        </div>
+                                        <div class="p-4 border border-success border-top-0 rounded-bottom bg-light-green">
+                                            <h4 class="text-success">{{ terrain.localisation }}</h4>
+                                            <p class="text-dark">Superficie: {{ terrain.superficie }} m²</p>
+                                            <p class="text-dark">Type de sol: {{ terrain.typeSol }}</p>
+                                            <div class="d-flex justify-content-between flex-lg-wrap">
+                                                <div class="d-flex gap-1">
+                                                    <a href="{{ path('terrain_show', {'id': terrain.id}) }}" class="btn border border-success rounded-pill px-3 text-success">
+                                                        <i class="fa fa-info-circle me-2 text-success"></i> Détails
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             {% else %}
-                                <span class="text-muted">Pas d'image</span>
-                            {% endif %}
-                        </td>
-                        <td class="text-center">
-                            <a href="{{ path('terrain_show', {'id': terrain.id}) }}" class="btn btn-info btn-sm">
-                                <i class="fas fa-eye"></i> Voir
-                            </a>
-                            <a href="{{ path('terrain_edit', {'id': terrain.id}) }}" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i> Modifier
-                            </a>
-                            <a href="{{ path('terrain_delete', {'id': terrain.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce terrain ?');">
-                                <i class="fas fa-trash"></i> Supprimer
-                            </a>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="3" class="text-center text-muted">Aucun terrain trouvé.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                                <div class="col-12">
+                                    <div class="alert alert-warning text-center">Aucun terrain trouvé.</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- ✅ Pagination -->
+                        <div class="mt-4 d-flex justify-content-center">
+                            {{ knp_pagination_render(terrains) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+
+<!-- Back to Top Button -->
+<a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-circle back-to-top"><i class="bi bi-arrow-up"></i></a>
 
 {% endblock %}

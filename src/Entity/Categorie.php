@@ -19,7 +19,7 @@ class Categorie
     private ?string $nom_categorie = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $description = null;
+    private string $description = ''; // ✅ Default empty string
 
     /**
      * @var Collection<int, Produit>

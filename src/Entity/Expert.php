@@ -53,28 +53,7 @@ class Expert extends Utilisateur
         return $this->discussions;
     }
 
-    public function addDiscussion(Discussion $discussion): static
-    {
-        if (!$this->discussions->contains($discussion)) {
-            $this->discussions->add($discussion);
-            $discussion->setExpert($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDiscussion(Discussion $discussion): static
-    {
-        if ($this->discussions->removeElement($discussion)) {
-            // set the owning side to null (unless already changed)
-            if ($discussion->getExpert() === $this) {
-                $discussion->setExpert(null);
-            }
-        }
-
-        return $this;
-    }
-
+   
     /**
      * @return Collection<int, Ticket>
      */

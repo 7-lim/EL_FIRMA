@@ -44,7 +44,7 @@ class DiscussionController extends AbstractController
     {
         $em = $doctrine->getManager();
         $discussion = new Discussion();
-        $discussion->setUtilisateur(null);
+        $discussion->setTitre(null);
         $form = $this->createForm(DiscussionType::class, $discussion);
         $form->handleRequest($request);
 

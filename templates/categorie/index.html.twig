@@ -1,31 +1,27 @@
-{# templates/categorie/index.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
 <div class="container mt-5">
-    <div class="row">
-{% if categories is defined and categories|length > 0 %}
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="text-success">Liste des Catégories</h2>
+        <a href="{{ path('app_categorie_new') }}" class="btn btn-primary">
+            ➕ Ajouter une Catégorie
+        </a>
+    </div>
+
+    <ul class="list-group mt-3">
         {% for categorie in categories %}
-        <div class="col-md-4">
-            <div class="card border-0 shadow-lg">
-                <div class="card-body text-center">
-                    <h5 class="card-title text-success">{{ categorie.getNomCategorie() }}</h5>
-                    {#<p class="text-muted">{{ categorie.description }}</p>#}
-                    {#<a href="{{ path('app_categorie_new', {'id': categorie.id}) }}" class="btn btn-outline-success">Creer</a>#}
-                    <a href="{{ path('app_categorie_show', {'id': categorie.id}) }}" class="btn btn-outline-success">Voir</a>
-                    <a href="{{ path('app_categorie_edit', {'id': categorie.id}) }}" class="btn btn-outline-primary">Modifier</a>
-                    <form method="post" action="{{ path('app_categorie_delete', {'id': categorie.id}) }}" class="d-inline">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ categorie.id) }}">
-                        <button class="btn btn-danger">Supprimer</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-{% endfor %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{{ path('app_categorie_show', { 'id': categorie.id }) }}" class="text-decoration-none">{{ categorie.nomCategorie }}</a>
+            </li>
         {% else %}
-        <p class="text-center">Aucune catégorie trouvée.</p>
-        {% endif %}
+            <li class="list-group-item text-muted">Aucune catégorie disponible.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Pagination Controls -->
+    <div class="d-flex justify-content-center mt-4">
+        {{ knp_pagination_render(categories) }}
     </div>
 </div>
 {% endblock %}

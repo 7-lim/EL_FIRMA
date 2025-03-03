@@ -149,25 +149,6 @@ class Agriculteur extends Utilisateur
         return $this->discussions;
     }
 
-    public function addDiscussion(Discussion $discussion): static
-    {
-        if (!$this->discussions->contains($discussion)) {
-            $this->discussions->add($discussion);
-            $discussion->setAgriculteur($this);
-        }
-        return $this;
-    }
-
-    public function removeDiscussion(Discussion $discussion): static
-    {
-        if ($this->discussions->removeElement($discussion)) {
-            if ($discussion->getAgriculteur() === $this) {
-                $discussion->setAgriculteur(null);
-            }
-        }
-        return $this;
-    }
-
     /**
      * @return Collection<int, Terrain>
      */
