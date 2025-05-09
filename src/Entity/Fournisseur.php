@@ -25,18 +25,11 @@ class Fournisseur extends Utilisateur
     #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'Fournisseur', orphanRemoval: true)]
     private Collection $produits;
 
-    /**
-     * @var Collection<int, Evenement>
-     */
-    #[ORM\OneToMany(targetEntity: Evenement::class, mappedBy: 'fournisseurs')]
-    private Collection $Evenements;
-
     public function __construct()
     {
         parent::__construct();
         $this->setRoles(['ROLE_FOURNISSEUR']);
         $this->produits = new ArrayCollection();
-        $this->Evenements = new ArrayCollection();
     }
     // Getters et setters pour nomEntreprise
 
@@ -93,29 +86,6 @@ class Fournisseur extends Utilisateur
         return $this;
     }
 
-    /**
-     * @return Collection<int, Evenement>
-     */
-    public function getEvenements(): Collection
-    {
-        return $this->Evenements;
-    }
-
-    public function addEvenement(Evenement $evenement): static
-    {
-        if (!$this->Evenements->contains($evenement)) {
-            $this->Evenements->add($evenement);
-        }
-
-        return $this;
-    }
-
-    public function removeEvenement(Evenement $evenement): static
-    {
-        $this->Evenements->removeElement($evenement);
-
-        return $this;
-    }
     // Getters et setters pour categorieProduit
     public function getCategorieProduit(): ?string
     {

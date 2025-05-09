@@ -13,8 +13,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Cocur\Slugify\Slugify;
 
 #[ORM\Entity(repositoryClass: EvenementRepository::class)]
-#[ORM\HasLifecycleCallbacks]
-#[UniqueEntity('slug', message: 'Ce slug existe déjà')]
 class Evenement
 {
     #[ORM\Id]
@@ -42,7 +40,7 @@ class Evenement
     private ?\DateTimeInterface $dateFin;
 
     #[ORM\Column(length: 55)]
-    #[Assert\NotBlank (message:"Le lieu de l'évènement ene doit pas étre vide")]
+    #[Assert\NotBlank (message:"Le lieu de l'évènement ne doit pas étre vide")]
     #[Assert\NotNull (message:"Le lieu de l'évènement est obligatoire")]
     private ?string $lieu;
 
@@ -57,7 +55,8 @@ class Evenement
     #[Assert\PositiveOrZero (message:"Le prix doit être positif")]
     private ?int $prix = null;
 
-    #[ORM\ManyToOne(inversedBy: 'evenements')]
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'evenements')]
+    #[ORM\JoinColumn(nullable: false, name: 'utilisateur_id', referencedColumnName: 'id')]
     private ?Utilisateur $utilisateur = null;
 
     /**

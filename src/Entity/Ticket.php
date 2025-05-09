@@ -15,7 +15,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity('slug', message: 'Ce slug existe déjà')]
 class Ticket
 {
     #[ORM\Id]
@@ -39,11 +38,15 @@ class Ticket
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')] // Add referential integrity
     private ?Evenement $evenement = null;
 
-    #[Gedmo\Slug(fields: ['Prix'], dateFormat: 'd/m/Y H-i-s')]  
-    #[ORM\Column(type: 'string', length: 255, unique: true)]
-   
     #[ORM\Column(type: 'boolean')]
-    private bool $isPaid = false;
+    private bool $isPaid = false; // Ensure this is not repeated
+
+    #[ORM\Column(length: 255)]
+    private ?string $Titre_evenement = null; // Match database schema
+
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(nullable: false)] // Match database schema
+    private ?Utilisateur $utilisateur = null;
 
     public function getId(): ?int
     {
@@ -118,6 +121,28 @@ class Ticket
     public function setIsPaid(bool $isPaid): self
     {
         $this->isPaid = $isPaid;
+        return $this;
+    }
+
+    public function getTitreEvenement(): ?string
+    {
+        return $this->Titre_evenement;
+    }
+
+    public function setTitreEvenement(string $Titre_evenement): static
+    {
+        $this->Titre_evenement = $Titre_evenement;
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
         return $this;
     }
 
