@@ -5,86 +5,138 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Interface - Agriculture</title>
     <style>
+        /* General Styles */
         body {
-            background-color: #f0fff0;
+            background-color: #f0fff0; /* Light green background */
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
+        /* Chat Container */
         .chat-container {
-            width: 350px;
+            width: 100%;
+            max-width: 400px;
             border: 2px solid #4CAF50;
             background: #ffffff;
-            padding: 15px;
-            margin: 20px auto;
+            padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
 
+        /* Chat Messages */
         .chat-messages {
             list-style: none;
             padding: 0;
-            max-height: 200px;
+            max-height: 300px;
             overflow-y: auto;
             border-bottom: 1px solid #ddd;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .chat-message {
-            padding: 8px;
+            padding: 10px;
             border-radius: 5px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            word-wrap: break-word;
         }
 
         .user-message {
-            background-color: #dff0d8;
+            background-color: #dff0d8; /* Light green for user messages */
             text-align: right;
+            margin-left: 20%;
         }
 
         .assistant-message {
-            background-color: #e7e7e7;
+            background-color: #e7e7e7; /* Light gray for assistant messages */
             text-align: left;
+            margin-right: 20%;
         }
 
+        /* Chat Input */
         .chat-input {
-            width: 100%;
-            padding: 8px;
+            width: calc(100% - 20px);
+            padding: 10px;
             border: 1px solid #4CAF50;
             border-radius: 5px;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            font-size: 16px;
         }
 
+        /* Chat Buttons */
         .chat-buttons {
             display: flex;
             justify-content: space-between;
+            gap: 10px;
         }
 
         .chat-button {
-            background-color: #4CAF50;
+            background-color: #4CAF50; /* Green buttons */
             color: white;
             border: none;
-            padding: 8px 12px;
+            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s ease;
+            font-size: 14px;
+            flex: 1;
         }
 
         .chat-button:hover {
-            background-color: #45a049;
+            background-color: #45a049; /* Darker green on hover */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .chat-container {
+                padding: 15px;
+            }
+
+            .chat-button {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="chat-container">
+        <!-- Chat Messages -->
         <ul class="chat-messages">
             <li class="chat-message user-message">User: Hello! 🌿</li>
             <li class="chat-message assistant-message">Assistant: Hi there! How's your farm today? 🚜</li>
         </ul>
+
+        <!-- Chat Input -->
         <input type="text" class="chat-input" placeholder="Type your message...">
+
+        <!-- Chat Buttons -->
         <div class="chat-buttons">
             <button class="chat-button">Send</button>
             <button class="chat-button">📷 Image</button>
             <button class="chat-button">😊 Emoji</button>
         </div>
     </div>
+
+    <!-- Twig-specific functionality (optional) -->
+    <script>
+        document.querySelector('.chat-button').addEventListener('click', () => {
+            const input = document.querySelector('.chat-input');
+            const message = input.value.trim();
+            if (message) {
+                const messagesList = document.querySelector('.chat-messages');
+                const newMessage = document.createElement('li');
+                newMessage.className = 'chat-message user-message';
+                newMessage.textContent = `User: ${message}`;
+                messagesList.appendChild(newMessage);
+                input.value = ''; // Clear the input field
+                messagesList.scrollTop = messagesList.scrollHeight; // Scroll to the bottom
+            }
+        });
+    </script>
 </body>
 </html>

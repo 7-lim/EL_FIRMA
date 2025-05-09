@@ -15,8 +15,6 @@
 
     <h1>Précontrat de Location Agricole</h1>
 
-    <p><strong>Bailleur :</strong> {{ location.terrain.agriculteur.nom }} {{ location.terrain.agriculteur.prenom }}</p>
-    <p><strong>Preneur :</strong> {{ location.terrain.agriculteur.nom }} {{ location.terrain.agriculteur.prenom }}</p>
     <p><strong>Terrain Loué :</strong> {{ location.terrain.localisation }}</p>
     <p><strong>Superficie :</strong> {{ location.terrain.superficie }} hectares</p>
     <p><strong>Durée du Contrat :</strong> du {{ location.dateDebut|date('d-m-Y') }} au {{ location.dateFin|date('d-m-Y') }}</p>
