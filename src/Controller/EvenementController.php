@@ -97,7 +97,7 @@ final class EvenementController extends AbstractController
             $entityManager->persist($ticket);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_ticket_show', ['slug' => $ticket->getSlug()]);
+            return $this->redirectToRoute('app_ticket_show', ['id' => $ticket->getId()]);
         }
 
         return $this->render('evenement/show.html.twig', [

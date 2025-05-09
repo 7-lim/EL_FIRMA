@@ -41,16 +41,7 @@ class Ticket
 
     #[Gedmo\Slug(fields: ['Prix'], dateFormat: 'd/m/Y H-i-s')]  
     #[ORM\Column(type: 'string', length: 255, unique: true)]
-    private string $slug;
-
-    #[Gedmo\Timestampable(on: 'create')]
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private \DateTimeImmutable $createdAt;
-
-    #[Gedmo\Timestampable(on: 'update')]
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private \DateTimeImmutable $updatedAt;
-
+   
     #[ORM\Column(type: 'boolean')]
     private bool $isPaid = false;
 
@@ -119,17 +110,6 @@ class Ticket
         ]);
     }
 
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(string $slug): static
-    {
-        $this->slug = $slug;
-        return $this;
-    }
-
     public function getIsPaid(): bool
     {
         return $this->isPaid;
@@ -138,28 +118,6 @@ class Ticket
     public function setIsPaid(bool $isPaid): self
     {
         $this->isPaid = $isPaid;
-        return $this;
-    }
-
-    public function getUpdatedAt(): \DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-        return $this;
-    }
-
-    public function getCreatedAt(): \DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
         return $this;
     }
 

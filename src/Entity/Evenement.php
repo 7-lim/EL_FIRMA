@@ -46,8 +46,6 @@ class Evenement
     #[Assert\NotNull (message:"Le lieu de l'évènement est obligatoire")]
     private ?string $lieu;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $image = null;
 
     #[ORM\Column(type: Types::INTEGER)]
     #[Assert\NotNull (message:"Le nombre de places est obligatoire")]
@@ -67,18 +65,6 @@ class Evenement
      */
     #[ORM\OneToMany(mappedBy: 'evenement', targetEntity: Ticket::class, orphanRemoval: true)]
     private Collection $tickets;
-
-    #[Gedmo\Slug(fields: ['titre'])]
-    #[ORM\Column(type: 'string', length: 255, unique: true)]
-    private string $slug;
-
-    #[Gedmo\Timestampable(on: 'create')]
-    #[ORM\Column(type: 'datetime_immutable' , nullable: true)]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[Gedmo\Timestampable(on: 'update')]
-    #[ORM\Column(type: 'datetime_immutable' ,nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {
@@ -145,16 +131,6 @@ class Evenement
         return $this;
     }
 
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(?string $image): static
-    {
-        $this->image = $image;
-        return $this;
-    }
 
     public function getNombreDePlaces(): ?int
     {
@@ -216,38 +192,6 @@ class Evenement
             }
         }
 
-        return $this;
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(string $slug): static
-    {
-        $this->slug = $slug;
-        return $this;
-    }
-        public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(?\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
         return $this;
     }
 
