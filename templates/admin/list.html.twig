@@ -1,0 +1,34 @@
+{# templates/admin/list.html.twig #}
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Liste des Administrateurs{% endblock %}
+
+{% block body %}
+    <h1>Liste des Administrateurs</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for admin in admins %}
+                <tr>
+                    <td>{{ admin.id }}</td>
+                    <td>{{ admin.nom }}</td>
+                    <td>{{ admin.prenom }}</td>
+                    <td>{{ admin.email }}</td>
+                    <td>{{ admin.telephone }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">Aucun administrateur trouvé.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

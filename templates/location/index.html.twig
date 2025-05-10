@@ -1,0 +1,113 @@
+{# templates/location/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Locations{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="mt-4">Liste des Locations</h1>
+    <a href="{{ path('location_new') }}" class="btn btn-primary mb-3">Ajouter une Location</a>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <input type="text" id="search" class="form-control" placeholder="Rechercher par terrain...">
+        </div>
+    </div>
+
+    {% if locations|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>ID</th>
+                        <th onclick="sortTable('terrain')">Terrain ⬆⬇</th>
+                        <th onclick="sortTable('dateDebut')">Date Début ⬆⬇</th>
+                        <th onclick="sortTable('dateFin')">Date Fin ⬆⬇</th>
+                        <th onclick="sortTable('prixLocation')">Prix (€) ⬆⬇</th>
+                        <th>Paiement Effectué</th>
+                        <th>Mode Paiement</th>
+                        <th onclick="sortTable('statut')">Statut ⬆⬇</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="location-list">
+                    {% for location in locations %}
+                        <tr>
+                            <td>{{ location.id }}</td>
+                            <td>{{ location.terrain.localisation }}</td>
+                            <td>{{ location.dateDebut|date('d/m/Y') }}</td>
+                            <td>{{ location.dateFin|date('d/m/Y') }}</td>
+                            <td>{{ location.prixLocation }}</td>
+                            <td>{{ location.paiementEffectue ? 'Oui' : 'Non' }}</td>
+                            <td>{{ location.modePaiement ?: 'N/A' }}</td>
+                            <td>{{ location.statut ?: 'En attente' }}</td>
+                            <td>
+                                <a href="{{ path('location_show', {'id': location.id}) }}" class="btn btn-info btn-sm">Voir</a>
+                                <a href="{{ path('location_edit', {'id': location.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                                <form method="post" action="{{ path('location_delete', {'id': location.id}) }}" style="display:inline-block;" onsubmit="return confirm('Êtes-vous sûr ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ location.id) }}">
+                                    <button class="btn btn-danger btn-sm">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center">Aucune location disponible.</p>
+    {% endif %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    let sortField = 'prixLocation';
+    let sortDirection = 'ASC';
+
+    function fetchLocations(query = '') {
+        $.ajax({
+            url: '/locations/search',
+            type: 'GET',
+            data: { q: query, sort: sortField, direction: sortDirection },
+            success: function(data) {
+                let html = '';
+                data.forEach(location => {
+                    html += `<tr>
+                                <td>${location.id}</td>
+                                <td>${location.terrain ? location.terrain.localisation : 'N/A'}</td>
+                                <td>${new Date(location.dateDebut).toLocaleDateString()}</td>
+                                <td>${new Date(location.dateFin).toLocaleDateString()}</td>
+                                <td>${location.prixLocation} €</td>
+                                <td>${location.paiementEffectue ? 'Oui' : 'Non'}</td>
+                                <td>${location.modePaiement || 'N/A'}</td>
+                                <td>${location.statut || 'En attente'}</td>
+                                <td>
+                                    <a href="/locations/${location.id}" class="btn btn-info btn-sm">Voir</a>
+                                    <a href="/locations/${location.id}/edit" class="btn btn-warning btn-sm">Modifier</a>
+                                    <form method="post" action="/locations/${location.id}/delete" style="display:inline-block;" onsubmit="return confirm('Êtes-vous sûr ?');">
+                                        <button class="btn btn-danger btn-sm">Supprimer</button>
+                                    </form>
+                                </td>
+                            </tr>`;
+                });
+                $('#location-list').html(html);
+            }
+        });
+    }
+
+    $('#search').on('keyup', function() {
+        fetchLocations(this.value);
+    });
+
+    function sortTable(field) {
+        if (sortField === field) {
+            sortDirection = (sortDirection === 'ASC') ? 'DESC' : 'ASC';
+        } else {
+            sortField = field;
+            sortDirection = 'ASC';
+        }
+        fetchLocations($('#search').val());
+    }
+</script>
+
+{% endblock %}

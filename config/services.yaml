@@ -1,0 +1,26 @@
+# config/services.yaml
+parameters:
+    openweather.api_key: '%env(OPENWEATHER_API_KEY)%'
+    google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+    google_recaptcha_secret_key: '%env(GOOGLE_RECAPTCHA_SECRET_KEY)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # Explicit service definition
+    App\Security\AuthenticationSuccessHandler:
+        arguments:
+            $urlGenerator: '@router'
+
+    App\Service\OpenWeatherService:
+        arguments:
+            $apiKey: '%openweather.api_key%'

@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Terrain{% endblock %}
+
+{% block body %}
+<style>
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+    }
+    .container {
+        max-width: 900px;
+        margin: auto;
+    }
+    #map {
+        height: 300px;
+        width: 100%;
+        border-radius: 15px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        margin-top: 20px;
+    }
+    .weather-card {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease-in-out;
+        max-width: 300px;
+        margin: 20px auto;
+    }
+    .weather-card:hover {
+        transform: scale(1.03);
+    }
+    .weather-icon img {
+        width: 60px;
+        margin-bottom: 10px;
+    }
+    .temp {
+        font-size: 32px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+    .weather-details {
+        font-size: 14px;
+        margin: 5px 0;
+    }
+    .btn-container {
+        margin-top: 20px;
+    }
+    #weatherChart {
+        height: 400px;
+        width: 100%;
+    }
+</style>
+
+<div class="container py-5">
+    <h2 class="text-center mb-4">Détails du Terrain</h2>
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <h3 class="card-title text-center">{{ terrain.localisation|default('Localisation inconnue') }}</h3>
+            <hr>
+            <p class="card-text text-center">
+                <strong>Superficie :</strong> {{ terrain.superficie|number_format(0, ',', ' ') }} m²<br>
+                <strong>Latitude :</strong> {{ terrain.latitude|default('Non spécifiée') }}<br>
+                <strong>Longitude :</strong> {{ terrain.longitude|default('Non spécifiée') }}<br>
+            </p>
+        </div>
+    </div>
+
+    <!-- Map Section -->
+    <div id="map"></div>
+
+    <!-- Google Chart for Weather Data -->
+    <div class="card shadow-lg mt-4">
+        <div class="card-body">
+            <h3 class="text-center">Analyse Météo</h3>
+            <div id="weatherChart"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet.js for Map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script> 
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const map = L.map('map').setView([{{ terrain.latitude }}, {{ terrain.longitude }}], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+        L.marker([{{ terrain.latitude }}, {{ terrain.longitude }}]).addTo(map)
+            .bindPopup('<b>{{ terrain.localisation }}</b><br>Superficie: {{ terrain.superficie }} m²')
+            .openPopup();
+
+        // Load Google Charts
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Météo', 'Valeurs'],
+                ['Température', {{ weatherData.main.temp }}],
+                ['Température ressentie', {{ weatherData.main.feels_like }}],
+                ['Humidité', {{ weatherData.main.humidity }}],
+                ['Pression', {{ weatherData.main.pressure }}],
+                ['Vent', {{ weatherData.wind.speed }}]
+            ]);
+
+            var options = {
+                title: 'Conditions météorologiques',
+                legend: { position: 'bottom' },
+                backgroundColor: 'transparent',
+                chartArea: { width: '85%', height: '70%' }
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('weatherChart'));
+            chart.draw(data, options);
+        }
+    });
+</script>
+{% endblock %}

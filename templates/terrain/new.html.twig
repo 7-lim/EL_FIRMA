@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un Terrain{% endblock %}
+
+
+{% block body %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                
+                {# Centrer le titre #}
+                <div class="title-container">
+                <h1 class="text-center">Ajouter un Terrain</h1>
+                </div>
+
+                {# Flash messages #}
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+
+                {# Formulaire #}
+                <div class="card">
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+                        {# Localisation Field #}
+                        <div class="form-group mb-3">
+                            {{ form_label(form.localisation, 'Localisation', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.localisation, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.localisation) }}
+                            </div>
+                        </div>
+
+                        {# Superficie Field #}
+                        <div class="form-group mb-3">
+                            {{ form_label(form.superficie, 'Superficie (m²)', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.superficie, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.superficie) }}
+                            </div>
+                        </div>
+
+                        {# Type de Sol Field #}
+                        <div class="form-group mb-3">
+                            {{ form_label(form.typeSol, 'Type de Sol', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.typeSol, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.typeSol) }}
+                            </div>
+                        </div>
+
+                        {# Statut Field #}
+                        <div class="form-group mb-3">
+                            {{ form_label(form.statut, 'Statut', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.statut, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.statut) }}
+                            </div>
+                        </div>
+
+                        {# Photo Field #}
+                        <div class="form-group mb-3">
+                            {{ form_label(form.photo, 'Photo', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.photo) }}
+                            </div>
+                        </div>
+
+                        {# Submit Button #}
+                        <div class="form-group text-center mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Enregistrer
+                            </button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+
+                {# Back Button #}
+                <div class="text-center mt-3">
+                    <a href="{{ path('terrain_list') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour à la liste
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

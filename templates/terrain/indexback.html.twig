@@ -1,0 +1,40 @@
+{% extends 'back.html.twig' %}
+
+{% block title %}Liste des Terrains{% endblock %}
+
+{% block body %}
+
+
+    <div class="container">
+        <h1 class="text-center">Liste des Terrains</h1>
+        <a href="{{ path('terrain_new') }}" class="btn btn-primary mb-3">Ajouter un terrain</a>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Localisation</th>
+                    <th>Photo</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for terrain in terrains %}
+                    <tr>
+                        <td>{{ terrain.localisation }}</td>
+                        <td>
+                            {% if terrain.photo %}
+                                <img src="{{ asset('uploads/terrains/' ~ terrain.photo) }}" class="img-thumbnail" style="max-width: 100px;">
+                            {% else %}
+                                Pas d'image
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ path('terrain_showadmin', {'id': terrain.id}) }}" class="btn btn-info btn-sm">Voir</a>
+                            <a href="{{ path('terrain_editback', {'id': terrain.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
