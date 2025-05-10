@@ -1,0 +1,7 @@
+{# templates/categorie/_form.html.twig #}
+<form method="post" {% if form.vars.multipart %}enctype="multipart/form-data"{% endif %}>
+    {{ form_widget(form) }}
+    <div class="mt-3">
+        <button type="submit" class="btn btn-success">{{ button_label|default('Sauvegarder') }}</button>
+    </div>
+</form>

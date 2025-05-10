@@ -1,0 +1,17 @@
+{% extends 'baseFournisseur.html.twig' %}
+
+{% block title %}New Produit{% endblock %}
+
+{% block body %}
+
+{#<div class="mb-3">
+    {{ form_label(form.categorie, 'Category', {'label_attr': {'class': 'form-label fw-bold text-success'}}) }}
+    {{ form_widget(form.categorie, {'attr': {'class': 'form-control border-success'}}) }}
+    {{ form_errors(form.categorie) }}
+</div>#}
+
+    {{ include('produit/_form.html.twig') }}
+
+    
+
+{% endblock %}

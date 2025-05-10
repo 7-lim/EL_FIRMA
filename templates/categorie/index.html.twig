@@ -1,0 +1,31 @@
+{# templates/categorie/index.html.twig #}
+{% extends 'baseFournisseur.html.twig' %}
+
+{% block body %}
+
+<div class="container mt-5">
+    <div class="row">
+{% if categories is defined and categories|length > 0 %}
+        {% for categorie in categories %}
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success">{{ categorie.getNomCategorie() }}</h5>
+                    {#<p class="text-muted">{{ categorie.description }}</p>#}
+                    {#<a href="{{ path('app_categorie_new', {'id': categorie.id}) }}" class="btn btn-outline-success">Creer</a>#}
+                    <a href="{{ path('app_categorie_show', {'id': categorie.id}) }}" class="btn btn-outline-success">Voir</a>
+                    <a href="{{ path('app_categorie_edit', {'id': categorie.id}) }}" class="btn btn-outline-primary">Modifier</a>
+                    <form method="post" action="{{ path('app_categorie_delete', {'id': categorie.id}) }}" class="d-inline">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ categorie.id) }}">
+                        <button class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+{% endfor %}
+        {% else %}
+        <p class="text-center">Aucune catégorie trouvée.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,13 +1,17 @@
+
 # config/services.yaml
 parameters:
     openweather.api_key: '%env(OPENWEATHER_API_KEY)%'
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
     google_recaptcha_secret_key: '%env(GOOGLE_RECAPTCHA_SECRET_KEY)%'
+    images_directory: '%kernel.project_dir%/public/uploads/images'
+    image: 'http://picsum.photos/id/<numberBetween(400,800)>/200/180'
 
 services:
     _defaults:
         autowire: true
         autoconfigure: true
+
 
     App\:
         resource: '../src/'
@@ -24,3 +28,10 @@ services:
     App\Service\OpenWeatherService:
         arguments:
             $apiKey: '%openweather.api_key%'
+            
+    Bezhanov\Faker\Provider\Commerce: ~
+    Bezhanov\Faker\Provider\Species: ~
+
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones

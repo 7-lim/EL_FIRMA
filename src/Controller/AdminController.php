@@ -53,7 +53,7 @@ class AdminController extends AbstractController
 
             // Définition des rôles et du type (ces champs sont gérés dans l'entité)
             $admin->setRoles(['ROLE_ADMIN']);
-            $admin->setType('Administrateur');
+            //$admin->setType('Administrateur');
 
             // Persistance dans la base de données ; la colonne discriminante (disc) sera automatiquement renseignée par Doctrine
             $entityManager->persist($admin);

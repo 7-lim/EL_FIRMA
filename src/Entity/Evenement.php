@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\EvenementRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EvenementRepository::class)]
@@ -14,97 +17,155 @@ class Evenement
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $Id_evenement = null;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    private ?string $titre;
 
     #[ORM\Column(length: 255)]
-    private ?string $Titre = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $Description = null;
-
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $DateDebut = null;
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    private ?string $description;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $DateFin = null;
+    #[Assert\NotNull]
+
+    private ?\DateTimeInterface $dateDebut;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotNull]
+  
+    private ?\DateTimeInterface $dateFin;
 
     #[ORM\Column(length: 55)]
-    private ?string $Lieu = null;
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    private ?string $lieu;
+
+   
+    #[ORM\ManyToOne(inversedBy: 'Evenements')]
+    private ?Fournisseur $fournisseurs = null;
+
+   
+    #[ORM\ManyToOne(inversedBy: 'evenements')]
+    private ?Administrateur $administrateur = null;
+
+    /**
+     * @var Collection<int, Ticket>
+     */
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'evenement')]
+    private Collection $tickets;
+
+    public function __construct()
+    {
+        $this->tickets = new ArrayCollection();
+ 
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getIdEvenement(): ?int
-    {
-        return $this->Id_evenement;
-    }
-
-    public function setIdEvenement(int $Id_evenement): static
-    {
-        $this->Id_evenement = $Id_evenement;
-
-        return $this;
-    }
-
     public function getTitre(): ?string
     {
-        return $this->Titre;
+        return $this->titre;
     }
 
-    public function setTitre(string $Titre): static
+    public function setTitre(string $titre): static
     {
-        $this->Titre = $Titre;
-
+        $this->titre = $titre;
         return $this;
     }
 
     public function getDescription(): ?string
     {
-        return $this->Description;
+        return $this->description;
     }
 
-    public function setDescription(string $Description): static
+    public function setDescription(string $description): static
     {
-        $this->Description = $Description;
-
+        $this->description = $description;
         return $this;
     }
 
     public function getDateDebut(): ?\DateTimeInterface
     {
-        return $this->DateDebut;
+        return $this->dateDebut;
     }
 
-    public function setDateDebut(\DateTimeInterface $DateDebut): static
+    public function setDateDebut(\DateTimeInterface $dateDebut): static
     {
-        $this->DateDebut = $DateDebut;
-
+        $this->dateDebut = $dateDebut;
         return $this;
     }
 
     public function getDateFin(): ?\DateTimeInterface
     {
-        return $this->DateFin;
+        return $this->dateFin;
     }
 
-    public function setDateFin(\DateTimeInterface $DateFin): static
+    public function setDateFin(\DateTimeInterface $dateFin): static
     {
-        $this->DateFin = $DateFin;
-
+        $this->dateFin = $dateFin;
         return $this;
     }
 
     public function getLieu(): ?string
     {
-        return $this->Lieu;
+        return $this->lieu;
     }
 
-    public function setLieu(string $Lieu): static
+    public function setLieu(string $lieu): static
     {
-        $this->Lieu = $Lieu;
+        $this->lieu = $lieu;
+        return $this;
+    }
+
+
+    public function getFournisseurs(): ?Fournisseur
+    {
+        return $this->fournisseurs;
+    }
+
+    public function getAdministrateur(): ?Administrateur
+    {
+        return $this->administrateur;
+    }
+
+    public function setAdministrateur(?Administrateur $administrateur): static
+    {
+        $this->administrateur = $administrateur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ticket>
+     */
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
+    }
+
+    public function addTicket(Ticket $ticket): static
+    {
+        if (!$this->tickets->contains($ticket)) {
+            $this->tickets->add($ticket);
+            $ticket->setEvenement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicket(Ticket $ticket): static
+    {
+        if ($this->tickets->removeElement($ticket)) {
+            // set the owning side to null (unless already changed)
+            if ($ticket->getEvenement() === $this) {
+                $ticket->setEvenement(null);
+            }
+        }
 
         return $this;
     }

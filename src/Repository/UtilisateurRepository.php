@@ -75,6 +75,3 @@ public function countUsersByRole(string $role): int
 
 
 }
-
-
-
