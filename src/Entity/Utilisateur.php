@@ -66,11 +66,47 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
     #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Evenement::class, orphanRemoval: true)]
     private Collection $evenements;
 
+    /**
+     * @var Collection<int, Ticket>
+     */
+    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Ticket::class, orphanRemoval: true)]
+    private Collection $tickets;
 
     public function __construct()
     {
         $this->roles = ['ROLE_USER']; // Rôle par défaut
         $this->evenements = new ArrayCollection();
+        $this->tickets = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection<int, Ticket>
+     */
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
+    }
+
+    public function addTicket(Ticket $ticket): static
+    {
+        if (!$this->tickets->contains($ticket)) {
+            $this->tickets[] = $ticket;
+            $ticket->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicket(Ticket $ticket): static
+    {
+        if ($this->tickets->removeElement($ticket)) {
+            // set the owning side to null (unless already changed)
+            if ($ticket->getUtilisateur() === $this) {
+                $ticket->setUtilisateur(null);
+            }
+        }
+
+        return $this;
     }
 
     // Méthodes pour les nouvelles propriétés
@@ -231,5 +267,3 @@ abstract class Utilisateur implements UserInterface, PasswordAuthenticatedUserIn
 
     }
 }
-
-

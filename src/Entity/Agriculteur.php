@@ -22,11 +22,11 @@ class Agriculteur extends Utilisateur
     #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'agriculteur')]
     private Collection $produits;
 
-    /**
-     * @var Collection<int, Ticket>
-     */
-    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'agriculteur')]
-    private Collection $tickets;
+    // /**
+    //  * @var Collection<int, Ticket>
+    //  */
+    // #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'agriculteur')]
+    // private Collection $tickets;
 
     /**
      * @var Collection<int, Discussion>
@@ -49,7 +49,7 @@ class Agriculteur extends Utilisateur
     public function __construct()
     {
         $this->produits = new ArrayCollection();
-        $this->tickets = new ArrayCollection();
+        //$this->tickets = new ArrayCollection();
         $this->discussions = new ArrayCollection();
         $this->terrains = new ArrayCollection();
         $this->reclamations = new ArrayCollection();
@@ -114,29 +114,29 @@ class Agriculteur extends Utilisateur
         return $this;
     }
 
-    /**
-     * @return Collection<int, Ticket>
-     */
-    public function getTickets(): Collection
-    {
-        return $this->tickets;
-    }
+    // /**
+    //  * @return Collection<int, Ticket>
+    //  */
+    // public function getTickets(): Collection
+    // {
+    //     return $this->tickets;
+    // }
 
-    public function addTicket(Ticket $ticket): static
-    {
-        if (!$this->tickets->contains($ticket)) {
-            $this->tickets->add($ticket);
-        }
+    // public function addTicket(Ticket $ticket): static
+    // {
+    //     if (!$this->tickets->contains($ticket)) {
+    //         $this->tickets->add($ticket);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeTicket(Ticket $ticket): static
-    {
-        $this->tickets->removeElement($ticket);
+    // public function removeTicket(Ticket $ticket): static
+    // {
+    //     $this->tickets->removeElement($ticket);
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * @return Collection<int, Discussion>

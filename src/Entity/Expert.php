@@ -18,11 +18,11 @@ class Expert extends Utilisateur
     #[ORM\OneToMany(targetEntity: Discussion::class, mappedBy: 'expert')]
     private Collection $discussions;
 
-    /**
-     * @var Collection<int, Ticket>
-     */
-    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'expert')]
-    private Collection $tickets;
+    // /**
+    //  * @var Collection<int, Ticket>
+    //  */
+    // #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'expert')]
+    // private Collection $tickets;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $domaineExpertise = null;
@@ -32,7 +32,7 @@ class Expert extends Utilisateur
         parent::__construct();
         $this->setRoles(['ROLE_EXPERT']);
         $this->discussions = new ArrayCollection();
-        $this->tickets = new ArrayCollection();
+        //$this->tickets = new ArrayCollection();
     }
 
 
@@ -78,35 +78,35 @@ class Expert extends Utilisateur
         return $this;
     }
 
-    /**
-     * @return Collection<int, Ticket>
-     */
-    public function getTickets(): Collection
-    {
-        return $this->tickets;
-    }
+    // /**
+    //  * @return Collection<int, Ticket>
+    //  */
+    // public function getTickets(): Collection
+    // {
+    //     return $this->tickets;
+    // }
 
-    public function addTicket(Ticket $ticket): static
-    {
-        if (!$this->tickets->contains($ticket)) {
-            $this->tickets->add($ticket);
-            $ticket->setExpert($this);
-        }
+    // public function addTicket(Ticket $ticket): static
+    // {
+    //     if (!$this->tickets->contains($ticket)) {
+    //         $this->tickets->add($ticket);
+    //         $ticket->setExpert($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeTicket(Ticket $ticket): static
-    {
-        if ($this->tickets->removeElement($ticket)) {
-            // set the owning side to null (unless already changed)
-            if ($ticket->getExpert() === $this) {
-                $ticket->setExpert(null);
-            }
-        }
+    // public function removeTicket(Ticket $ticket): static
+    // {
+    //     if ($this->tickets->removeElement($ticket)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($ticket->getExpert() === $this) {
+    //             $ticket->setExpert(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
 
 }

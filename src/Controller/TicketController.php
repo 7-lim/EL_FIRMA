@@ -25,14 +25,7 @@ final class TicketController extends AbstractController
             throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos tickets');
         }
 
-        // Fetch tickets based on user role
-        if (in_array('ROLE_AGRICULTEUR', $user->getRoles())) {
-            $tickets = $ticketRepository->findBy(['agriculteur' => $user]);
-        } elseif (in_array('ROLE_EXPERT', $user->getRoles())) {
-            $tickets = $ticketRepository->findBy(['expert' => $user]);
-        } else {
-            $tickets = [];
-        }
+        $tickets = $ticketRepository->findBy(['utilisateur' => $user]);
 
         return $this->render('ticket/index.html.twig', [
             'tickets' => $tickets,
@@ -48,6 +41,7 @@ final class TicketController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $evenement = $ticket->getEvenement();
+            
             $prix = $ticket->getPrix();
             $nombreDePlaces = $evenement->getNombreDePlaces();
     

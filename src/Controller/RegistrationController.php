@@ -46,12 +46,15 @@ class RegistrationController extends AbstractController
                 $user->setNomEntreprise($data['nomEntreprise']);
                 $user->setIdFiscale($data['idFiscale']);
                 $user->setCategorieProduit($data['categorieProduit']);
+                $user->setRoles(['ROLE_FOURNISSEUR']);
             } elseif ($userType === 'expert') {
                 $user = new Expert();
                 $user->setDomaineExpertise($data['domaine_expertise']);
+                $user->setRoles(['ROLE_EXPERT']);
             } elseif ($userType === 'agriculteur') {
                 $user = new Agriculteur();
                 $user->setAdresseExploitation($data['adresse_exploitation']);
+                $user->setRoles(['ROLE_AGRICULTEUR']);
             } elseif ($userType === 'administrateur') {
                 $user = new Administrateur();
                 // Attribution explicite du rôle administrateur
@@ -253,4 +256,3 @@ public function statistics(UtilisateurRepository $utilisateurRepository): Respon
     ]);
 }
 }
-

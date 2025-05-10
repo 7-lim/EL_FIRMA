@@ -78,16 +78,12 @@ final class EvenementController extends AbstractController
             $ticket = new Ticket();
             $ticket->setEvenement($evenement);
             $ticket->setPrix($evenement->getPrix());
+            $ticket->setIsPaid(false); // Set to false initially
+            $ticket->setTitreEvenement($evenement->getTitre());
 
-            // Set user based on role and downcast to child class
-            if (in_array('ROLE_AGRICULTEUR', $user->getRoles())) {
-                if ($user instanceof Agriculteur) {
-                    $ticket->setAgriculteur($user);
-                }
-            } elseif (in_array('ROLE_EXPERT', $user->getRoles())) {
-                if ($user instanceof Expert) {
-                    $ticket->setExpert($user);
-                }
+            // Set user
+            if (in_array('ROLE_AGRICULTEUR', $user->getRoles()) || in_array('ROLE_EXPERT', $user->getRoles())) {
+                $ticket->setUtilisateur($user);
             } else {
                 throw $this->createAccessDeniedException('Vous devez être connecté en tant qu\'agriculteur ou expert pour participer à un événement.');
             }

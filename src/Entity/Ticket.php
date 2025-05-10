@@ -29,10 +29,7 @@ class Ticket
     private ?int $Prix = null;
 
     #[ORM\ManyToOne(inversedBy: 'tickets')]
-    private ?Agriculteur $agriculteur = null;
-
-    #[ORM\ManyToOne(inversedBy: 'tickets')]
-    private ?Expert $expert = null;
+    private ?Utilisateur $utilisateur = null;
 
     #[ORM\ManyToOne(targetEntity: Evenement::class, inversedBy: 'tickets')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')] // Add referential integrity
@@ -44,9 +41,6 @@ class Ticket
     #[ORM\Column(length: 255)]
     private ?string $Titre_evenement = null; // Match database schema
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
-    #[ORM\JoinColumn(nullable: false)] // Match database schema
-    private ?Utilisateur $utilisateur = null;
 
     public function getId(): ?int
     {
@@ -65,26 +59,14 @@ class Ticket
         return $this;
     }
 
-    public function getAgriculteur(): ?Agriculteur
+    public function getUtilisateur(): ?Utilisateur
     {
-        return $this->agriculteur;
+        return $this->utilisateur;
     }
 
-    public function setAgriculteur(?Agriculteur $agriculteur): static
+    public function setUtilisateur(?Utilisateur $utilisateur): static
     {
-        $this->agriculteur = $agriculteur;
-
-        return $this;
-    }
-
-    public function getExpert(): ?Expert
-    {
-        return $this->expert;
-    }
-
-    public function setExpert(?Expert $expert): static
-    {
-        $this->expert = $expert;
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }
@@ -103,7 +85,7 @@ class Ticket
 
     public function getQrCodeContent(): string
     {
-        $user = $this->getAgriculteur() ?? $this->getExpert();
+        $user = $this->getUtilisateur() ?? $this->getUtilisateur();
         $userName = $user ? $user->getNom() . ' ' . $user->getPrenom() : 'Utilisateur inconnu';
 
         return json_encode([
@@ -132,17 +114,6 @@ class Ticket
     public function setTitreEvenement(string $Titre_evenement): static
     {
         $this->Titre_evenement = $Titre_evenement;
-        return $this;
-    }
-
-    public function getUtilisateur(): ?Utilisateur
-    {
-        return $this->utilisateur;
-    }
-
-    public function setUtilisateur(?Utilisateur $utilisateur): static
-    {
-        $this->utilisateur = $utilisateur;
         return $this;
     }
 
