@@ -1,7 +1,7 @@
 # PIDEV Symfony Application
 
 ## Description
-**PIDEV** is a Symfony-based web application designed to manage various user roles and functionalities, including administrators, experts, suppliers, and farmers. The application provides features such as user registration, password reset, event management, product management, and PDF export of user data. It also includes a dashboard for administrators to manage users and view statistics.
+**El_FIRMA** is a Symfony-based web application designed to manage various user roles and functionalities, including administrators, experts, suppliers, and farmers. The application provides features such as user registration, password reset, event management, product management, and PDF export of user data. It also includes a dashboard for administrators to manage users and view statistics.
 
 ## Table of Contents
 - [Features](#features)
