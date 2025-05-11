@@ -1,91 +1,132 @@
-# PIDEV Symfony Application
+# Application Symfony PIDEV
 
 ## Description
-**El_FIRMA** is a Symfony-based web application designed to manage various user roles and functionalities, including administrators, experts, suppliers, and farmers. The application provides features such as user registration, password reset, event management, product management, and PDF export of user data. It also includes a dashboard for administrators to manage users and view statistics.
+**El_FIRMA** est une application web basée sur Symfony conçue pour gérer différents rôles utilisateurs, notamment les administrateurs, experts, fournisseurs et agriculteurs. L’application offre des fonctionnalités telles que l’inscription des utilisateurs, la réinitialisation de mot de passe, la gestion d’événements, la gestion de produits, et l’exportation PDF des données utilisateurs. Elle comprend également un tableau de bord pour les administrateurs afin de gérer les utilisateurs et consulter les statistiques.
 
-## Table of Contents
-- [Features](#features)
+## Modules du projet
+L’application **El_FIRMA** est organisée en plusieurs modules clés, chacun conçu pour répondre à des besoins spécifiques des utilisateurs et offrir une plateforme numérique complète pour les interactions et services liés à l’agriculture.
+
+### 📅 Module de gestion des événements (Module Événement)
+Ce module permet aux fournisseurs de promouvoir leurs produits et de favoriser l'engagement en organisant des événements. Les fournisseurs peuvent :
+- Créer et gérer des événements en ligne ou en présentiel via leur tableau de bord.
+- Générer des QR codes pour les billets d’événement afin de faciliter l’enregistrement et d’améliorer l’organisation.
+- Cibler un large public : les événements sont visibles et accessibles aux agriculteurs, experts et autres fournisseurs.
+
+> Cela favorise le réseautage, le partage de connaissances et la croissance commerciale au sein de la communauté agricole.
+
+### 🛒 Module de gestion des produits (Module Produit)
+Ce module permet aux fournisseurs de présenter et de vendre leurs produits agricoles. Fonctionnalités clés :
+- Ajout de fiches produits détaillées avec images, descriptions, prix et quantités.
+- Achat en ligne fluide avec paiements sécurisés via Stripe.
+- Filtres avancés pour permettre aux agriculteurs de rechercher par catégorie et prix.
+
+### 💬 Module de conseil expert et forum (Module Conseil Expert)
+Ce module connecte les agriculteurs aux experts en agriculture. Fonctionnalités :
+- Interface de type forum pour poser des questions et recevoir des réponses d'experts vérifiés.
+- Base de connaissances consultable regroupant les questions précédemment traitées.
+
+> Favorise la collaboration et la résolution de problèmes pour améliorer les pratiques agricoles.
+
+### 🌾 Module de location de terrains (Module Terrain)
+Permet la location de terrains agricoles entre utilisateurs :
+- Les propriétaires publient des annonces détaillées (localisation, superficie, type, etc.).
+- Les agriculteurs peuvent rechercher et louer selon leurs besoins.
+
+> Encourage une meilleure utilisation des terres et offre des opportunités aux agriculteurs sans propriété.
+
+### 👤 Module de gestion des utilisateurs (Module Utilisateur)
+Au cœur de l’application, ce module gère :
+- Les accès et permissions basés sur les rôles (admin, expert, fournisseur, agriculteur).
+- L’authentification et l’autorisation sécurisées.
+- La gestion des profils et des données utilisateurs.
+
+> Garantit la sécurité de la plateforme et personnalise l’expérience utilisateur.
+
+---
+
+## Table des matières
+- [Fonctionnalités](#fonctionnalités)
 - [Installation](#installation)
-- [Usage](#usage)
-- [Technologies Used](#technologies-used)
-- [Contributing](#contributing)
-- [License](#license)
-- [Keywords](#keywords)
+- [Utilisation](#utilisation)
+- [Technologies utilisées](#technologies-utilisées)
+- [Contribuer](#contribuer)
+- [Licence](#licence)
+- [Mots-clés](#mots-clés)
 
-## Features
-- **User Management**: Registration, login, and role-based access control for administrators, experts, suppliers, and farmers.
-- **Password Reset**: Secure password reset functionality via email.
-- **Event Management**: Create, update, and manage events.
-- **Product Management**: Manage products with details like name, description, quantity, and price.
-- **Dashboard**: Admin dashboard with user statistics and management tools.
-- **PDF Export**: Export user data to PDF using Dompdf.
-- **Responsive Design**: Frontend built with responsive styles for a seamless user experience.
+## Fonctionnalités
+- **Gestion des utilisateurs** : Inscription, connexion et contrôle d’accès selon les rôles.
+- **Réinitialisation de mot de passe** : Fonctionnalité sécurisée par e-mail.
+- **Gestion des événements** : Création, modification et suivi des événements.
+- **Gestion des produits** : Ajout et gestion de produits (nom, description, quantité, prix).
+- **Tableau de bord** : Statistiques utilisateurs et outils de gestion pour les administrateurs.
+- **Export PDF** : Exportation des données utilisateurs en PDF via Dompdf.
+- **Design responsive** : Interface adaptée aux différents appareils.
 
 ## Installation
 
-1. **Clone the repository**:
+1. **Cloner le dépôt** :
    ```bash
    git clone https://github.com/username/pidev-symfony.git
    cd pidev-symfony
    ```
 
-2. **Install dependencies**:
+2. **Installer les dépendances** :
    ```bash
    composer install
    npm install
    ```
 
-3. **Configure the environment**:
-   - Copy `.env` to `.env.local` and update your database credentials.
+3. **Configurer l’environnement** :
+   - Copier le fichier `.env` en `.env.local` et modifier les informations de connexion à la base de données.
 
-4. **Run migrations**:
+4. **Lancer les migrations** :
    ```bash
    php bin/console doctrine:migrations:migrate
    ```
 
-5. **Start the development server**:
+5. **Démarrer le serveur de développement** :
    ```bash
    symfony server:start
    ```
 
-6. **Build assets**:
+6. **Compiler les assets** :
    ```bash
    npm run dev
    ```
 
-## Usage
-- Access the application at: [http://localhost:8000](http://localhost:8000).
-- Use the admin dashboard to manage users, events, and products.
-- Register as a user with different roles (e.g., expert, supplier, farmer) to explore role-specific features.
+## Utilisation
+- Accédez à l’application via : [http://localhost:8000](http://localhost:8000).
+- Utilisez le tableau de bord admin pour gérer les utilisateurs, événements et produits.
+- Inscrivez-vous avec différents rôles pour découvrir les fonctionnalités spécifiques à chacun.
 
-## Technologies Used
-- **Backend**: Symfony Framework
-- **Frontend**: Twig, SCSS, Bootstrap
-- **Database**: MySQL
-- **PDF Generation**: Dompdf
-- **JavaScript**: Vanilla JS, jQuery
-- **CSS Framework**: SB Admin 2
+## Technologies utilisées
+- **Backend** : Symfony Framework
+- **Frontend** : Twig, SCSS, Bootstrap
+- **Base de données** : MySQL
+- **Génération de PDF** : Dompdf
+- **JavaScript** : Vanilla JS, jQuery
+- **Template Admin** : SB Admin 2
 
-## Contributing
-Contributions are welcome! Please follow these steps:
+## Contribuer
+Les contributions sont les bienvenues ! Voici comment procéder :
 
-1. Fork the repository.
-2. Create a new branch:
+1. Forkez le dépôt.
+2. Créez une nouvelle branche :
    ```bash
-   git checkout -b feature-name
+   git checkout -b nouvelle-fonctionnalité
    ```
-3. Commit your changes:
+3. Effectuez vos modifications :
    ```bash
-   git commit -m "Add feature-name"
+   git commit -m "Ajout de nouvelle-fonctionnalité"
    ```
-4. Push to the branch:
+4. Poussez la branche :
    ```bash
-   git push origin feature-name
+   git push origin nouvelle-fonctionnalité
    ```
-5. Open a pull request.
+5. Créez une pull request.
 
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+## Licence
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus d'informations.
 
-## Keywords
-Symfony, User Management, Dashboard, PDF Export, Event Management, Product Management, Role-Based Access Control, Responsive Design, Web Application
+## Mots-clés
+Symfony, Gestion des utilisateurs, Tableau de bord, Export PDF, Gestion des événements, Gestion des produits, Contrôle d’accès par rôle, Design responsive, Application web
